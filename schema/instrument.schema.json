@@ -28,9 +28,9 @@
         "center_wavenumber_cm1": { "$ref": "#/$defs/dist_or_number" },
         "scan_range_cm1": { "$ref": "#/$defs/dist_or_number" },
         "scan_rate_Hz": { "$ref": "#/$defs/dist_or_number" },
-        "scan_nonlinearity_poly": {
+        "scan_nonlinearity_poly_cm1": {
           "type": "array",
-          "description": "Distributions for polynomial coefficients of current->wavenumber scan nonlinearity (order 2+ terms).",
+          "description": "Distributions for polynomial coefficients (cm-1 per normalized-ramp^k, order 2+ terms) of current->wavenumber scan nonlinearity.",
           "items": { "$ref": "#/$defs/dist_or_number" }
         },
         "ram_amplitude_rel": {

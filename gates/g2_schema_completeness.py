@@ -117,11 +117,82 @@ def _random_record(rng) -> dict:
         rec["instrument"]["modulation"] = {
             "frequency_Hz": float(rng.uniform(1e3, 5e4)),
             "depth_cm1": float(rng.uniform(0.01, 0.2)),
+            "harmonic_scheme": "2f/1f" if rng.random() < 0.5 else "2f",
+            "im_i0_rel": float(rng.uniform(0.05, 0.5)),
+            "im_i2_rel": float(rng.uniform(0.0, 0.02)),
+            "fm_im_phase1_rad": float(rng.uniform(-3.14, 3.14)),
+            "fm_im_phase2_rad": float(rng.uniform(-3.14, 3.14)),
         }
         rec["signals"]["demod_2f"] = {
             "array_ref": f"/records/{rec['record_id']}/demod_2f",
             "n_samples": n,
         }
+        if rng.random() < 0.5:
+            rec["signals"]["demod_1f"] = {
+                "array_ref": f"/records/{rec['record_id']}/demod_1f",
+                "n_samples": n,
+            }
+    # Exercise wider schema surface (independent review: previous generator
+    # touched roughly half the fields)
+    if rng.random() < 0.5:
+        rec["signals"]["raw_scan"] = {
+            "array_ref": f"/records/{rec['record_id']}/raw_scan",
+            "n_samples": n,
+            "sampling_rate_Hz": float(rng.uniform(1e5, 1e8)),
+        }
+    if rng.random() < 0.4:
+        rec["conditions"]["interferents"] = [
+            {
+                "molecule": "H2O",
+                "hitran_molecule_id": 1,
+                "concentration_ppm": float(rng.uniform(100.0, 20000.0)),
+            }
+        ]
+    if rng.random() < 0.4:
+        rec["labels"]["species"].append(
+            {
+                "molecule": "CO2",
+                "hitran_molecule_id": 2,
+                "concentration_ppm": float(rng.uniform(10.0, 5000.0)),
+            }
+        )
+    if rng.random() < 0.5:
+        rec["instrument"]["cell"] = {
+            "type": "Herriott multipass",
+            "number_of_passes": int(rng.integers(2, 200)),
+            "volume_cm3": float(rng.uniform(10.0, 5000.0)),
+        }
+    if rng.random() < 0.5:
+        rec["instrument"]["laser"].update(
+            {
+                "type": "DFB",
+                "scan_waveform": "sawtooth",
+                "operating_temperature_K": float(rng.uniform(283.0, 313.0)),
+                "injection_current_mA": float(rng.uniform(20.0, 150.0)),
+                "output_power_mW": float(rng.uniform(1.0, 40.0)),
+                "tuning_poly_cm1": [float(v) for v in rng.normal(0.0, 0.1, 3)],
+            }
+        )
+    if rng.random() < 0.5:
+        rec["processing"] = {
+            "calibration_method": "calibration-free (first-principles)",
+            "baseline_treatment": "3rd-order polynomial on non-absorbing wings",
+            "line_shape_model": "Voigt",
+            "averaging_n_scans": int(rng.integers(1, 1000)),
+            "averaging_time_s": float(rng.uniform(0.01, 100.0)),
+        }
+    if rng.random() < 0.3:
+        rec["instrument"]["target_lines"][0].update(
+            {
+                "isotopologue_id": 1,
+                "line_strength_cm_per_molec": 1.2e-21,
+                "elower_cm1": 62.88,
+                "gamma_air_cm1_per_atm": 0.06,
+                "gamma_self_cm1_per_atm": 0.075,
+                "n_air": 0.72,
+                "delta_air_cm1_per_atm": -0.008,
+            }
+        )
     return rec
 
 
@@ -151,23 +222,46 @@ def _round_trip() -> dict:
     }
 
 
-def _iter_numeric_leaves(schema_node: dict, path: str = ""):
-    """Yield (field_path, field_name) for numeric-typed leaf properties."""
+def _iter_numeric_leaves(schema_node: dict, root: dict | None = None, path: str = ""):
+    """Yield (field_path, field_name) for numeric-typed leaf properties.
+
+    Resolves local ``$ref``s so that properties pointing at shared $defs —
+    notably the instrument schema's ``dist_or_number`` — are linted under the
+    referencing property's own name (independent review found the previous
+    version skipped every $ref'd property).
+    """
+    root = root if root is not None else schema_node
+
+    def resolve(node: dict) -> dict:
+        ref = node.get("$ref", "")
+        if ref.startswith("#/"):
+            cur = root
+            for seg in ref[2:].split("/"):
+                cur = cur[seg]
+            return cur
+        return node
+
     props = schema_node.get("properties", {})
     for name, sub in props.items():
         p = f"{path}/{name}"
-        t = sub.get("type")
-        if t in ("number", "integer"):
+        rsub = resolve(sub)
+        is_dist = sub.get("$ref", "").endswith("dist_or_number")
+        if rsub.get("type") in ("number", "integer") or is_dist:
             yield p, name
-        yield from _iter_numeric_leaves(sub, p)
-        for kw in ("items",):
-            if isinstance(sub.get(kw), dict):
-                yield from _iter_numeric_leaves(sub[kw], p + "[]")
+        if not is_dist:  # dist internals (low/high/mean/...) inherit parent unit
+            yield from _iter_numeric_leaves(rsub, root, p)
+            items = rsub.get("items")
+            if isinstance(items, dict):
+                r_items = resolve(items)
+                if r_items.get("type") in ("number", "integer") or items.get(
+                    "$ref", ""
+                ).endswith("dist_or_number"):
+                    yield p + "[]", name
+                else:
+                    yield from _iter_numeric_leaves(r_items, root, p + "[]")
     for kw in ("allOf", "anyOf", "oneOf"):
         for sub in schema_node.get(kw, []) or []:
-            yield from _iter_numeric_leaves(sub, path)
-    for name, sub in (schema_node.get("$defs", {}) or {}).items():
-        yield from _iter_numeric_leaves(sub, f"{path}/$defs:{name}")
+            yield from _iter_numeric_leaves(sub, root, path)
 
 
 def _unit_lint() -> dict:

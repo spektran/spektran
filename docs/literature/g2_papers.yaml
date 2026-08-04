@@ -182,10 +182,10 @@ papers:
 
   - id: goldenstein2014_hp_wms
     title: "Wavelength-modulation spectroscopy near 1.4 um for measurements of H2O and temperature in high-pressure and -temperature gases"
-    authors: "C. S. Goldenstein, R. M. Spearrin, J. B. Jeffries, R. K. Hanson"
+    authors: "C. S. Goldenstein, R. M. Spearrin, I. A. Schultz, J. B. Jeffries, R. K. Hanson"
     year: 2014
     journal: "Measurement Science and Technology"
-    doi: "doi-unverified"
+    doi: "10.1088/0957-0233/25/5/055101"
     technique: WMS
     target_gas: "H2O + temperature (700-2400 K, 2-25 atm, shock-heated H2O-N2)"
     notes: "WMS-2f/1f validated at high pressure where blended, non-Lorentzian lineshapes dominate; accuracy 1.5-3.5% against known conditions."
@@ -222,7 +222,7 @@ papers:
     authors: "A. Klein, O. Witzel, V. Ebert"
     year: 2014
     journal: "Sensors (MDPI) 14(11)"
-    doi: "doi-unverified"
+    doi: "10.3390/s141121497"
     technique: both
     target_gas: "H2O (DA/WMS on the same instrument, time-multiplexed)"
     notes: "Direct comparison of DA and WMS channels sharing one laser/detector chain; useful anchor for a schema that must serve both techniques."
@@ -261,7 +261,7 @@ papers:
     authors: "R. Sur, K. Sun, J. B. Jeffries, R. K. Hanson"
     year: 2014
     journal: "Applied Physics B"
-    doi: "doi-unverified"
+    doi: "10.1007/s00340-013-5644-6"
     technique: WMS
     target_gas: "CO, CO2, CH4, H2O (multi-species, high pressure ~10-15 atm)"
     notes: "Scanned-WMS-2f/1f in an engineering-scale gasifier; strong emphasis on interference, pressure broadening at high P, and window fouling immunity."
@@ -417,7 +417,7 @@ papers:
     authors: "J. Li, H. Deng, J. Sun, B. Yu, H. Fischer"
     year: 2016
     journal: "Sensors and Actuators B: Chemical 231:723-732"
-    doi: "doi-unverified"
+    doi: "10.1016/j.snb.2016.03.089"
     technique: both
     target_gas: "CO, N2O, H2O (4566 nm QCL; DAS self-calibrates WMS)"
     notes: "Long-path DAS provides absolute concentrations used to calibrate higher-SNR WMS channel; precisions 0.21 ppb CO / 0.18 ppb N2O at 75 s."
@@ -546,7 +546,7 @@ papers:
     authors: "L. Shao, B. Fang, F. Zheng, X. Qiu, Q. He, J. Wei, C. Li, W. Zhao"
     year: 2019
     journal: "Spectrochimica Acta Part A: Molecular and Biomolecular Spectroscopy 222:117118"
-    doi: "10.1016/j.saa.2019.117118"
+    doi: "10.1016/j.saa.2019.05.023"
     technique: WMS
     target_gas: "CO, CH4 (neighboring lines near 2.33 um, single laser)"
     notes: "WMS-2f/1f with Herriott multipass cell and FPGA lock-in; 48 h continuous atmospheric monitoring; Allan analysis for drift."
@@ -811,7 +811,7 @@ papers:
     authors: "N. S. B. Jaeger, M. Mhanna, J. Rochussen, P. Kirchen"
     year: 2025
     journal: "Applied Optics 64(4):1028-1035"
-    doi: "doi-unverified"
+    doi: "10.1364/ao.546704"
     technique: WMS
     target_gas: "CH4 (wet, hot exhaust of a marine NG engine; 20 Hz logging)"
     notes: "Calibration-free 2f/1f matches calibrated 2f/1f within 2.17% over 3 h at sea; laser characterization and drift handling for long-duration field use."

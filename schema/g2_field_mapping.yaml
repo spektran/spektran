@@ -92,7 +92,7 @@ parameters:
     fields: ["R:/instrument/laser/scan_range_cm1"]
   laser_tuning_coefficient:
     status: covered
-    fields: ["R:/instrument/laser/tuning_poly_cm1", "I:/laser/scan_nonlinearity_poly"]
+    fields: ["R:/instrument/laser/tuning_poly_cm1", "I:/laser/scan_nonlinearity_poly_cm1"]
   laser_intensity_modulation_parameters:
     status: covered
     fields: ["R:/instrument/modulation/im_i0_rel", "R:/instrument/modulation/im_i2_rel", "R:/instrument/modulation/fm_im_phase1_rad", "R:/instrument/modulation/fm_im_phase2_rad", "I:/laser/ram_amplitude_rel"]
