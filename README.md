@@ -7,7 +7,7 @@ SPEKTRAN builds one platform pattern — parameterized forward physics + literat
 - **Code**: Apache-2.0 ([LICENSE](LICENSE))
 - **Data & schema**: CC BY 4.0 ([LICENSE-DATA](LICENSE-DATA))
 
-> ⚠️ **Status: alpha (v0.2.0).** Gates G1–G5 all pass with archived adversarial reviews. Multi-species support (CH4, H2O, CO2, CO), higher-harmonic WMS (3f/4f), and 6 benchmark tasks now available. APIs and schema may still change until v1.0.
+> ⚠️ **Status: alpha (v0.2.1).** Gates G1–G5 all pass with archived adversarial reviews. Multi-species support (CH4, H2O, CO2, CO), higher-harmonic WMS (3f/4f), and 6 benchmark tasks — all with complete pipelines and reference baselines — now available. APIs and schema may still change until v1.0.
 
 ## Why SPEKTRAN?
 
@@ -83,6 +83,16 @@ alpha_h2o = absorption_coefficient(nu, demo_h2o(), 0.01, 296.0, 1.0)  # 1% H2O
 
 T2 denoising (same test split): wing-anchored cubic-polynomial baseline
 (classical reference) — spectral RMSE 6.31e-3, peak-weighted RMSE 8.60e-3.
+
+T4 WMS concentration (2f demodulated signal, held-out test split): ridge
+regression 15.15 ppm MAE, 1D CNN 20.35 ppm MAE — the linear model wins again,
+same pattern as T1/T3.
+
+T5 drift compensation (10 held-out time series, 200 scans each): moving-average
+baseline 0.270 ppm MAE.
+
+T6 OOD instrument detection (in-distribution vs. held-out instrument): PCA +
+Mahalanobis-distance baseline 0.672 AUROC.
 
 Reproduce with [`baselines/README.md`](baselines/README.md). Note the T3
 lesson already visible in the baselines: the deep model overfits instrument
