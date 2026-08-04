@@ -97,7 +97,12 @@ class TestAbsorptionCrossValidation:
                 delta_air=lines.delta_air[j : j + 1],
                 elower_cm1=lines.elower_cm1[j : j + 1],
             )
-            alpha = absorption_coefficient(np.array([nu]), single, x, T, P)[0]
+            # Pin q_ratio explicitly: this test cross-validates the Voigt/HITRAN
+            # line-shape formula, not the partition-function model, so it must
+            # not depend on whichever q_ratio absorption_coefficient defaults to.
+            alpha = absorption_coefficient(
+                np.array([nu]), single, x, T, P, q_ratio=default_q_ratio
+            )[0]
             main = alpha * L_cm
 
             ref = absorbance_ref(

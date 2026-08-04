@@ -9,6 +9,7 @@ from .lineshape import (
     lorentz_profile,
     voigt_profile,
 )
+from .tips import tips_q_ratio
 from .wms import WMSConfig, lockin_demodulate, simulate_wms
 
 __all__ = [
@@ -25,5 +26,6 @@ __all__ = [
     "lorentz_profile",
     "simulate_absorbance",
     "simulate_wms",
+    "tips_q_ratio",
     "voigt_profile",
 ]
