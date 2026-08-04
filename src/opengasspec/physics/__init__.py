@@ -9,17 +9,21 @@ from .lineshape import (
     lorentz_profile,
     voigt_profile,
 )
+from .wms import WMSConfig, lockin_demodulate, simulate_wms
 
 __all__ = [
     "LineList",
+    "WMSConfig",
     "absorption_coefficient",
     "demo_ch4_2nu3",
     "doppler_hwhm_cm1",
     "fetch_lines",
     "gaussian_profile",
     "line_strength_at_T",
+    "lockin_demodulate",
     "lorentz_hwhm_cm1",
     "lorentz_profile",
     "simulate_absorbance",
+    "simulate_wms",
     "voigt_profile",
 ]
