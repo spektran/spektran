@@ -38,17 +38,37 @@ Observations (honest, not tuned away):
 ## Reproduce
 
 ```bash
-python baselines/ridge_regression/train.py
-python baselines/cnn1d/train.py
-# score any predictions file:
+python baselines/ridge_regression/train.py   # ~20 s
+python baselines/cnn1d/train.py              # ~7 min on CPU (60 epochs)
+```
+
+Score each model on T1, then on T3. The `--t1-mae` flag is the SAME MODEL's
+T1 test MAE (from its T1 evaluate output) — it feeds the T3 degradation
+ratio, so always substitute your own model's number:
+
+```bash
+# ridge
 python -m opengasspec.benchmark.evaluate --task T1-concentration \
   --truth data/ch4-t1-test-v0.h5 \
   --predictions baselines/ridge_regression/predictions_t1-test.csv
 python -m opengasspec.benchmark.evaluate --task T3-generalization \
   --truth data/ch4-t3-test-heldout-v0.h5 \
   --predictions baselines/ridge_regression/predictions_t3-test-heldout.csv \
-  --t1-mae 2.8426
+  --t1-mae 2.8426   # <- ridge's own T1 MAE from the previous command
+
+# cnn1d
+python -m opengasspec.benchmark.evaluate --task T1-concentration \
+  --truth data/ch4-t1-test-v0.h5 \
+  --predictions baselines/cnn1d/predictions_t1-test.csv
+python -m opengasspec.benchmark.evaluate --task T3-generalization \
+  --truth data/ch4-t3-test-heldout-v0.h5 \
+  --predictions baselines/cnn1d/predictions_t3-test-heldout.csv \
+  --t1-mae 15.5807  # <- cnn1d's own T1 MAE
 ```
 
 Hyperparameters live in each model directory's `hyperparams.json` (written at
-train time, including the full validation curve for the CNN).
+train time, including the full validation curve for the CNN). Prediction
+files are NOT shipped in the repository — running `train.py` regenerates
+them; determinism means your regenerated files should match the official
+scores exactly (the leaderboard table rounds to 2 decimals; full precision is
+in `scores_*.json`).

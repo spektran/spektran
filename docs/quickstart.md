@@ -32,17 +32,24 @@ python scripts/generate_dataset.py configs/datasets/ch4-t1-train-v0.yaml --out d
 ```
 
 Reproducible bit-for-bit: the config pins the master seed, instrument
-configs, and gas-truth distributions.
+configs, and gas-truth distributions. The four official v0 splits total
+~285 MB on disk and generate in well under a minute.
+(`configs/datasets/ch4-da-medium-v0.yaml` is a standalone 10k-record demo
+config, not part of the benchmark splits.)
 
 ## Train and score a baseline
 
 ```bash
-pip install scikit-learn
+pip install scikit-learn torch   # torch only needed for the CNN baseline
 for s in t1-train t1-val t1-test t3-test-heldout; do
   python scripts/generate_dataset.py configs/datasets/ch4-$s-v0.yaml --out data
 done
-python baselines/ridge_regression/train.py
+python baselines/ridge_regression/train.py   # ~20 s
 python -m opengasspec.benchmark.evaluate --task T1-concentration \
   --truth data/ch4-t1-test-v0.h5 \
   --predictions baselines/ridge_regression/predictions_t1-test.csv
 ```
+
+The CNN baseline (`baselines/cnn1d/train.py`) takes ~7 minutes on CPU; full
+scoring commands for both models, including the T3 `--t1-mae` convention,
+are in [baselines/README.md](https://github.com/opengasspec/opengasspec/blob/main/baselines/README.md).

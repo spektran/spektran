@@ -24,11 +24,12 @@ All shipped data is simulation-born and labeled `data_origin: simulated`. The si
 ## Quick start
 
 ```bash
+git clone https://github.com/opengasspec/opengasspec
+cd opengasspec
 pip install -e ".[dev]"
 ```
 
 ```python
-import numpy as np
 from opengasspec.physics import simulate_absorbance
 
 # Clean CH4 direct-absorption spectrum near 6046.9 cm-1 (1653 nm, 2v3 band)
