@@ -27,11 +27,14 @@ import numpy as np
 from .constants import C2_CM_K, T_REF_K, number_density_cm3
 from .hitran import LineList, demo_ch4_2nu3
 from .lineshape import doppler_hwhm_cm1, lorentz_hwhm_cm1, voigt_profile
+from .tips import tips_q_ratio
 
 # Default partition-function ratio approximation Q(T_ref)/Q(T) ~ (T_ref/T)^m.
 # m = 3/2 for nonlinear polyatomics (rotational partition function; classical
-# limit), m = 1 for linear molecules. Adequate near room temperature; official
-# generation injects hapi's TIPS partition sums via `q_ratio` for accuracy.
+# limit), m = 1 for linear molecules. Exact only at T = T_ref; kept for
+# backward compatibility and as the accuracy baseline that `tips_q_ratio`
+# (see tips.py) is benchmarked against in tests/test_tips.py. Superseded as
+# the default by `tips_q_ratio` below.
 _LINEAR_MOLECULES = {"CO2", "N2O", "CO", "O2"}
 
 
@@ -39,10 +42,10 @@ def default_q_ratio(molecule: str, temperature_K: float, T_ref_K: float = T_REF_
     """Approximate partition-sum ratio Q(T_ref)/Q(T) by a power law.
 
     Exact at T = T_ref (ratio = 1), which is why HITRAN-comparison tests pin
-    T = 296 K. For production-quality temperature scaling pass a TIPS-based
-    ``q_ratio`` callable to :func:`absorption_coefficient` (see hapi's
-    partitionSum; R.R. Gamache et al., JQSRT 203 (2017) 70,
-    doi:10.1016/j.jqsrt.2017.03.045).
+    T = 296 K. Kept for backward compatibility; :func:`absorption_coefficient`
+    now defaults to the more accurate :func:`tips.tips_q_ratio` (R.R. Gamache
+    et al., JQSRT 203 (2017) 70, doi:10.1016/j.jqsrt.2017.03.045) unless a
+    ``q_ratio`` callable is passed explicitly.
     """
     m = 1.0 if molecule in _LINEAR_MOLECULES else 1.5
     return (T_ref_K / temperature_K) ** m
@@ -92,7 +95,7 @@ def absorption_coefficient(
     """
     if not 0.0 <= mole_fraction <= 1.0:
         raise ValueError(f"mole_fraction must be in [0, 1], got {mole_fraction}")
-    q = (q_ratio or default_q_ratio)(lines.molecule, temperature_K)
+    q = (q_ratio or tips_q_ratio)(lines.molecule, temperature_K)
     strengths = line_strength_at_T(
         lines.sw_cm_per_molec, lines.nu0_cm1, lines.elower_cm1, temperature_K, q
     )

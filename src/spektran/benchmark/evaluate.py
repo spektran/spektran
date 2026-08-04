@@ -6,8 +6,9 @@ Usage (also exposed as ``python -m spektran.benchmark.evaluate``):
                 --predictions preds.csv [--json-out scores.json]
 
 Prediction formats:
-- T1/T3: CSV with header ``record_id,concentration_ppm``
+- T1/T3/T4: CSV with header ``record_id,concentration_ppm``
 - T2: HDF5 with /predictions/<record_id> arrays (denoised absorbance)
+- T5/T6: not yet implemented (raises NotImplementedError; see docs/benchmark.md)
 """
 
 from __future__ import annotations
@@ -81,7 +82,9 @@ def evaluate_denoising(truth_h5: Path, predictions_h5: Path) -> dict:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--task", required=True,
-                    choices=["T1-concentration", "T2-denoising", "T3-generalization"])
+                    choices=["T1-concentration", "T2-denoising", "T3-generalization",
+                             "T4-wms-concentration", "T5-drift-compensation",
+                             "T6-ood-instrument"])
     ap.add_argument("--truth", required=True, help="truth HDF5 file")
     ap.add_argument("--predictions", required=True)
     ap.add_argument("--t1-mae", type=float, default=None,
@@ -89,14 +92,22 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--json-out", default=None)
     args = ap.parse_args(argv)
 
-    if args.task in ("T1-concentration", "T3-generalization"):
+    if args.task in ("T1-concentration", "T3-generalization", "T4-wms-concentration"):
         scores = evaluate_concentration(Path(args.truth), Path(args.predictions))
         if args.task == "T3-generalization" and args.t1_mae:
             scores["degradation_ratio_vs_T1"] = M.degradation_ratio(
                 scores["mae_ppm"], args.t1_mae
             )
-    else:
+    elif args.task == "T2-denoising":
         scores = evaluate_denoising(Path(args.truth), Path(args.predictions))
+    elif args.task == "T5-drift-compensation":
+        raise NotImplementedError(
+            "T5 evaluation requires time-series data format; see docs/benchmark.md"
+        )
+    elif args.task == "T6-ood-instrument":
+        raise NotImplementedError(
+            "T6 evaluation requires OOD label format; see docs/benchmark.md"
+        )
 
     out = {"task": args.task, "scores": scores}
     print(json.dumps(out, indent=2))

@@ -12,3 +12,5 @@
 - Physics correctness is enforced by dual independent implementations
   (Faddeeva vs quadrature; time-domain lock-in vs Fourier coefficients) that
   must agree to 0.1% / 1% on 1000 random points — see [Quality gates](gates.md).
+- v0.2 introduces the `spektran generate` CLI as the primary generation
+  interface; `scripts/generate_dataset.py` remains available as an alternative.

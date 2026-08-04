@@ -1,5 +1,14 @@
 # Schema changelog
 
+## v0.2 (2026-08 — Phase 3)
+
+- `schema_version` accepts `"0.1"` and `"0.2"` (backward compatible).
+- New signal slots: `demod_3f`, `demod_4f` for higher-harmonic WMS.
+- `modulation.harmonic_scheme` enum extended with `"3f"`, `"4f"`.
+- New optional top-level `measurement` block for experimental records
+  (`operator`, `date_utc`, `facility`, `instrument_serial`, `notes`).
+- Generator now emits `schema_version: "0.2"`.
+
 ## v0.1 (2026-08-04 — generator integration)
 
 - 2026-08-04 (later): `instrument` schema additions driven by the generator

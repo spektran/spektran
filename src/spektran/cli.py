@@ -1,30 +1,153 @@
 """Command-line entry point: ``spektran <subcommand>``."""
-
 from __future__ import annotations
 
+import argparse
 import sys
 
 from . import __version__
 
 
-def main(argv: list[str] | None = None) -> int:
-    args = argv if argv is not None else sys.argv[1:]
-    if not args or args[0] in {"-h", "--help"}:
-        print(
-            "SPEKTRAN CLI\n\nsubcommands:\n"
-            "  validate FILES...   validate records against the schema\n"
-            "  --version           print version"
-        )
-        return 0
-    if args[0] == "--version":
-        print(__version__)
-        return 0
-    if args[0] == "validate":
-        from .validate import main as validate_main
+def cmd_validate(args: argparse.Namespace) -> int:
+    from .validate import main as validate_main
+    return validate_main(args.files)
 
-        return validate_main(args[1:])
-    print(f"unknown subcommand: {args[0]}", file=sys.stderr)
-    return 2
+
+def cmd_generate(args: argparse.Namespace) -> int:
+    import time
+    from pathlib import Path
+
+    import yaml
+
+    from .generator import GenerationSpec, generate_dataset
+    from .instrument.sampling import load_instrument_config
+    from .io import write_records
+
+    repo = Path(args.config).resolve().parents[0]
+    while not (repo / "pyproject.toml").exists() and repo != repo.parent:
+        repo = repo.parent
+    if not (repo / "pyproject.toml").exists():
+        # Config lives outside any repo checkout (e.g. a tmp config file) --
+        # fall back to CWD, which by convention is the repo root when
+        # invoking `spektran generate`.
+        repo = Path.cwd()
+
+    cfg = yaml.safe_load(Path(args.config).read_text())
+    inst_paths = cfg["instrument_config"]
+    if isinstance(inst_paths, str):
+        inst_paths = [inst_paths]
+    instruments = [load_instrument_config(repo / p) for p in inst_paths]
+
+    from .physics import demo_ch4_2nu3, demo_co, demo_co2, demo_h2o, fetch_lines
+
+    gas = cfg.get("gas", {})
+    conc = gas.get("concentration_ppm", {})
+    source = cfg.get("line_source", "demo")
+    molecule = gas.get("molecule", "CH4")
+    if source == "hitran":
+        lo, hi = cfg.get("wavenumber_range_cm1", [6045.0, 6049.0])
+        lines = fetch_lines(molecule, lo, hi)
+    elif source == "demo":
+        demo_fns = {"CH4": demo_ch4_2nu3, "H2O": demo_h2o, "CO2": demo_co2, "CO": demo_co}
+        if molecule not in demo_fns:
+            print(f"No demo lines for {molecule}", file=sys.stderr)
+            return 1
+        lines = demo_fns[molecule]()
+    else:
+        print(f"Unknown line_source: {source}", file=sys.stderr)
+        return 1
+
+    interferent_specs = []
+    for interf_cfg in cfg.get("interferents", []):
+        mol = interf_cfg["molecule"]
+        if source == "demo":
+            demo_fns_i = {"H2O": demo_h2o, "CO2": demo_co2, "CO": demo_co}
+            if mol not in demo_fns_i:
+                print(f"No demo lines for interferent {mol}", file=sys.stderr)
+                return 1
+            i_lines = demo_fns_i[mol]()
+        else:
+            i_lo, i_hi = interf_cfg.get("wavenumber_range_cm1",
+                                        cfg.get("wavenumber_range_cm1", [6045.0, 6049.0]))
+            i_lines = fetch_lines(mol, i_lo, i_hi)
+        interferent_specs.append({
+            "molecule": mol, "lines": i_lines,
+            "concentration_ppm": float(interf_cfg["concentration_ppm"]),
+        })
+
+    spec = GenerationSpec(
+        lines=lines, molecule=molecule,
+        concentration_ppm_low=float(conc.get("low", 1.0)),
+        concentration_ppm_high=float(conc.get("high", 1000.0)),
+        log_uniform_concentration=bool(conc.get("log_uniform", True)),
+        path_length_m=float(gas.get("path_length_m", 10.0)),
+        matrix_gas=gas.get("matrix_gas", "N2"),
+        n_points=int(cfg.get("n_points", 2000)),
+        interferents=interferent_specs,
+    )
+    n = args.n if args.n else int(cfg["n_records"])
+    seed = int(cfg["master_seed"])
+    out_dir = Path(args.out)
+
+    t0 = time.time()
+    records = []
+    per = n // len(instruments)
+    counts = [per + (1 if i < n - per * len(instruments) else 0)
+              for i in range(len(instruments))]
+    for i, (inst, n_i) in enumerate(zip(instruments, counts)):
+        records.extend(generate_dataset(spec, inst, n_i, seed + i))
+    t1 = time.time()
+
+    out_path = out_dir / f"{cfg['dataset_id']}.h5"
+    write_records(out_path, records, validate=True)
+    t2 = time.time()
+    print(f"{cfg['dataset_id']}: {n} records "
+          f"(gen {t1 - t0:.1f}s, write {t2 - t1:.1f}s) -> {out_path}")
+    return 0
+
+
+def cmd_benchmark(args: argparse.Namespace) -> int:
+    from .benchmark.evaluate import main as eval_main
+    return eval_main(args.eval_args)
+
+
+def cmd_download(args: argparse.Namespace) -> int:
+    print("spektran download: fetches pre-built datasets from Hugging Face.")
+    print("Usage: pip install datasets && python -c "
+          "\"from datasets import load_dataset; "
+          "ds = load_dataset('spektran/spektran-ch4-v0')\"")
+    return 0
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(prog="spektran", description="SPEKTRAN CLI")
+    parser.add_argument("--version", action="version", version=__version__)
+    sub = parser.add_subparsers(dest="command")
+
+    p_val = sub.add_parser("validate", help="validate records against the schema")
+    p_val.add_argument("files", nargs="+")
+
+    p_gen = sub.add_parser("generate", help="generate a dataset from a YAML config")
+    p_gen.add_argument("config", help="dataset config YAML")
+    p_gen.add_argument("--out", default="data", help="output directory")
+    p_gen.add_argument("--n", type=int, default=None, help="override n_records")
+
+    p_bench = sub.add_parser("benchmark", help="run benchmark evaluation")
+    p_bench.add_argument("eval_args", nargs=argparse.REMAINDER,
+                         help="args passed to evaluate.py (--task, --truth, --predictions)")
+
+    sub.add_parser("download", help="show download instructions for pre-built datasets")
+
+    args = parser.parse_args(argv)
+    if args.command is None:
+        parser.print_help()
+        return 0
+    handlers = {
+        "validate": cmd_validate,
+        "generate": cmd_generate,
+        "benchmark": cmd_benchmark,
+        "download": cmd_download,
+    }
+    return handlers[args.command](args)
 
 
 if __name__ == "__main__":

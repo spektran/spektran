@@ -72,3 +72,28 @@ files are NOT shipped in the repository — running `train.py` regenerates
 them; determinism means your regenerated files should match the official
 scores exactly (the leaderboard table rounds to 2 decimals; full precision is
 in `scores_*.json`).
+
+## T4/T5/T6 tasks (v0.2)
+
+Added in schema v0.2:
+
+| Task | Input | Output | Primary metric | Status |
+|---|---|---|---|---|
+| T4 WMS concentration | 2f demod signal | ppm | MAE | Dataset configs shipped; baselines pending |
+| T5 Drift compensation | Time-series scans | Drift-corrected ppm | Allan variance improvement | Evaluation stub; baselines pending |
+| T6 OOD instrument | Raw scan | In/out-of-distribution | AUROC | Evaluation stub; baselines pending |
+
+T4 dataset generation:
+
+```bash
+for s in t4-train t4-val t4-test; do
+  python scripts/generate_dataset.py configs/datasets/ch4-$s-v0.yaml --out data
+done
+```
+
+T4 evaluation uses the same pipeline as T1:
+
+```bash
+python -m spektran.benchmark.evaluate --task T4-wms-concentration \
+  --truth data/ch4-t4-test-v0.h5 --predictions preds_t4.csv
+```

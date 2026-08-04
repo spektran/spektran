@@ -37,7 +37,35 @@ Uses the built-in approximate CH4 demo line list. For authoritative spectra
 install the HITRAN extra (`pip install -e ".[hitran]"`) and pass
 `lines=fetch_lines("CH4", 6045.0, 6049.0)` (network required on first call).
 
+## Multi-species example
+
+```python
+from spektran.physics import demo_ch4_2nu3, demo_h2o, absorption_coefficient
+import numpy as np
+
+nu = np.linspace(6046.0, 6048.0, 2000)
+alpha_ch4 = absorption_coefficient(nu, demo_ch4_2nu3(), 100e-6, 296.0, 1.0)
+alpha_h2o = absorption_coefficient(nu, demo_h2o(), 0.01, 296.0, 1.0)  # 1% H2O
+total = alpha_ch4 + alpha_h2o  # Beer-Lambert linear superposition
+```
+
+Demo line lists are also available for CO2 (`demo_co2()`) and CO (`demo_co()`).
+Each demo line list is centered on its own representative sensing band (CH4
+~6047 cm⁻¹, H2O ~7187 cm⁻¹, CO2 ~4978 cm⁻¹, CO ~2171 cm⁻¹), so combining two
+demo species over one narrow scan window mostly exercises the superposition
+code path rather than showing visible spectral overlap. For a window with
+genuine cross-species interference, fetch HITRAN lines for both species over
+the same range with `fetch_lines()`.
+
 ## Generate an official dataset split
+
+Using the CLI (v0.2+):
+
+```bash
+spektran generate configs/datasets/ch4-t1-train-v0.yaml --out data
+```
+
+Or using the script directly:
 
 ```bash
 python scripts/generate_dataset.py configs/datasets/ch4-t1-train-v0.yaml --out data
@@ -54,10 +82,10 @@ config, not part of the benchmark splits.)
 ```bash
 pip install scikit-learn torch   # torch only needed for the CNN baseline
 for s in t1-train t1-val t1-test t3-test-heldout; do
-  python scripts/generate_dataset.py configs/datasets/ch4-$s-v0.yaml --out data
+  spektran generate configs/datasets/ch4-$s-v0.yaml --out data
 done
 python baselines/ridge_regression/train.py   # ~20 s
-python -m spektran.benchmark.evaluate --task T1-concentration \
+spektran benchmark --task T1-concentration \
   --truth data/ch4-t1-test-v0.h5 \
   --predictions baselines/ridge_regression/predictions_t1-test.csv
 ```

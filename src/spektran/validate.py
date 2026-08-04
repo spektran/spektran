@@ -35,6 +35,9 @@ def _load_schema(name: str) -> dict:
 
 @lru_cache(maxsize=None)
 def record_validator() -> Draft202012Validator:
+    # record.schema.json's schema_version is an enum (currently "0.1", "0.2"), not a
+    # const, so one validator instance accepts every supported version — no
+    # per-version dispatch needed here.
     schema = _load_schema("record.schema.json")
     Draft202012Validator.check_schema(schema)
     return Draft202012Validator(schema)

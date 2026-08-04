@@ -44,7 +44,15 @@ from .physics.wms import WMSConfig, simulate_wms
 
 @dataclass
 class GenerationSpec:
-    """What to generate: gas truth distribution + sampling grid."""
+    """What to generate: gas truth distribution + sampling grid.
+
+    ``interferents`` are background absorbers superposed onto the target
+    species' absorbance (Beer-Lambert linearity) but excluded from
+    ``labels.species`` -- they are not a prediction target, only a source of
+    spectral cross-interference the model must learn to be robust to. Each
+    entry is a dict with keys ``molecule`` (str), ``lines`` (LineList) and
+    ``concentration_ppm`` (float).
+    """
 
     lines: LineList
     molecule: str = "CH4"
@@ -57,6 +65,7 @@ class GenerationSpec:
     matrix_gas: str = "N2"
     n_points: int = 2000
     extra_conditions: dict = field(default_factory=dict)
+    interferents: list[dict] = field(default_factory=list)
 
 
 def _sample_concentration(spec: GenerationSpec, rng: np.random.Generator) -> float:
@@ -122,6 +131,18 @@ def generate_record(
         pressure_atm=pressure_atm,
     )
     absorbance = alpha * spec.path_length_m * 100.0
+    # Beer-Lambert linearity: total absorbance is the sum of each absorber's
+    # own absorbance. Interferents are background species, not the
+    # prediction target -- they are omitted from labels.species below.
+    for interf in spec.interferents:
+        alpha_interf = absorption_coefficient(
+            nu,
+            interf["lines"],
+            mole_fraction=interf["concentration_ppm"] * 1e-6,
+            temperature_K=temperature_K,
+            pressure_atm=pressure_atm,
+        )
+        absorbance += alpha_interf * spec.path_length_m * 100.0
     step_est = abs(laser["scan_range_cm1"]) / n
     absorbance_measured = linewidth_convolve(
         absorbance, step_est, laser.get("linewidth_MHz", 0.0)
@@ -184,6 +205,10 @@ def generate_record(
         f_m = mod["frequency_Hz"]
         fs = f_m * 50.0
         scan_rate = laser.get("scan_rate_Hz", 10.0)
+        # sample_instrument() casts every leaf (incl. list items) to float, so
+        # cast back to int here -- f"x_{h}f" must key off "1", not "1.0".
+        harmonics_cfg = mod.get("harmonics", [1, 2])
+        harmonics = tuple(int(h) for h in harmonics_cfg)
         cfg = WMSConfig(
             modulation_frequency_Hz=f_m,
             modulation_depth_cm1=mod["depth_cm1"],
@@ -205,9 +230,19 @@ def generate_record(
                 temperature_K=temperature_K,
                 pressure_atm=pressure_atm,
             )
-            return a * spec.path_length_m * 100.0
+            total = a * spec.path_length_m * 100.0
+            for interf in spec.interferents:
+                a_i = absorption_coefficient(
+                    np.asarray(nu_arr, dtype=float),
+                    interf["lines"],
+                    mole_fraction=interf["concentration_ppm"] * 1e-6,
+                    temperature_K=temperature_K,
+                    pressure_atm=pressure_atm,
+                )
+                total += a_i * spec.path_length_m * 100.0
+            return total
 
-        out = simulate_wms(cfg, absorbance_fn, harmonics=(1, 2))
+        out = simulate_wms(cfg, absorbance_fn, harmonics=harmonics)
         n_t = len(out["t_s"])
         noisy = out["intensity"]
         if sigma_w:
@@ -217,7 +252,7 @@ def generate_record(
         from .physics.wms import lockin_demodulate
 
         stride = max(1, n_t // n)
-        for h in (1, 2):
+        for h in harmonics:
             x, _ = lockin_demodulate(
                 noisy, out["t_s"], f_m, h, cfg.lockin_phase_rad,
                 cfg.lowpass_cutoff_Hz, fs,
@@ -232,7 +267,7 @@ def generate_record(
 
     meta = {
         "record_id": record_id,
-        "schema_version": "0.1",
+        "schema_version": "0.2",
         "data_origin": "simulated",
         "technique": technique,
         "provenance": {
@@ -275,6 +310,20 @@ def generate_record(
             "pressure_atm": pressure_atm,
             "path_length_m": spec.path_length_m,
             "matrix_gas": spec.matrix_gas,
+            **(
+                {
+                    "interferents": [
+                        {
+                            "molecule": interf["molecule"],
+                            "hitran_molecule_id": MOLECULE_IDS[interf["molecule"]],
+                            "concentration_ppm": interf["concentration_ppm"],
+                        }
+                        for interf in spec.interferents
+                    ]
+                }
+                if spec.interferents
+                else {}
+            ),
         },
         "instrument": {
             "laser": {

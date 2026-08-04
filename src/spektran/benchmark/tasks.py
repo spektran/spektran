@@ -16,6 +16,18 @@ Tasks (v0):
   whose parameter ranges are excluded from the training distribution.
   Metrics: MAE (primary), degradation ratio vs the T1 test MAE.
 
+Tasks (v0.2 additions):
+
+- **T4 WMS concentration-regression**: input = demod_2f (WMS lock-in output);
+  output = CH4 concentration [ppm]. Metrics: MAE (primary), MAPE. Dataset
+  configs shipped (``ch4-t4-*-v0.yaml``); evaluation reuses the T1 pipeline.
+- **T5 drift compensation**: input = raw_scan_timeseries; output =
+  drift-corrected concentration [ppm]. Metrics: Allan variance improvement
+  (primary), MAE. Evaluation pending a time-series HDF5 layout.
+- **T6 OOD instrument detection**: input = raw_scan; output = ood_label
+  (in-/out-of-distribution). Metrics: AUROC. Evaluation pending an OOD
+  label format.
+
 Split seeds are disjoint by construction (different master seeds per split;
 per-record streams spawn from them independently).
 """
@@ -24,7 +36,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-TASKS = ("T1-concentration", "T2-denoising", "T3-generalization")
+TASKS = (
+    "T1-concentration", "T2-denoising", "T3-generalization",
+    "T4-wms-concentration", "T5-drift-compensation", "T6-ood-instrument",
+)
 
 # Difficulty tiers -> instrument configs used in the train/val/test mixtures
 TIER_INSTRUMENTS = {
@@ -45,6 +60,15 @@ SPLIT_SEEDS = {
     ("T1", "test"): 101_003,
     ("T3", "test"): 103_001,  # held-out instruments; train/val shared with T1
 }
+SPLIT_SEEDS.update({
+    ("T4", "train"): 104_001,
+    ("T4", "val"): 104_002,
+    ("T4", "test"): 104_003,
+    ("T5", "train"): 105_001,
+    ("T5", "test"): 105_002,
+    ("T6", "train"): 106_001,
+    ("T6", "test"): 106_002,
+})
 
 
 @dataclass
@@ -79,3 +103,26 @@ TASK_SPECS = {
         secondary_metrics=["mape", "degradation_ratio_vs_T1"],
     ),
 }
+TASK_SPECS.update({
+    "T4-wms-concentration": TaskSpec(
+        task_id="T4-wms-concentration",
+        input_signal="demod_2f",
+        target="labels.species[0].concentration_ppm",
+        primary_metric="mae",
+        secondary_metrics=["mape"],
+    ),
+    "T5-drift-compensation": TaskSpec(
+        task_id="T5-drift-compensation",
+        input_signal="raw_scan_timeseries",
+        target="labels.species[0].concentration_ppm",
+        primary_metric="allan_variance_improvement",
+        secondary_metrics=["mae"],
+    ),
+    "T6-ood-instrument": TaskSpec(
+        task_id="T6-ood-instrument",
+        input_signal="raw_scan",
+        target="ood_label",
+        primary_metric="auroc",
+        secondary_metrics=[],
+    ),
+})

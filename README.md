@@ -7,7 +7,7 @@ SPEKTRAN builds one platform pattern — parameterized forward physics + literat
 - **Code**: Apache-2.0 ([LICENSE](LICENSE))
 - **Data & schema**: CC BY 4.0 ([LICENSE-DATA](LICENSE-DATA))
 
-> ⚠️ **Status: alpha.** Gates G1–G5 (naming, schema completeness, physics correctness, noise realism, cold-start usability) all pass with archived adversarial reviews; APIs and schema v0.1 may still change until v1.0.
+> ⚠️ **Status: alpha (v0.2.0).** Gates G1–G5 all pass with archived adversarial reviews. Multi-species support (CH4, H2O, CO2, CO), higher-harmonic WMS (3f/4f), and 6 benchmark tasks now available. APIs and schema may still change until v1.0.
 
 ## Why SPEKTRAN?
 
@@ -17,7 +17,7 @@ SPEKTRAN attacks this with three assets:
 
 1. **A parameterized simulation engine** — HITRAN-based forward physics (direct absorption and wavelength-modulation spectroscopy) plus a modular instrument-noise chain modeled after real hardware.
 2. **A data standard** — a JSON Schema for spectra records with explicit units, full provenance (generator version, random seed, every sampled noise parameter), and a `technique` field ready for NDIR / PAS / CRDS extensions.
-3. **A tiered benchmark** — official train/val/test splits, three difficulty levels, and a flagship *cross-instrument generalization* track built on held-out virtual instruments.
+3. **A tiered benchmark** — official train/val/test splits, three difficulty levels, six tasks (concentration regression, denoising, cross-instrument generalization, WMS concentration, drift compensation, OOD detection), and a flagship *cross-instrument generalization* track built on held-out virtual instruments.
 
 All shipped data is simulation-born and labeled `data_origin: simulated`. The sim-to-real gap is not hidden — it is the research topic of the generalization track.
 
@@ -53,6 +53,16 @@ nu, absorbance = simulate_absorbance(
 )
 ```
 
+```python
+# Multi-species: CH4 with H2O interferent
+from spektran.physics import demo_ch4_2nu3, demo_h2o, absorption_coefficient
+import numpy as np
+
+nu = np.linspace(6046.0, 6048.0, 2000)
+alpha_ch4 = absorption_coefficient(nu, demo_ch4_2nu3(), 100e-6, 296.0, 1.0)
+alpha_h2o = absorption_coefficient(nu, demo_h2o(), 0.01, 296.0, 1.0)  # 1% H2O
+```
+
 ## Benchmark tasks
 
 | Task | Input | Output | Primary metric |
@@ -60,6 +70,9 @@ nu, absorbance = simulate_absorbance(
 | **T1 Concentration regression** | Noisy raw scan (DA) | CH₄ concentration (ppm) | MAE, MAPE |
 | **T2 Denoising / baseline correction** | Raw spectrum with fringes & drift | Clean absorbance spectrum | RMSE, peak-weighted RMSE |
 | **T3 Cross-instrument generalization** | Same as T1, held-out instruments | Concentration (ppm) | Generalization MAE, degradation vs T1 |
+| **T4 WMS concentration** | Noisy 2f signal (WMS) | CH₄ concentration (ppm) | MAE |
+| **T5 Drift compensation** | Time-series raw scans | Drift-corrected concentrations | Allan variance improvement |
+| **T6 OOD instrument detection** | Raw scan | In-dist vs OOD binary | AUROC |
 
 ### Leaderboard (v0 splits, CH4 DA)
 
@@ -76,6 +89,15 @@ lesson already visible in the baselines: the deep model overfits instrument
 signatures harder than the linear one. Submissions: run
 `python -m spektran.benchmark.evaluate` on your predictions and open a PR
 adding your row with a link to reproducible code.
+
+## CLI
+
+```bash
+spektran generate configs/datasets/ch4-t1-train-v0.yaml --out data
+spektran benchmark --task T1-concentration --truth data/test.h5 --predictions preds.csv
+spektran validate data/ch4-t1-train-v0.h5
+spektran download
+```
 
 ## Project quality gates
 

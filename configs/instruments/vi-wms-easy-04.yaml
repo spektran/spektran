@@ -15,6 +15,7 @@ modulation:
   depth_cm1: {dist: uniform, low: 0.04, high: 0.08}
   lockin_phase_error_rad: {dist: normal, mean: 0.0, sigma: 0.02}
   lowpass_cutoff_Hz: 1000.0
+  harmonics: [1, 2]
 etalons:
   - free_spectral_range_cm1: {dist: uniform, low: 0.8, high: 1.2}
     amplitude_rel: {dist: loguniform, low: 4.0e-5, high: 1.2e-4}

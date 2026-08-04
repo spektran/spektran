@@ -22,7 +22,7 @@
       "description": "UUIDv4 uniquely identifying this record."
     },
     "schema_version": {
-      "const": "0.1",
+      "enum": ["0.1", "0.2"],
       "description": "Version of this schema the record conforms to."
     },
     "data_origin": {
@@ -91,7 +91,9 @@
           }
         },
         "demod_1f": { "$ref": "#/$defs/demod_signal" },
-        "demod_2f": { "$ref": "#/$defs/demod_signal" }
+        "demod_2f": { "$ref": "#/$defs/demod_signal" },
+        "demod_3f": { "$ref": "#/$defs/demod_signal" },
+        "demod_4f": { "$ref": "#/$defs/demod_signal" }
       }
     },
     "labels": {
@@ -221,6 +223,18 @@
         }
       }
     },
+    "measurement": {
+      "type": "object",
+      "description": "Metadata for experimental (measured) records. Optional; primarily for data_origin: experimental/augmented.",
+      "additionalProperties": false,
+      "properties": {
+        "operator": { "type": "string", "description": "Person or team who performed the measurement." },
+        "date_utc": { "type": "string", "format": "date-time", "description": "Measurement timestamp (ISO 8601)." },
+        "facility": { "type": "string", "description": "Laboratory or field site." },
+        "instrument_serial": { "type": "string", "description": "Serial number of the physical instrument." },
+        "notes": { "type": "string", "description": "Free-text notes about the measurement." }
+      }
+    },
     "instrument": {
       "type": "object",
       "required": ["laser", "detector", "target_lines"],
@@ -291,7 +305,7 @@
             },
             "phase_rad": { "type": "number" },
             "harmonic_scheme": {
-              "enum": ["1f", "2f", "2f/1f", "4f", "other"],
+              "enum": ["1f", "2f", "2f/1f", "3f", "4f", "other"],
               "description": "Harmonic detection / normalization scheme."
             },
             "modulation_index": {
