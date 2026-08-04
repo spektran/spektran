@@ -62,7 +62,10 @@ def line_strength_at_T(
            * exp(-c2 E''/T) / exp(-c2 E''/T_ref)
            * [1 - exp(-c2 nu0/T)] / [1 - exp(-c2 nu0/T_ref)]
 
-    Reference: Rothman et al., JQSRT 110 (2009) 533, Eq. (A11).
+    Standard HITRAN intensity-scaling relation; originally formulated in the
+    HITRAN/HAWKS appendix (L.S. Rothman et al., JQSRT 60 (1998) 665,
+    doi:10.1016/S0022-4073(98)00078-8) and restated in later editions
+    (Rothman et al., JQSRT 110 (2009) 533, doi:10.1016/j.jqsrt.2009.02.013).
     """
     boltzmann = np.exp(-C2_CM_K * elower_cm1 / temperature_K) / np.exp(
         -C2_CM_K * elower_cm1 / T_ref_K

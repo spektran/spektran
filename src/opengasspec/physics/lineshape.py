@@ -37,8 +37,9 @@ def doppler_hwhm_cm1(nu0_cm1: float, temperature_K: float, molar_mass_amu: float
     alpha_D = (nu0/c) * sqrt(2 ln2 kT / m)
 
     Standard thermal-Doppler broadening; see e.g. W. Demtroeder, "Laser
-    Spectroscopy" 5th ed., Springer (2014), Eq. (3.43),
-    doi:10.1007/978-3-642-53859-9
+    Spectroscopy" 5th ed., Springer (2014), doi:10.1007/978-3-642-53859-9
+    (its Eq. (3.43) gives the FWHM; this function returns the HWHM, i.e.
+    half that value).
     """
     m_g = molar_mass_amu * AMU_G
     return (nu0_cm1 / C_CM_PER_S) * np.sqrt(

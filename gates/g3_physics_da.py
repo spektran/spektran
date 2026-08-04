@@ -122,6 +122,57 @@ def check_forward_chain() -> dict:
     }
 
 
+def check_multi_line_sum() -> dict:
+    """Cross-validate the multi-line summation path (added after independent
+    review flagged that the chain check exercised single lines only).
+    Reference total = sum of independent single-line reference absorbances."""
+    from opengasspec.physics import demo_ch4_2nu3
+    from opengasspec.physics.absorption import absorption_coefficient, default_q_ratio
+    from tests.reference_impl.ref_absorption import absorbance_ref
+
+    rng = np.random.default_rng(SEED_CHAIN + 1)
+    lines = demo_ch4_2nu3()
+    max_rel, deviations = 0.0, []
+    for _ in range(N_POINTS):
+        T = rng.uniform(250.0, 350.0)
+        P = 10.0 ** rng.uniform(-1.0, 0.3)
+        x = 10.0 ** rng.uniform(-6.0, -3.0)
+        L_cm = rng.uniform(10.0, 5000.0)
+        nu = rng.uniform(float(lines.nu0_cm1.min()) - 0.5, float(lines.nu0_cm1.max()) + 0.5)
+        q = default_q_ratio("CH4", T)
+        main = absorption_coefficient(np.array([nu]), lines, x, T, P)[0] * L_cm
+        ref = sum(
+            absorbance_ref(
+                nu,
+                nu0_cm1=float(lines.nu0_cm1[j]),
+                sw_ref=float(lines.sw_cm_per_molec[j]),
+                gamma_air=float(lines.gamma_air[j]),
+                gamma_self=float(lines.gamma_self[j]),
+                n_air=float(lines.n_air[j]),
+                delta_air=float(lines.delta_air[j]),
+                elower_cm1=float(lines.elower_cm1[j]),
+                molar_mass_amu=lines.molar_mass_amu,
+                mole_fraction=x,
+                temperature_K=T,
+                pressure_atm=P,
+                path_length_cm=L_cm,
+                q_ratio_value=q,
+            )
+            for j in range(len(lines))
+        )
+        rel = abs(main - ref) / abs(ref)
+        deviations.append(rel)
+        max_rel = max(max_rel, rel)
+    return {
+        "n_points": N_POINTS,
+        "seed": SEED_CHAIN + 1,
+        "max_relative_deviation": max_rel,
+        "median_relative_deviation": float(np.median(deviations)),
+        "threshold": THRESHOLD_CHAIN,
+        "pass": bool(max_rel < THRESHOLD_CHAIN),
+    }
+
+
 def check_pytest() -> dict:
     proc = subprocess.run(
         [sys.executable, "-m", "pytest", "-q", "-m", "not hitran_online"],
@@ -158,6 +209,7 @@ def main() -> int:
         "checks": {
             "lineshape_cross_validation": check_lineshape(),
             "forward_chain_cross_validation": check_forward_chain(),
+            "multi_line_sum_cross_validation": check_multi_line_sum(),
             "physics_test_suite": check_pytest(),
             "doi_citations": check_doi_citations(),
         },

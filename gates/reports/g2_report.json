@@ -1,0 +1,25 @@
+{
+  "gate": "G2",
+  "date": "2026-08-04",
+  "checks": {
+    "meta_validation": {
+      "pass": true
+    },
+    "round_trip_100": {
+      "n_records": 100,
+      "seed": 20260806,
+      "failures": [],
+      "pass": true
+    },
+    "unit_lint": {
+      "warnings": [],
+      "pass": true
+    },
+    "literature_coverage": {
+      "status": "pending",
+      "detail": "literature survey and/or field mapping not yet available",
+      "pass": false
+    }
+  },
+  "pass": false
+}

@@ -19,22 +19,30 @@
       "threshold": 0.001,
       "pass": true
     },
+    "multi_line_sum_cross_validation": {
+      "n_points": 1000,
+      "seed": 20260806,
+      "max_relative_deviation": 8.550975100119255e-15,
+      "median_relative_deviation": 2.3243269297778945e-16,
+      "threshold": 0.001,
+      "pass": true
+    },
     "physics_test_suite": {
       "exit_code": 0,
-      "summary": "=========================== short test summary info ============================\nSKIPPED [1] tests/test_hitran_online.py:10: could not import 'hapi': No module named 'hapi'\n27 passed, 1 skipped in 0.98s",
+      "summary": "=========================== short test summary info ============================\nSKIPPED [1] tests/test_hitran_online.py:10: could not import 'hapi': No module named 'hapi'\n27 passed, 1 skipped in 0.86s",
       "pass": true
     },
     "doi_citations": {
       "doi_citations_per_file": {
         "src/opengasspec/physics/__init__.py": 0,
-        "src/opengasspec/physics/absorption.py": 3,
+        "src/opengasspec/physics/absorption.py": 5,
         "src/opengasspec/physics/constants.py": 0,
         "src/opengasspec/physics/hitran.py": 2,
         "src/opengasspec/physics/lineshape.py": 4,
         "tests/reference_impl/ref_absorption.py": 0,
         "tests/reference_impl/ref_lineshape.py": 1
       },
-      "total": 10,
+      "total": 12,
       "pass": true,
       "note": "Independent reviewer must spot-check 10 citations against sources."
     }
