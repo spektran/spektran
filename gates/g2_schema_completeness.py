@@ -35,7 +35,8 @@ SEED = 20260806
 
 UNIT_SUFFIXES = (
     "_ppm", "_K", "_atm", "_cm1", "_Hz", "_MHz", "_m", "_rad", "_amu",
-    "_rel", "_per_s", "_per_atm", "_bits",
+    "_rel", "_per_s", "_per_atm", "_bits", "_mA", "_mW", "_cm3", "_s",
+    "_per_min", "_per_h", "_cm_per_molec",
 )
 DIMENSIONLESS_WHITELIST = {
     "n_samples",          # sample count
@@ -45,6 +46,11 @@ DIMENSIONLESS_WHITELIST = {
     "adc_bits",           # bit count
     "n_air",              # dimensionless temperature exponent (HITRAN)
     "one_over_f_slope",   # dimensionless PSD slope
+    "modulation_index",   # dimensionless ratio a/HWHM
+    "averaging_n_scans",  # scan count
+    "number_of_passes",   # pass count
+    "snr_typical",        # dimensionless ratio
+    "linearity_r2",       # dimensionless R^2
     "low", "high", "mean", "sigma", "values",  # distribution descriptors: unit
                                                # comes from the parent field
 }
@@ -176,6 +182,36 @@ def _unit_lint() -> dict:
     return {"warnings": warnings, "pass": not warnings}
 
 
+def _resolve_ref(schema: dict, node: dict) -> dict:
+    ref = node.get("$ref")
+    if ref and ref.startswith("#/"):
+        cur = schema
+        for seg in ref[2:].split("/"):
+            cur = cur[seg]
+        return cur
+    return node
+
+
+def _field_path_exists(schemas: dict, spec: str) -> bool:
+    """Check a mapping field path like 'R:/labels/species[]/molecule' exists."""
+    prefix, _, path = spec.partition(":/")
+    schema = schemas.get(prefix)
+    if schema is None:
+        return False
+    node = schema
+    for raw_seg in path.strip("/").split("/"):
+        is_array = raw_seg.endswith("[]")
+        seg = raw_seg[:-2] if is_array else raw_seg
+        node = _resolve_ref(schema, node)
+        props = node.get("properties", {})
+        if seg not in props:
+            return False
+        node = _resolve_ref(schema, props[seg])
+        if is_array:
+            node = _resolve_ref(schema, node.get("items", {}))
+    return True
+
+
 def _coverage() -> dict:
     superset_path = REPO / "docs" / "literature" / "g2_parameter_superset.yaml"
     mapping_path = REPO / "schema" / "g2_field_mapping.yaml"
@@ -187,29 +223,40 @@ def _coverage() -> dict:
         }
     superset = yaml.safe_load(superset_path.read_text())
     mapping = yaml.safe_load(mapping_path.read_text())
+    schemas = {
+        "R": json.loads((REPO / "schema" / "record.schema.json").read_text()),
+        "I": json.loads((REPO / "schema" / "instrument.schema.json").read_text()),
+    }
     params = superset["parameters"] if isinstance(superset, dict) else superset
-    covered, excluded, unmapped = [], [], []
+    covered, excluded, unmapped, bad_paths = [], [], [], []
     for p in params:
         name = p["canonical_name"] if isinstance(p, dict) else p
         m = mapping.get("parameters", {}).get(name)
         if m is None:
             unmapped.append(name)
         elif m.get("status") == "covered":
-            covered.append(name)
+            # A "covered" claim is only valid if every referenced field path
+            # actually resolves inside the schemas.
+            missing = [f for f in m.get("fields", []) if not _field_path_exists(schemas, f)]
+            if missing or not m.get("fields"):
+                bad_paths.append({"parameter": name, "missing_fields": missing})
+            else:
+                covered.append(name)
         elif m.get("status") == "excluded" and m.get("justification"):
             excluded.append(name)
         else:
             unmapped.append(name)
-    total = len(covered) + len(excluded) + len(unmapped)
+    total = len(covered) + len(excluded) + len(unmapped) + len(bad_paths)
     coverage = len(covered) / total if total else 0.0
     return {
         "n_parameters": total,
         "covered": len(covered),
         "excluded_with_justification": len(excluded),
         "unmapped": unmapped,
+        "covered_claims_with_nonexistent_fields": bad_paths,
         "coverage_of_all": coverage,
         "threshold": COVERAGE_THRESHOLD,
-        "pass": coverage >= COVERAGE_THRESHOLD and not unmapped,
+        "pass": coverage >= COVERAGE_THRESHOLD and not unmapped and not bad_paths,
     }
 
 

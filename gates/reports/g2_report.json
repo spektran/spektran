@@ -16,10 +16,15 @@
       "pass": true
     },
     "literature_coverage": {
-      "status": "pending",
-      "detail": "literature survey and/or field mapping not yet available",
-      "pass": false
+      "n_parameters": 61,
+      "covered": 61,
+      "excluded_with_justification": 0,
+      "unmapped": [],
+      "covered_claims_with_nonexistent_fields": [],
+      "coverage_of_all": 1.0,
+      "threshold": 0.95,
+      "pass": true
     }
   },
-  "pass": false
+  "pass": true
 }

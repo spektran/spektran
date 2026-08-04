@@ -143,6 +143,15 @@
           "type": "string",
           "description": "Bulk/bath gas, e.g. 'N2' or 'air'."
         },
+        "sample_flow_L_per_min": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Sample gas flow rate through the cell (0 = static fill)."
+        },
+        "sample_conditioning": {
+          "type": "string",
+          "description": "Upstream sample handling: filtering, drying, pressure regulation, heated lines. Free text."
+        },
         "interferents": {
           "type": "array",
           "description": "Interfering absorbers present in addition to the labeled target species.",
@@ -159,6 +168,59 @@
         }
       }
     },
+    "processing": {
+      "type": "object",
+      "description": "Signal-processing and calibration methodology. Optional; primarily for experimental/augmented records where the raw-to-reported chain must be reproducible. For simulated records the generator config plays this role.",
+      "additionalProperties": false,
+      "properties": {
+        "calibration_method": {
+          "type": "string",
+          "description": "e.g. 'calibration-free (first-principles)', 'reference-gas calibration'."
+        },
+        "calibration_reference": {
+          "type": "string",
+          "description": "Certified gas standard / reference instrument used, with stated uncertainty."
+        },
+        "baseline_treatment": {
+          "type": "string",
+          "description": "Zero-absorption baseline determination (polynomial fit, I0 reference, baseline-free scheme)."
+        },
+        "wavelength_calibration_method": {
+          "type": "string",
+          "description": "Frequency-axis calibration: etalon FSR, wavemeter, reference cell."
+        },
+        "spectral_fitting_method": {
+          "type": "string",
+          "description": "Fit procedure converting spectra to gas properties."
+        },
+        "line_shape_model": {
+          "type": "string",
+          "description": "Profile used in simulation/fitting: 'Voigt', 'Rautian', 'HTP', ..."
+        },
+        "demodulation_method": {
+          "type": "string",
+          "description": "Lock-in implementation (analog / digital / FPGA software lock-in)."
+        },
+        "denoising_method": {
+          "type": "string",
+          "description": "Additional digital denoising applied (wavelet, EMD, Kalman, ML)."
+        },
+        "averaging_n_scans": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of averaged scans per reported spectrum."
+        },
+        "averaging_time_s": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Integration/averaging time per reported data point."
+        },
+        "uncertainty_budget_note": {
+          "type": "string",
+          "description": "Itemized combined-uncertainty budget or pointer to it."
+        }
+      }
+    },
     "instrument": {
       "type": "object",
       "required": ["laser", "detector", "target_lines"],
@@ -169,6 +231,10 @@
           "required": ["center_wavenumber_cm1", "scan_range_cm1"],
           "additionalProperties": false,
           "properties": {
+            "type": {
+              "type": "string",
+              "description": "Laser source class, e.g. 'DFB', 'VCSEL', 'QCL', 'ICL', 'ECDL'."
+            },
             "center_wavenumber_cm1": { "type": "number", "exclusiveMinimum": 0 },
             "scan_range_cm1": {
               "type": "number",
@@ -180,10 +246,34 @@
               "exclusiveMinimum": 0,
               "description": "Scan (ramp) repetition rate."
             },
+            "scan_waveform": {
+              "enum": ["sawtooth", "triangle", "sine"],
+              "description": "Shape of the scan drive waveform."
+            },
             "linewidth_MHz": {
               "type": "number",
               "minimum": 0,
               "description": "Laser Lorentzian linewidth (FWHM). 0 = ideal monochromatic."
+            },
+            "operating_temperature_K": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Laser temperature setpoint reaching the target line."
+            },
+            "injection_current_mA": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Mean injection current at the operating point."
+            },
+            "output_power_mW": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Optical output power at the operating point."
+            },
+            "tuning_poly_cm1": {
+              "type": "array",
+              "items": { "type": "number" },
+              "description": "Polynomial coefficients (ascending order, cm-1 per unit normalized ramp) of the current-to-optical-frequency tuning response used to build the frequency axis."
             }
           }
         },
@@ -199,7 +289,49 @@
               "exclusiveMinimum": 0,
               "description": "Optical-frequency modulation amplitude a in nu(t) = nu_c + a*cos(2*pi*f*t)."
             },
-            "phase_rad": { "type": "number" }
+            "phase_rad": { "type": "number" },
+            "harmonic_scheme": {
+              "enum": ["1f", "2f", "2f/1f", "4f", "other"],
+              "description": "Harmonic detection / normalization scheme."
+            },
+            "modulation_index": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "m = depth / line HWHM at the measurement condition (2f optimum ~2.2)."
+            },
+            "im_i0_rel": {
+              "type": "number",
+              "description": "Linear intensity-modulation amplitude i0 (relative), calibration-free WMS characterization (Rieker/Hanson convention)."
+            },
+            "im_i2_rel": {
+              "type": "number",
+              "description": "Nonlinear intensity-modulation amplitude i2 (relative)."
+            },
+            "fm_im_phase1_rad": {
+              "type": "number",
+              "description": "Phase shift psi1 between FM and linear IM."
+            },
+            "fm_im_phase2_rad": {
+              "type": "number",
+              "description": "Phase shift psi2 between FM and nonlinear IM."
+            }
+          }
+        },
+        "cell": {
+          "type": "object",
+          "description": "Absorption cell / optical geometry.",
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "e.g. 'Herriott multipass', 'White', 'single-pass extractive', 'open path', 'in situ line-of-sight'."
+            },
+            "number_of_passes": { "type": "integer", "minimum": 1 },
+            "volume_cm3": { "type": "number", "exclusiveMinimum": 0 },
+            "temperature_control": {
+              "type": "string",
+              "description": "Thermal stabilization / insulation arrangement, free text."
+            }
           }
         },
         "detector": {
@@ -222,7 +354,27 @@
             "properties": {
               "hitran_molecule_id": { "type": "integer", "minimum": 1 },
               "isotopologue_id": { "type": "integer", "minimum": 1 },
-              "wavenumber_cm1": { "type": "number", "exclusiveMinimum": 0 }
+              "wavenumber_cm1": { "type": "number", "exclusiveMinimum": 0 },
+              "line_strength_cm_per_molec": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "description": "Line intensity S(296 K) [cm-1/(molecule cm-2)] snapshot from the pinned database version."
+              },
+              "elower_cm1": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Lower-state energy E''."
+              },
+              "gamma_air_cm1_per_atm": { "type": "number", "minimum": 0 },
+              "gamma_self_cm1_per_atm": { "type": "number", "minimum": 0 },
+              "n_air": {
+                "type": "number",
+                "description": "Temperature exponent of gamma_air (dimensionless)."
+              },
+              "delta_air_cm1_per_atm": {
+                "type": "number",
+                "description": "Air pressure-induced line shift coefficient."
+              }
             }
           }
         }

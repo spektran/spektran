@@ -1,0 +1,252 @@
+# OpenGasSpec Gate G2: canonical TDLAS experimental-parameter superset
+# Deduplicated union of per-paper reporting checklists in g2_papers.yaml.
+# count = number of surveyed papers whose reproduction requires the parameter.
+survey_date: 2026-08-04
+n_papers: 23
+technique_split: {DA: 3, WMS: 15, both: 5}
+n_parameters: 61
+parameters:
+  - canonical_name: target_gas
+    description: "Chemical species measured (and isotopic/vibrational band identity where relevant)."
+    count: 23
+    papers: [rieker2009_cfwms, sun2013_scanned_wms, witzel2013_vcsel_engine, goldenstein2014_rde_wms, goldenstein2014_hp_wms, klein2014_tdm_da_wms, sur2014_gasifier_wms, pogany2015_metrology_da, upadhyay2015_ram_nulling, li2016_ethane_icl, li2016_qcl_dual_spec, zhao2016_stabilized_das, goldenstein2017_ir_review, shao2019_co_ch4_wms, lou2019_breath_co2, li2022_co_icl_openpath, duan2022_multipass_3gas, festabianchet2022_ch4_flux, lin2022_sensitivity_review, chang2023_o2_multipass, jaeger2025_ch4_slip, mu2025_ch4_denoise, meshcherinov2026_eddy]
+  - canonical_name: target_transition
+    description: "Line-center position of the probed transition(s), in cm-1 and/or nm."
+    count: 23
+    papers: [rieker2009_cfwms, sun2013_scanned_wms, witzel2013_vcsel_engine, goldenstein2014_rde_wms, goldenstein2014_hp_wms, klein2014_tdm_da_wms, sur2014_gasifier_wms, pogany2015_metrology_da, upadhyay2015_ram_nulling, li2016_ethane_icl, li2016_qcl_dual_spec, zhao2016_stabilized_das, goldenstein2017_ir_review, shao2019_co_ch4_wms, lou2019_breath_co2, li2022_co_icl_openpath, duan2022_multipass_3gas, festabianchet2022_ch4_flux, lin2022_sensitivity_review, chang2023_o2_multipass, jaeger2025_ch4_slip, mu2025_ch4_denoise, meshcherinov2026_eddy]
+  - canonical_name: laser_type
+    description: "Laser source class and model characteristics (DFB, VCSEL, QCL, ICL; fiber-coupled or free-space)."
+    count: 23
+    papers: [rieker2009_cfwms, sun2013_scanned_wms, witzel2013_vcsel_engine, goldenstein2014_rde_wms, goldenstein2014_hp_wms, klein2014_tdm_da_wms, sur2014_gasifier_wms, pogany2015_metrology_da, upadhyay2015_ram_nulling, li2016_ethane_icl, li2016_qcl_dual_spec, zhao2016_stabilized_das, goldenstein2017_ir_review, shao2019_co_ch4_wms, lou2019_breath_co2, li2022_co_icl_openpath, duan2022_multipass_3gas, festabianchet2022_ch4_flux, lin2022_sensitivity_review, chang2023_o2_multipass, jaeger2025_ch4_slip, mu2025_ch4_denoise, meshcherinov2026_eddy]
+  - canonical_name: laser_center_wavelength
+    description: "Laser nominal emission wavelength/wavenumber at the operating point."
+    count: 23
+    papers: [rieker2009_cfwms, sun2013_scanned_wms, witzel2013_vcsel_engine, goldenstein2014_rde_wms, goldenstein2014_hp_wms, klein2014_tdm_da_wms, sur2014_gasifier_wms, pogany2015_metrology_da, upadhyay2015_ram_nulling, li2016_ethane_icl, li2016_qcl_dual_spec, zhao2016_stabilized_das, goldenstein2017_ir_review, shao2019_co_ch4_wms, lou2019_breath_co2, li2022_co_icl_openpath, duan2022_multipass_3gas, festabianchet2022_ch4_flux, lin2022_sensitivity_review, chang2023_o2_multipass, jaeger2025_ch4_slip, mu2025_ch4_denoise, meshcherinov2026_eddy]
+  - canonical_name: optical_path_length
+    description: "Absorption path length L (physical or effective multipass/open path)."
+    count: 23
+    papers: [rieker2009_cfwms, sun2013_scanned_wms, witzel2013_vcsel_engine, goldenstein2014_rde_wms, goldenstein2014_hp_wms, klein2014_tdm_da_wms, sur2014_gasifier_wms, pogany2015_metrology_da, upadhyay2015_ram_nulling, li2016_ethane_icl, li2016_qcl_dual_spec, zhao2016_stabilized_das, goldenstein2017_ir_review, shao2019_co_ch4_wms, lou2019_breath_co2, li2022_co_icl_openpath, duan2022_multipass_3gas, festabianchet2022_ch4_flux, lin2022_sensitivity_review, chang2023_o2_multipass, jaeger2025_ch4_slip, mu2025_ch4_denoise, meshcherinov2026_eddy]
+  - canonical_name: detector_type
+    description: "Photodetector type/material (InGaAs, MCT, Si) and cooling/preamplifier arrangement."
+    count: 23
+    papers: [rieker2009_cfwms, sun2013_scanned_wms, witzel2013_vcsel_engine, goldenstein2014_rde_wms, goldenstein2014_hp_wms, klein2014_tdm_da_wms, sur2014_gasifier_wms, pogany2015_metrology_da, upadhyay2015_ram_nulling, li2016_ethane_icl, li2016_qcl_dual_spec, zhao2016_stabilized_das, goldenstein2017_ir_review, shao2019_co_ch4_wms, lou2019_breath_co2, li2022_co_icl_openpath, duan2022_multipass_3gas, festabianchet2022_ch4_flux, lin2022_sensitivity_review, chang2023_o2_multipass, jaeger2025_ch4_slip, mu2025_ch4_denoise, meshcherinov2026_eddy]
+  - canonical_name: gas_temperature
+    description: "Gas temperature during measurement, how it is measured/controlled, and its range."
+    count: 22
+    papers: [rieker2009_cfwms, sun2013_scanned_wms, witzel2013_vcsel_engine, goldenstein2014_rde_wms, goldenstein2014_hp_wms, klein2014_tdm_da_wms, sur2014_gasifier_wms, pogany2015_metrology_da, upadhyay2015_ram_nulling, li2016_ethane_icl, li2016_qcl_dual_spec, zhao2016_stabilized_das, goldenstein2017_ir_review, shao2019_co_ch4_wms, lou2019_breath_co2, li2022_co_icl_openpath, duan2022_multipass_3gas, festabianchet2022_ch4_flux, chang2023_o2_multipass, jaeger2025_ch4_slip, mu2025_ch4_denoise, meshcherinov2026_eddy]
+  - canonical_name: gas_pressure
+    description: "Total gas pressure during measurement (including reduced-pressure operation) and its measurement/control."
+    count: 22
+    papers: [rieker2009_cfwms, sun2013_scanned_wms, witzel2013_vcsel_engine, goldenstein2014_rde_wms, goldenstein2014_hp_wms, klein2014_tdm_da_wms, sur2014_gasifier_wms, pogany2015_metrology_da, upadhyay2015_ram_nulling, li2016_ethane_icl, li2016_qcl_dual_spec, zhao2016_stabilized_das, goldenstein2017_ir_review, shao2019_co_ch4_wms, lou2019_breath_co2, li2022_co_icl_openpath, duan2022_multipass_3gas, festabianchet2022_ch4_flux, chang2023_o2_multipass, jaeger2025_ch4_slip, mu2025_ch4_denoise, meshcherinov2026_eddy]
+  - canonical_name: mole_fraction_range
+    description: "Target-species mole-fraction/concentration range covered by the measurement or validation."
+    count: 22
+    papers: [rieker2009_cfwms, sun2013_scanned_wms, witzel2013_vcsel_engine, goldenstein2014_rde_wms, goldenstein2014_hp_wms, klein2014_tdm_da_wms, sur2014_gasifier_wms, pogany2015_metrology_da, upadhyay2015_ram_nulling, li2016_ethane_icl, li2016_qcl_dual_spec, zhao2016_stabilized_das, goldenstein2017_ir_review, shao2019_co_ch4_wms, lou2019_breath_co2, li2022_co_icl_openpath, duan2022_multipass_3gas, festabianchet2022_ch4_flux, chang2023_o2_multipass, jaeger2025_ch4_slip, mu2025_ch4_denoise, meshcherinov2026_eddy]
+  - canonical_name: line_strength
+    description: "Line strength S(T_ref) of the target transition, including source and uncertainty."
+    count: 21
+    papers: [rieker2009_cfwms, sun2013_scanned_wms, witzel2013_vcsel_engine, goldenstein2014_rde_wms, goldenstein2014_hp_wms, klein2014_tdm_da_wms, sur2014_gasifier_wms, pogany2015_metrology_da, upadhyay2015_ram_nulling, li2016_ethane_icl, li2016_qcl_dual_spec, goldenstein2017_ir_review, shao2019_co_ch4_wms, lou2019_breath_co2, li2022_co_icl_openpath, duan2022_multipass_3gas, festabianchet2022_ch4_flux, chang2023_o2_multipass, jaeger2025_ch4_slip, mu2025_ch4_denoise, meshcherinov2026_eddy]
+  - canonical_name: spectral_database_version
+    description: "Spectroscopic database and version used (e.g. HITRAN2016/2020, HITEMP, in-house measured line data)."
+    count: 21
+    papers: [rieker2009_cfwms, sun2013_scanned_wms, witzel2013_vcsel_engine, goldenstein2014_rde_wms, goldenstein2014_hp_wms, klein2014_tdm_da_wms, sur2014_gasifier_wms, pogany2015_metrology_da, upadhyay2015_ram_nulling, li2016_ethane_icl, li2016_qcl_dual_spec, goldenstein2017_ir_review, shao2019_co_ch4_wms, lou2019_breath_co2, li2022_co_icl_openpath, duan2022_multipass_3gas, festabianchet2022_ch4_flux, chang2023_o2_multipass, jaeger2025_ch4_slip, mu2025_ch4_denoise, meshcherinov2026_eddy]
+  - canonical_name: modulation_frequency
+    description: "Sinusoidal modulation frequency f applied to the injection current (WMS)."
+    count: 20
+    papers: [rieker2009_cfwms, sun2013_scanned_wms, goldenstein2014_rde_wms, goldenstein2014_hp_wms, klein2014_tdm_da_wms, sur2014_gasifier_wms, upadhyay2015_ram_nulling, li2016_ethane_icl, li2016_qcl_dual_spec, goldenstein2017_ir_review, shao2019_co_ch4_wms, lou2019_breath_co2, li2022_co_icl_openpath, duan2022_multipass_3gas, festabianchet2022_ch4_flux, lin2022_sensitivity_review, chang2023_o2_multipass, jaeger2025_ch4_slip, mu2025_ch4_denoise, meshcherinov2026_eddy]
+  - canonical_name: harmonic_detection_scheme
+    description: "Harmonic(s) detected and normalization scheme (2f, 2f/1f, RAM-nulled 2f, even-harmonic variants)."
+    count: 20
+    papers: [rieker2009_cfwms, sun2013_scanned_wms, goldenstein2014_rde_wms, goldenstein2014_hp_wms, klein2014_tdm_da_wms, sur2014_gasifier_wms, upadhyay2015_ram_nulling, li2016_ethane_icl, li2016_qcl_dual_spec, goldenstein2017_ir_review, shao2019_co_ch4_wms, lou2019_breath_co2, li2022_co_icl_openpath, duan2022_multipass_3gas, festabianchet2022_ch4_flux, lin2022_sensitivity_review, chang2023_o2_multipass, jaeger2025_ch4_slip, mu2025_ch4_denoise, meshcherinov2026_eddy]
+  - canonical_name: calibration_method
+    description: "Calibration strategy: calibration-free (first-principles) vs reference-gas calibration, and self-calibration schemes."
+    count: 20
+    papers: [rieker2009_cfwms, sun2013_scanned_wms, goldenstein2014_rde_wms, goldenstein2014_hp_wms, klein2014_tdm_da_wms, sur2014_gasifier_wms, pogany2015_metrology_da, upadhyay2015_ram_nulling, li2016_ethane_icl, li2016_qcl_dual_spec, goldenstein2017_ir_review, shao2019_co_ch4_wms, lou2019_breath_co2, li2022_co_icl_openpath, duan2022_multipass_3gas, festabianchet2022_ch4_flux, lin2022_sensitivity_review, chang2023_o2_multipass, jaeger2025_ch4_slip, meshcherinov2026_eddy]
+  - canonical_name: modulation_depth
+    description: "Optical-frequency modulation amplitude a (cm-1) or the equivalent drive amplitude."
+    count: 19
+    papers: [rieker2009_cfwms, sun2013_scanned_wms, goldenstein2014_rde_wms, goldenstein2014_hp_wms, klein2014_tdm_da_wms, sur2014_gasifier_wms, upadhyay2015_ram_nulling, li2016_ethane_icl, li2016_qcl_dual_spec, goldenstein2017_ir_review, shao2019_co_ch4_wms, lou2019_breath_co2, li2022_co_icl_openpath, duan2022_multipass_3gas, festabianchet2022_ch4_flux, lin2022_sensitivity_review, chang2023_o2_multipass, jaeger2025_ch4_slip, mu2025_ch4_denoise]
+  - canonical_name: demodulation_method
+    description: "Lock-in implementation (analog/digital/FPGA software lock-in) used to extract harmonic signals."
+    count: 19
+    papers: [rieker2009_cfwms, sun2013_scanned_wms, goldenstein2014_rde_wms, goldenstein2014_hp_wms, klein2014_tdm_da_wms, upadhyay2015_ram_nulling, li2016_ethane_icl, li2016_qcl_dual_spec, goldenstein2017_ir_review, shao2019_co_ch4_wms, lou2019_breath_co2, li2022_co_icl_openpath, duan2022_multipass_3gas, festabianchet2022_ch4_flux, lin2022_sensitivity_review, chang2023_o2_multipass, jaeger2025_ch4_slip, mu2025_ch4_denoise, meshcherinov2026_eddy]
+  - canonical_name: scan_rate
+    description: "Scan/sweep repetition rate (or ramp frequency) of the wavelength scan."
+    count: 17
+    papers: [sun2013_scanned_wms, witzel2013_vcsel_engine, goldenstein2014_rde_wms, klein2014_tdm_da_wms, pogany2015_metrology_da, li2016_ethane_icl, li2016_qcl_dual_spec, zhao2016_stabilized_das, goldenstein2017_ir_review, shao2019_co_ch4_wms, li2022_co_icl_openpath, duan2022_multipass_3gas, festabianchet2022_ch4_flux, chang2023_o2_multipass, jaeger2025_ch4_slip, mu2025_ch4_denoise, meshcherinov2026_eddy]
+  - canonical_name: sampling_rate
+    description: "Data-acquisition sampling rate of the raw detector signal."
+    count: 17
+    papers: [sun2013_scanned_wms, witzel2013_vcsel_engine, goldenstein2014_rde_wms, klein2014_tdm_da_wms, pogany2015_metrology_da, li2016_ethane_icl, li2016_qcl_dual_spec, zhao2016_stabilized_das, goldenstein2017_ir_review, shao2019_co_ch4_wms, lou2019_breath_co2, li2022_co_icl_openpath, duan2022_multipass_3gas, festabianchet2022_ch4_flux, jaeger2025_ch4_slip, mu2025_ch4_denoise, meshcherinov2026_eddy]
+  - canonical_name: line_shape_model
+    description: "Line-shape profile used for simulation/fitting (Voigt, Rautian, HTP, ...) including far-wing treatment."
+    count: 15
+    papers: [rieker2009_cfwms, sun2013_scanned_wms, witzel2013_vcsel_engine, goldenstein2014_rde_wms, goldenstein2014_hp_wms, klein2014_tdm_da_wms, sur2014_gasifier_wms, pogany2015_metrology_da, upadhyay2015_ram_nulling, li2016_qcl_dual_spec, zhao2016_stabilized_das, goldenstein2017_ir_review, festabianchet2022_ch4_flux, jaeger2025_ch4_slip, meshcherinov2026_eddy]
+  - canonical_name: matrix_gas
+    description: "Balance/matrix gas composition of the sample (N2, air, exhaust matrix) affecting broadening."
+    count: 14
+    papers: [rieker2009_cfwms, sun2013_scanned_wms, witzel2013_vcsel_engine, goldenstein2014_hp_wms, sur2014_gasifier_wms, pogany2015_metrology_da, li2016_ethane_icl, goldenstein2017_ir_review, lou2019_breath_co2, duan2022_multipass_3gas, festabianchet2022_ch4_flux, chang2023_o2_multipass, jaeger2025_ch4_slip, mu2025_ch4_denoise]
+  - canonical_name: detection_limit
+    description: "Minimum detection limit / sensitivity (e.g. ppb or ppm*m, with stated bandwidth or integration time)."
+    count: 13
+    papers: [goldenstein2014_rde_wms, klein2014_tdm_da_wms, li2016_ethane_icl, li2016_qcl_dual_spec, zhao2016_stabilized_das, goldenstein2017_ir_review, shao2019_co_ch4_wms, lou2019_breath_co2, li2022_co_icl_openpath, duan2022_multipass_3gas, lin2022_sensitivity_review, chang2023_o2_multipass, mu2025_ch4_denoise]
+  - canonical_name: cell_type
+    description: "Absorption cell/geometry: Herriott, White, astigmatic multipass, single-pass extractive, open path, in situ line-of-sight."
+    count: 12
+    papers: [pogany2015_metrology_da, li2016_ethane_icl, li2016_qcl_dual_spec, goldenstein2017_ir_review, shao2019_co_ch4_wms, lou2019_breath_co2, li2022_co_icl_openpath, duan2022_multipass_3gas, lin2022_sensitivity_review, chang2023_o2_multipass, mu2025_ch4_denoise, meshcherinov2026_eddy]
+  - canonical_name: pressure_broadening_coefficients
+    description: "Collisional (air-, self-, or matrix-specific) broadening half-width coefficients used in the spectral model."
+    count: 10
+    papers: [rieker2009_cfwms, sun2013_scanned_wms, witzel2013_vcsel_engine, goldenstein2014_rde_wms, goldenstein2014_hp_wms, klein2014_tdm_da_wms, sur2014_gasifier_wms, pogany2015_metrology_da, goldenstein2017_ir_review, jaeger2025_ch4_slip]
+  - canonical_name: measurement_accuracy
+    description: "Accuracy versus known/reference conditions (bias, percent deviation)."
+    count: 10
+    papers: [rieker2009_cfwms, sun2013_scanned_wms, goldenstein2014_rde_wms, goldenstein2014_hp_wms, sur2014_gasifier_wms, pogany2015_metrology_da, upadhyay2015_ram_nulling, goldenstein2017_ir_review, festabianchet2022_ch4_flux, jaeger2025_ch4_slip]
+  - canonical_name: interfering_species
+    description: "Neighboring/overlapping absorbers considered (e.g. H2O, CO2 interference) and how cross-talk is handled."
+    count: 9
+    papers: [sur2014_gasifier_wms, li2016_ethane_icl, li2016_qcl_dual_spec, goldenstein2017_ir_review, shao2019_co_ch4_wms, lou2019_breath_co2, duan2022_multipass_3gas, jaeger2025_ch4_slip, meshcherinov2026_eddy]
+  - canonical_name: averaging_time
+    description: "Number of averaged scans / integration (averaging) time per reported data point."
+    count: 9
+    papers: [li2016_ethane_icl, li2016_qcl_dual_spec, zhao2016_stabilized_das, shao2019_co_ch4_wms, lou2019_breath_co2, duan2022_multipass_3gas, lin2022_sensitivity_review, chang2023_o2_multipass, mu2025_ch4_denoise]
+  - canonical_name: allan_deviation_analysis
+    description: "Allan(-Werle) deviation analysis: optimum averaging time and stability-limited precision."
+    count: 9
+    papers: [klein2014_tdm_da_wms, li2016_ethane_icl, li2016_qcl_dual_spec, zhao2016_stabilized_das, shao2019_co_ch4_wms, duan2022_multipass_3gas, lin2022_sensitivity_review, chang2023_o2_multipass, mu2025_ch4_denoise]
+  - canonical_name: wavelength_scan_range
+    description: "Optical frequency span of the wavelength scan across the transition (cm-1 or nm)."
+    count: 8
+    papers: [sun2013_scanned_wms, witzel2013_vcsel_engine, klein2014_tdm_da_wms, pogany2015_metrology_da, li2016_qcl_dual_spec, zhao2016_stabilized_das, goldenstein2017_ir_review, meshcherinov2026_eddy]
+  - canonical_name: laser_tuning_coefficient
+    description: "Static and dynamic current(or ramp)-to-optical-frequency tuning response used to convert time to frequency axis."
+    count: 8
+    papers: [rieker2009_cfwms, sun2013_scanned_wms, goldenstein2014_rde_wms, goldenstein2014_hp_wms, sur2014_gasifier_wms, upadhyay2015_ram_nulling, goldenstein2017_ir_review, jaeger2025_ch4_slip]
+  - canonical_name: laser_intensity_modulation_parameters
+    description: "Laser intensity-modulation characterization for calibration-free WMS: linear/nonlinear IM amplitudes (i0, i2) and FM/IM phase shifts (psi1, psi2)."
+    count: 8
+    papers: [rieker2009_cfwms, sun2013_scanned_wms, goldenstein2014_rde_wms, goldenstein2014_hp_wms, sur2014_gasifier_wms, upadhyay2015_ram_nulling, goldenstein2017_ir_review, jaeger2025_ch4_slip]
+  - canonical_name: baseline_treatment
+    description: "Zero-absorption baseline determination for DA (polynomial fit, non-absorbing region, I0 reference, baseline-free schemes)."
+    count: 8
+    papers: [witzel2013_vcsel_engine, klein2014_tdm_da_wms, pogany2015_metrology_da, li2016_qcl_dual_spec, zhao2016_stabilized_das, goldenstein2017_ir_review, lin2022_sensitivity_review, meshcherinov2026_eddy]
+  - canonical_name: spectral_fitting_method
+    description: "Fitting procedure converting spectra to gas properties (Voigt/least-squares fit of absorbance, simulation-vs-measurement WMS fit) and residuals."
+    count: 8
+    papers: [sun2013_scanned_wms, witzel2013_vcsel_engine, klein2014_tdm_da_wms, pogany2015_metrology_da, li2016_qcl_dual_spec, zhao2016_stabilized_das, goldenstein2017_ir_review, meshcherinov2026_eddy]
+  - canonical_name: reference_gas_standard
+    description: "Certified calibration/validation gas mixtures (or reference instrument) and their stated uncertainty."
+    count: 8
+    papers: [pogany2015_metrology_da, li2016_ethane_icl, shao2019_co_ch4_wms, lou2019_breath_co2, duan2022_multipass_3gas, festabianchet2022_ch4_flux, chang2023_o2_multipass, meshcherinov2026_eddy]
+  - canonical_name: snr
+    description: "Signal-to-noise ratio of the absorbance or harmonic signal at reference conditions."
+    count: 8
+    papers: [rieker2009_cfwms, witzel2013_vcsel_engine, goldenstein2014_hp_wms, zhao2016_stabilized_das, goldenstein2017_ir_review, li2022_co_icl_openpath, lin2022_sensitivity_review, mu2025_ch4_denoise]
+  - canonical_name: linearity
+    description: "Linearity of response over the concentration range (R^2 / residuals of calibration curve)."
+    count: 8
+    papers: [li2016_ethane_icl, shao2019_co_ch4_wms, lou2019_breath_co2, li2022_co_icl_openpath, duan2022_multipass_3gas, chang2023_o2_multipass, mu2025_ch4_denoise, meshcherinov2026_eddy]
+  - canonical_name: lower_state_energy
+    description: "Lower-state energy E'' of the transition (temperature sensitivity; required for multi-line thermometry)."
+    count: 7
+    papers: [rieker2009_cfwms, sun2013_scanned_wms, witzel2013_vcsel_engine, goldenstein2014_rde_wms, goldenstein2014_hp_wms, sur2014_gasifier_wms, goldenstein2017_ir_review]
+  - canonical_name: modulation_index
+    description: "Modulation index m = a / (line HWHM) at the measurement condition (optimum ~2.2 for 2f)."
+    count: 7
+    papers: [rieker2009_cfwms, sun2013_scanned_wms, goldenstein2014_rde_wms, goldenstein2014_hp_wms, sur2014_gasifier_wms, goldenstein2017_ir_review, jaeger2025_ch4_slip]
+  - canonical_name: detector_bandwidth
+    description: "Detection-chain electrical bandwidth relative to scan/modulation frequencies."
+    count: 7
+    papers: [rieker2009_cfwms, sun2013_scanned_wms, witzel2013_vcsel_engine, goldenstein2014_rde_wms, sur2014_gasifier_wms, zhao2016_stabilized_das, goldenstein2017_ir_review]
+  - canonical_name: laser_output_power
+    description: "Optical output power at the operating point (and power incident on the detector where reported)."
+    count: 6
+    papers: [witzel2013_vcsel_engine, li2016_ethane_icl, zhao2016_stabilized_das, goldenstein2017_ir_review, lou2019_breath_co2, meshcherinov2026_eddy]
+  - canonical_name: wavelength_calibration_method
+    description: "How the relative/absolute frequency axis was calibrated (etalon FSR, wavemeter, reference cell)."
+    count: 6
+    papers: [sun2013_scanned_wms, witzel2013_vcsel_engine, klein2014_tdm_da_wms, pogany2015_metrology_da, zhao2016_stabilized_das, goldenstein2017_ir_review]
+  - canonical_name: number_of_passes
+    description: "Number of passes/reflections realizing the effective path length in a multipass cell."
+    count: 6
+    papers: [li2016_ethane_icl, shao2019_co_ch4_wms, duan2022_multipass_3gas, chang2023_o2_multipass, mu2025_ch4_denoise, meshcherinov2026_eddy]
+  - canonical_name: measurement_precision
+    description: "Statistical precision (1-sigma scatter) of the retrieved quantity at a stated rate."
+    count: 6
+    papers: [witzel2013_vcsel_engine, klein2014_tdm_da_wms, li2016_qcl_dual_spec, goldenstein2017_ir_review, lou2019_breath_co2, meshcherinov2026_eddy]
+  - canonical_name: measurement_rate_time_resolution
+    description: "Output measurement rate / time resolution of retrieved gas properties."
+    count: 6
+    papers: [witzel2013_vcsel_engine, goldenstein2014_rde_wms, goldenstein2017_ir_review, festabianchet2022_ch4_flux, jaeger2025_ch4_slip, meshcherinov2026_eddy]
+  - canonical_name: broadening_temperature_exponent
+    description: "Temperature-dependence exponent n of the collisional broadening coefficients."
+    count: 5
+    papers: [witzel2013_vcsel_engine, goldenstein2014_rde_wms, goldenstein2014_hp_wms, sur2014_gasifier_wms, goldenstein2017_ir_review]
+  - canonical_name: laser_operating_setpoint
+    description: "Laser temperature and injection-current setpoints used to reach the target line."
+    count: 5
+    papers: [sun2013_scanned_wms, li2016_ethane_icl, shao2019_co_ch4_wms, duan2022_multipass_3gas, chang2023_o2_multipass]
+  - canonical_name: scan_waveform
+    description: "Shape of the scan drive waveform (sawtooth, triangle, sinusoid) and duty handling."
+    count: 5
+    papers: [sun2013_scanned_wms, witzel2013_vcsel_engine, klein2014_tdm_da_wms, zhao2016_stabilized_das, goldenstein2017_ir_review]
+  - canonical_name: long_term_drift
+    description: "Long-duration stability/drift behavior and drift-correction measures."
+    count: 5
+    papers: [pogany2015_metrology_da, shao2019_co_ch4_wms, lin2022_sensitivity_review, chang2023_o2_multipass, jaeger2025_ch4_slip]
+  - canonical_name: lock_in_filter_settings
+    description: "Lock-in time constant / low-pass filter bandwidth and slope used in demodulation."
+    count: 4
+    papers: [rieker2009_cfwms, goldenstein2014_rde_wms, li2016_ethane_icl, lou2019_breath_co2]
+  - canonical_name: optical_fringe_level
+    description: "Residual etalon-fringe amplitude and fringe-suppression measures (wedged windows, dithering, off-axis alignment)."
+    count: 4
+    papers: [witzel2013_vcsel_engine, sur2014_gasifier_wms, zhao2016_stabilized_das, lin2022_sensitivity_review]
+  - canonical_name: sample_flow_rate
+    description: "Sample gas flow rate through the cell during measurements."
+    count: 4
+    papers: [pogany2015_metrology_da, li2016_ethane_icl, shao2019_co_ch4_wms, duan2022_multipass_3gas]
+  - canonical_name: response_time
+    description: "Sensor response (gas-exchange rise/fall) time to a concentration step."
+    count: 4
+    papers: [li2016_ethane_icl, lou2019_breath_co2, duan2022_multipass_3gas, chang2023_o2_multipass]
+  - canonical_name: isotopologue
+    description: "Isotopologue identity and abundance scaling assumed for the target line."
+    count: 3
+    papers: [pogany2015_metrology_da, goldenstein2017_ir_review, lou2019_breath_co2]
+  - canonical_name: cell_volume
+    description: "Internal sample volume of the cell (drives exchange/response time)."
+    count: 3
+    papers: [li2016_ethane_icl, lou2019_breath_co2, duan2022_multipass_3gas]
+  - canonical_name: pressure_shift_coefficient
+    description: "Pressure-induced line-shift coefficient applied to the line position."
+    count: 2
+    papers: [pogany2015_metrology_da, goldenstein2017_ir_review]
+  - canonical_name: demodulation_phase
+    description: "Detection phase setting between X/Y channels or the magnitude convention used for harmonics."
+    count: 2
+    papers: [rieker2009_cfwms, upadhyay2015_ram_nulling]
+  - canonical_name: adc_resolution
+    description: "Digitizer resolution / front-end acquisition electronics details (ADC bits, FPGA acquisition chain)."
+    count: 2
+    papers: [shao2019_co_ch4_wms, li2022_co_icl_openpath]
+  - canonical_name: sample_conditioning
+    description: "Sample handling upstream of the cell: filtering, drying, pressure regulation, heated lines."
+    count: 2
+    papers: [li2016_ethane_icl, lou2019_breath_co2]
+  - canonical_name: denoising_method
+    description: "Additional digital denoising applied (wavelet, EMD, Kalman filtering, machine-learning correction)."
+    count: 2
+    papers: [lin2022_sensitivity_review, mu2025_ch4_denoise]
+  - canonical_name: uncertainty_budget
+    description: "Combined uncertainty budget itemizing spectroscopic, p/T/L, calibration and fitting contributions."
+    count: 2
+    papers: [pogany2015_metrology_da, festabianchet2022_ch4_flux]
+  - canonical_name: laser_linewidth
+    description: "Laser emission linewidth relative to the absorption feature width."
+    count: 1
+    papers: [goldenstein2017_ir_review]
+  - canonical_name: cell_temperature_control
+    description: "Thermal stabilization/insulation of the cell and its temperature uniformity."
+    count: 1
+    papers: [pogany2015_metrology_da]

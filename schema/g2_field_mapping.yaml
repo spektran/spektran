@@ -1,0 +1,191 @@
+# Gate G2: mapping of the literature-derived parameter superset
+# (docs/literature/g2_parameter_superset.yaml, 61 parameters, 23 papers)
+# onto schema v0.1 fields. status: covered | excluded (with justification).
+# R = record.schema.json, I = instrument.schema.json.
+survey_ref: docs/literature/g2_parameter_superset.yaml
+date: 2026-08-04
+parameters:
+  target_gas:
+    status: covered
+    fields: ["R:/labels/species[]/molecule", "R:/labels/species[]/hitran_molecule_id"]
+  target_transition:
+    status: covered
+    fields: ["R:/instrument/target_lines[]/wavenumber_cm1"]
+  laser_type:
+    status: covered
+    fields: ["R:/instrument/laser/type"]
+  laser_center_wavelength:
+    status: covered
+    fields: ["R:/instrument/laser/center_wavenumber_cm1"]
+  optical_path_length:
+    status: covered
+    fields: ["R:/conditions/path_length_m"]
+  detector_type:
+    status: covered
+    fields: ["R:/instrument/detector/type"]
+  gas_temperature:
+    status: covered
+    fields: ["R:/conditions/temperature_K", "I:/environment/temperature_K", "I:/environment/temperature_jitter_K"]
+  gas_pressure:
+    status: covered
+    fields: ["R:/conditions/pressure_atm", "I:/environment/pressure_atm", "I:/environment/pressure_jitter_atm"]
+  mole_fraction_range:
+    status: covered
+    fields: ["R:/labels/species[]/concentration_ppm"]
+    note: "Per-record truth value; the RANGE is a dataset-level property fixed by the official generation configs (configs/datasets/)."
+  line_strength:
+    status: covered
+    fields: ["R:/instrument/target_lines[]/line_strength_cm_per_molec", "R:/provenance/hitran_data_version"]
+  spectral_database_version:
+    status: covered
+    fields: ["R:/provenance/hitran_data_version"]
+  modulation_frequency:
+    status: covered
+    fields: ["R:/instrument/modulation/frequency_Hz"]
+  harmonic_detection_scheme:
+    status: covered
+    fields: ["R:/instrument/modulation/harmonic_scheme", "R:/signals/demod_1f", "R:/signals/demod_2f"]
+  calibration_method:
+    status: covered
+    fields: ["R:/processing/calibration_method"]
+  modulation_depth:
+    status: covered
+    fields: ["R:/instrument/modulation/depth_cm1"]
+  demodulation_method:
+    status: covered
+    fields: ["R:/processing/demodulation_method"]
+  scan_rate:
+    status: covered
+    fields: ["R:/instrument/laser/scan_rate_Hz"]
+  sampling_rate:
+    status: covered
+    fields: ["R:/signals/raw_scan/sampling_rate_Hz"]
+  line_shape_model:
+    status: covered
+    fields: ["R:/processing/line_shape_model"]
+  matrix_gas:
+    status: covered
+    fields: ["R:/conditions/matrix_gas"]
+  detection_limit:
+    status: covered
+    fields: ["I:/performance/detection_limit_ppm", "I:/performance/detection_bandwidth_Hz"]
+  cell_type:
+    status: covered
+    fields: ["R:/instrument/cell/type"]
+  pressure_broadening_coefficients:
+    status: covered
+    fields: ["R:/instrument/target_lines[]/gamma_air_cm1_per_atm", "R:/instrument/target_lines[]/gamma_self_cm1_per_atm"]
+  measurement_accuracy:
+    status: covered
+    fields: ["I:/performance/accuracy_rel"]
+  interfering_species:
+    status: covered
+    fields: ["R:/conditions/interferents[]"]
+  averaging_time:
+    status: covered
+    fields: ["R:/processing/averaging_n_scans", "R:/processing/averaging_time_s"]
+  allan_deviation_analysis:
+    status: covered
+    fields: ["I:/performance/allan_min_ppm", "I:/performance/allan_optimum_time_s"]
+  wavelength_scan_range:
+    status: covered
+    fields: ["R:/instrument/laser/scan_range_cm1"]
+  laser_tuning_coefficient:
+    status: covered
+    fields: ["R:/instrument/laser/tuning_poly_cm1", "I:/laser/scan_nonlinearity_poly"]
+  laser_intensity_modulation_parameters:
+    status: covered
+    fields: ["R:/instrument/modulation/im_i0_rel", "R:/instrument/modulation/im_i2_rel", "R:/instrument/modulation/fm_im_phase1_rad", "R:/instrument/modulation/fm_im_phase2_rad", "I:/laser/ram_amplitude_rel"]
+  baseline_treatment:
+    status: covered
+    fields: ["R:/processing/baseline_treatment", "I:/optics/baseline_poly_rel"]
+  spectral_fitting_method:
+    status: covered
+    fields: ["R:/processing/spectral_fitting_method"]
+  reference_gas_standard:
+    status: covered
+    fields: ["R:/processing/calibration_reference"]
+  snr:
+    status: covered
+    fields: ["I:/performance/snr_typical"]
+  linearity:
+    status: covered
+    fields: ["I:/performance/linearity_r2"]
+  lower_state_energy:
+    status: covered
+    fields: ["R:/instrument/target_lines[]/elower_cm1"]
+  modulation_index:
+    status: covered
+    fields: ["R:/instrument/modulation/modulation_index"]
+  detector_bandwidth:
+    status: covered
+    fields: ["R:/instrument/detector/bandwidth_Hz", "I:/detector/bandwidth_Hz"]
+  laser_output_power:
+    status: covered
+    fields: ["R:/instrument/laser/output_power_mW"]
+  wavelength_calibration_method:
+    status: covered
+    fields: ["R:/processing/wavelength_calibration_method"]
+  number_of_passes:
+    status: covered
+    fields: ["R:/instrument/cell/number_of_passes"]
+  measurement_precision:
+    status: covered
+    fields: ["I:/performance/precision_1sigma_ppm"]
+  measurement_rate_time_resolution:
+    status: covered
+    fields: ["I:/performance/measurement_rate_Hz"]
+  broadening_temperature_exponent:
+    status: covered
+    fields: ["R:/instrument/target_lines[]/n_air"]
+  laser_operating_setpoint:
+    status: covered
+    fields: ["R:/instrument/laser/operating_temperature_K", "R:/instrument/laser/injection_current_mA"]
+  scan_waveform:
+    status: covered
+    fields: ["R:/instrument/laser/scan_waveform"]
+  long_term_drift:
+    status: covered
+    fields: ["I:/performance/drift_ppm_per_h", "I:/optics/transmittance_drift_rel_per_s"]
+  lock_in_filter_settings:
+    status: covered
+    fields: ["R:/signals/demod_1f/lowpass_cutoff_Hz", "R:/signals/demod_2f/lowpass_cutoff_Hz", "I:/modulation/lowpass_cutoff_Hz"]
+  optical_fringe_level:
+    status: covered
+    fields: ["I:/etalons[]/amplitude_rel", "I:/etalons[]/free_spectral_range_cm1"]
+  sample_flow_rate:
+    status: covered
+    fields: ["R:/conditions/sample_flow_L_per_min"]
+  response_time:
+    status: covered
+    fields: ["I:/performance/response_time_s"]
+  isotopologue:
+    status: covered
+    fields: ["R:/instrument/target_lines[]/isotopologue_id"]
+  cell_volume:
+    status: covered
+    fields: ["R:/instrument/cell/volume_cm3"]
+  pressure_shift_coefficient:
+    status: covered
+    fields: ["R:/instrument/target_lines[]/delta_air_cm1_per_atm"]
+  demodulation_phase:
+    status: covered
+    fields: ["R:/instrument/modulation/phase_rad", "I:/modulation/lockin_phase_error_rad"]
+  adc_resolution:
+    status: covered
+    fields: ["I:/detector/adc_bits"]
+  sample_conditioning:
+    status: covered
+    fields: ["R:/conditions/sample_conditioning"]
+  denoising_method:
+    status: covered
+    fields: ["R:/processing/denoising_method"]
+  uncertainty_budget:
+    status: covered
+    fields: ["R:/labels/species[]/concentration_uncertainty_ppm", "R:/processing/uncertainty_budget_note"]
+  laser_linewidth:
+    status: covered
+    fields: ["R:/instrument/laser/linewidth_MHz", "I:/laser/linewidth_MHz"]
+  cell_temperature_control:
+    status: covered
+    fields: ["R:/instrument/cell/temperature_control"]

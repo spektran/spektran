@@ -1,0 +1,923 @@
+# OpenGasSpec Gate G2 literature survey: per-paper parameter checklists
+# Scope: quantitative TDLAS gas measurements (direct absorption, DA, and
+# wavelength modulation spectroscopy, WMS), primarily 2013-2026, plus
+# foundational calibration-free WMS references.
+# Honesty policy: DOIs marked "doi-unverified" were not independently confirmed
+# during this survey; all entries correspond to real publications located via
+# web search or reliably known citation records. Metadata for entries without
+# the flag was verified against publisher/PubMed/PMC/OSTI pages during the survey
+# (2026-08-04).
+# "parameters" lists use the canonical snake_case names defined in
+# g2_parameter_superset.yaml and reflect what each paper reports (or requires)
+# to reproduce its measurement.
+
+survey_date: 2026-08-04
+n_papers: 23
+papers:
+
+  - id: rieker2009_cfwms
+    title: "Calibration-free wavelength-modulation spectroscopy for measurements of gas temperature and concentration in harsh environments"
+    authors: "G. B. Rieker, J. B. Jeffries, R. K. Hanson"
+    year: 2009
+    journal: "Applied Optics 48(29):5546-5560"
+    doi: "10.1364/AO.48.005546"
+    technique: WMS
+    target_gas: "H2O, CO2 (temperature + concentration)"
+    role: foundational
+    notes: "Defines 1f-normalized WMS-2f (2f/1f) calibration-free formalism; requires pre-characterized laser intensity/frequency modulation behavior."
+    parameters:
+      - target_gas
+      - target_transition
+      - line_strength
+      - lower_state_energy
+      - pressure_broadening_coefficients
+      - spectral_database_version
+      - line_shape_model
+      - laser_type
+      - laser_center_wavelength
+      - laser_tuning_coefficient
+      - laser_intensity_modulation_parameters
+      - modulation_frequency
+      - modulation_depth
+      - modulation_index
+      - harmonic_detection_scheme
+      - demodulation_method
+      - lock_in_filter_settings
+      - demodulation_phase
+      - optical_path_length
+      - gas_temperature
+      - gas_pressure
+      - mole_fraction_range
+      - matrix_gas
+      - detector_type
+      - detector_bandwidth
+      - calibration_method
+      - measurement_accuracy
+      - snr
+
+  - id: sun2013_scanned_wms
+    title: "Analysis of calibration-free wavelength-scanned wavelength modulation spectroscopy for practical gas sensing using tunable diode lasers"
+    authors: "K. Sun, X. Chao, R. Sur, C. S. Goldenstein, J. B. Jeffries, R. K. Hanson"
+    year: 2013
+    journal: "Measurement Science and Technology 24:125203"
+    doi: "10.1088/0957-0233/24/12/125203"
+    technique: WMS
+    target_gas: "H2O / generic TDL-accessible species (simulation-vs-measurement fitting)"
+    role: foundational
+    notes: "Simulation-based scanned-WMS retrieval; requires full injection-current tuning characterization (simultaneous intensity and wavelength modulation)."
+    parameters:
+      - target_gas
+      - target_transition
+      - line_strength
+      - lower_state_energy
+      - pressure_broadening_coefficients
+      - spectral_database_version
+      - line_shape_model
+      - laser_type
+      - laser_center_wavelength
+      - laser_operating_setpoint
+      - laser_tuning_coefficient
+      - laser_intensity_modulation_parameters
+      - wavelength_scan_range
+      - scan_rate
+      - scan_waveform
+      - wavelength_calibration_method
+      - modulation_frequency
+      - modulation_depth
+      - modulation_index
+      - harmonic_detection_scheme
+      - demodulation_method
+      - optical_path_length
+      - gas_temperature
+      - gas_pressure
+      - mole_fraction_range
+      - matrix_gas
+      - detector_type
+      - detector_bandwidth
+      - sampling_rate
+      - spectral_fitting_method
+      - calibration_method
+      - measurement_accuracy
+
+  - id: witzel2013_vcsel_engine
+    title: "VCSEL-based, high-speed, in situ TDLAS for in-cylinder water vapor measurements in IC engines"
+    authors: "O. Witzel, A. Klein, C. Meffert, S. Wagner, S. Kaiser, C. Schulz, V. Ebert"
+    year: 2013
+    journal: "Optics Express 21(17):19951-19965"
+    doi: "10.1364/OE.21.019951"
+    technique: DA
+    target_gas: "H2O (in-cylinder, crank-angle resolved)"
+    notes: "Calibration-free direct absorption at up to 100 us time resolution; SNR up to 29; precision 0.046 vol.% H2O (39 ppm*m)."
+    parameters:
+      - target_gas
+      - target_transition
+      - line_strength
+      - lower_state_energy
+      - pressure_broadening_coefficients
+      - broadening_temperature_exponent
+      - spectral_database_version
+      - line_shape_model
+      - laser_type
+      - laser_center_wavelength
+      - laser_output_power
+      - wavelength_scan_range
+      - scan_rate
+      - scan_waveform
+      - wavelength_calibration_method
+      - optical_path_length
+      - gas_temperature
+      - gas_pressure
+      - mole_fraction_range
+      - matrix_gas
+      - detector_type
+      - detector_bandwidth
+      - sampling_rate
+      - baseline_treatment
+      - spectral_fitting_method
+      - optical_fringe_level
+      - snr
+      - measurement_precision
+      - measurement_rate_time_resolution
+
+  - id: goldenstein2014_rde_wms
+    title: "High-bandwidth scanned-wavelength-modulation spectroscopy sensors for temperature and H2O in a rotating detonation engine"
+    authors: "C. S. Goldenstein, C. A. Almodovar, J. B. Jeffries, R. K. Hanson, C. M. Brophy"
+    year: 2014
+    journal: "Measurement Science and Technology 25:105104"
+    doi: "10.1088/0957-0233/25/10/105104"
+    technique: WMS
+    target_gas: "H2O + gas temperature (two-color)"
+    notes: "Two NIR TDLs (1391.7 / 1469.3 nm) modulated at 225/285 kHz, 50 kHz measurement rate, calibration-free scanned-WMS-2f/1f; detection limit 0.2% H2O."
+    parameters:
+      - target_gas
+      - target_transition
+      - line_strength
+      - lower_state_energy
+      - pressure_broadening_coefficients
+      - broadening_temperature_exponent
+      - spectral_database_version
+      - line_shape_model
+      - laser_type
+      - laser_center_wavelength
+      - laser_tuning_coefficient
+      - laser_intensity_modulation_parameters
+      - scan_rate
+      - modulation_frequency
+      - modulation_depth
+      - modulation_index
+      - harmonic_detection_scheme
+      - demodulation_method
+      - lock_in_filter_settings
+      - optical_path_length
+      - gas_temperature
+      - gas_pressure
+      - mole_fraction_range
+      - detector_type
+      - detector_bandwidth
+      - sampling_rate
+      - calibration_method
+      - detection_limit
+      - measurement_rate_time_resolution
+      - measurement_accuracy
+
+  - id: goldenstein2014_hp_wms
+    title: "Wavelength-modulation spectroscopy near 1.4 um for measurements of H2O and temperature in high-pressure and -temperature gases"
+    authors: "C. S. Goldenstein, R. M. Spearrin, J. B. Jeffries, R. K. Hanson"
+    year: 2014
+    journal: "Measurement Science and Technology"
+    doi: "doi-unverified"
+    technique: WMS
+    target_gas: "H2O + temperature (700-2400 K, 2-25 atm, shock-heated H2O-N2)"
+    notes: "WMS-2f/1f validated at high pressure where blended, non-Lorentzian lineshapes dominate; accuracy 1.5-3.5% against known conditions."
+    parameters:
+      - target_gas
+      - target_transition
+      - line_strength
+      - lower_state_energy
+      - pressure_broadening_coefficients
+      - broadening_temperature_exponent
+      - spectral_database_version
+      - line_shape_model
+      - laser_type
+      - laser_center_wavelength
+      - laser_tuning_coefficient
+      - laser_intensity_modulation_parameters
+      - modulation_frequency
+      - modulation_depth
+      - modulation_index
+      - harmonic_detection_scheme
+      - demodulation_method
+      - optical_path_length
+      - gas_temperature
+      - gas_pressure
+      - mole_fraction_range
+      - matrix_gas
+      - detector_type
+      - calibration_method
+      - measurement_accuracy
+      - snr
+
+  - id: klein2014_tdm_da_wms
+    title: "Rapid, time-division multiplexed, direct absorption- and wavelength modulation-spectroscopy"
+    authors: "A. Klein, O. Witzel, V. Ebert"
+    year: 2014
+    journal: "Sensors (MDPI) 14(11)"
+    doi: "doi-unverified"
+    technique: both
+    target_gas: "H2O (DA/WMS on the same instrument, time-multiplexed)"
+    notes: "Direct comparison of DA and WMS channels sharing one laser/detector chain; useful anchor for a schema that must serve both techniques."
+    parameters:
+      - target_gas
+      - target_transition
+      - line_strength
+      - pressure_broadening_coefficients
+      - spectral_database_version
+      - line_shape_model
+      - laser_type
+      - laser_center_wavelength
+      - wavelength_scan_range
+      - scan_rate
+      - scan_waveform
+      - wavelength_calibration_method
+      - modulation_frequency
+      - modulation_depth
+      - harmonic_detection_scheme
+      - demodulation_method
+      - optical_path_length
+      - gas_temperature
+      - gas_pressure
+      - mole_fraction_range
+      - detector_type
+      - sampling_rate
+      - baseline_treatment
+      - spectral_fitting_method
+      - calibration_method
+      - detection_limit
+      - allan_deviation_analysis
+      - measurement_precision
+
+  - id: sur2014_gasifier_wms
+    title: "TDLAS-based sensors for in situ measurement of syngas composition in a pressurized, oxygen-blown, entrained flow coal gasifier"
+    authors: "R. Sur, K. Sun, J. B. Jeffries, R. K. Hanson"
+    year: 2014
+    journal: "Applied Physics B"
+    doi: "doi-unverified"
+    technique: WMS
+    target_gas: "CO, CO2, CH4, H2O (multi-species, high pressure ~10-15 atm)"
+    notes: "Scanned-WMS-2f/1f in an engineering-scale gasifier; strong emphasis on interference, pressure broadening at high P, and window fouling immunity."
+    parameters:
+      - target_gas
+      - target_transition
+      - line_strength
+      - lower_state_energy
+      - pressure_broadening_coefficients
+      - broadening_temperature_exponent
+      - spectral_database_version
+      - line_shape_model
+      - interfering_species
+      - laser_type
+      - laser_center_wavelength
+      - laser_tuning_coefficient
+      - laser_intensity_modulation_parameters
+      - modulation_frequency
+      - modulation_depth
+      - modulation_index
+      - harmonic_detection_scheme
+      - optical_path_length
+      - gas_temperature
+      - gas_pressure
+      - mole_fraction_range
+      - matrix_gas
+      - detector_type
+      - detector_bandwidth
+      - calibration_method
+      - measurement_accuracy
+      - optical_fringe_level
+
+  - id: pogany2015_metrology_da
+    title: "Development and metrological characterization of a tunable diode laser absorption spectroscopy (TDLAS) spectrometer for simultaneous absolute measurement of carbon dioxide and water vapor"
+    authors: "A. Pogany, S. Wagner, O. Werhahn, V. Ebert"
+    year: 2015
+    journal: "Applied Spectroscopy 69(2):257-268"
+    doi: "10.1366/14-07575"
+    technique: DA
+    target_gas: "CO2, H2O (absolute, calibration-free, traceable)"
+    notes: "Metrology-grade dTDLAS: full uncertainty budget, traceable p/T/L measurement, line data uncertainties dominate; anchor paper for schema completeness."
+    parameters:
+      - target_gas
+      - target_transition
+      - line_strength
+      - pressure_broadening_coefficients
+      - pressure_shift_coefficient
+      - isotopologue
+      - spectral_database_version
+      - line_shape_model
+      - laser_type
+      - laser_center_wavelength
+      - wavelength_scan_range
+      - scan_rate
+      - wavelength_calibration_method
+      - optical_path_length
+      - cell_type
+      - cell_temperature_control
+      - gas_temperature
+      - gas_pressure
+      - mole_fraction_range
+      - matrix_gas
+      - sample_flow_rate
+      - detector_type
+      - sampling_rate
+      - baseline_treatment
+      - spectral_fitting_method
+      - calibration_method
+      - reference_gas_standard
+      - uncertainty_budget
+      - measurement_accuracy
+      - long_term_drift
+
+  - id: upadhyay2015_ram_nulling
+    title: "Calibration-free 2f WMS with in situ real-time laser characterization and 2f RAM nulling"
+    authors: "A. Upadhyay, A. L. Chakraborty"
+    year: 2015
+    journal: "Optics Letters 40(17):4086-4089"
+    doi: "10.1364/OL.40.004086"
+    technique: WMS
+    target_gas: "CH4 (1650 nm; concentration and pressure without laser pre-characterization)"
+    notes: "In situ real-time determination of laser intensity-modulation parameters and RAM nulling; removes need for offline laser characterization."
+    parameters:
+      - target_gas
+      - target_transition
+      - line_strength
+      - spectral_database_version
+      - line_shape_model
+      - laser_type
+      - laser_center_wavelength
+      - laser_tuning_coefficient
+      - laser_intensity_modulation_parameters
+      - modulation_frequency
+      - modulation_depth
+      - harmonic_detection_scheme
+      - demodulation_method
+      - demodulation_phase
+      - optical_path_length
+      - gas_temperature
+      - gas_pressure
+      - mole_fraction_range
+      - detector_type
+      - calibration_method
+      - measurement_accuracy
+
+  - id: li2016_ethane_icl
+    title: "Compact TDLAS based optical sensor for ppb-level ethane detection by use of a 3.34 um room-temperature CW interband cascade laser"
+    authors: "C. Li, L. Dong, C. Zheng, F. K. Tittel"
+    year: 2016
+    journal: "Sensors and Actuators B: Chemical 232:188-194"
+    doi: "10.1016/j.snb.2016.03.141"
+    technique: WMS
+    target_gas: "C2H6 (2996.88 cm-1, ppb level)"
+    notes: "2f/1f-WMS, 54.6 m multipass cell at <100 Torr; MDL ~1 ppbv (4 s), Allan-based 239 pptv at 208 s."
+    parameters:
+      - target_gas
+      - target_transition
+      - line_strength
+      - interfering_species
+      - spectral_database_version
+      - laser_type
+      - laser_center_wavelength
+      - laser_output_power
+      - laser_operating_setpoint
+      - scan_rate
+      - modulation_frequency
+      - modulation_depth
+      - harmonic_detection_scheme
+      - demodulation_method
+      - lock_in_filter_settings
+      - optical_path_length
+      - cell_type
+      - number_of_passes
+      - cell_volume
+      - gas_pressure
+      - gas_temperature
+      - mole_fraction_range
+      - matrix_gas
+      - sample_flow_rate
+      - sample_conditioning
+      - detector_type
+      - sampling_rate
+      - averaging_time
+      - calibration_method
+      - reference_gas_standard
+      - detection_limit
+      - allan_deviation_analysis
+      - response_time
+      - linearity
+
+  - id: li2016_qcl_dual_spec
+    title: "Simultaneous atmospheric CO, N2O and H2O detection using a single quantum cascade laser sensor based on dual-spectroscopy techniques"
+    authors: "J. Li, H. Deng, J. Sun, B. Yu, H. Fischer"
+    year: 2016
+    journal: "Sensors and Actuators B: Chemical 231:723-732"
+    doi: "doi-unverified"
+    technique: both
+    target_gas: "CO, N2O, H2O (4566 nm QCL; DAS self-calibrates WMS)"
+    notes: "Long-path DAS provides absolute concentrations used to calibrate higher-SNR WMS channel; precisions 0.21 ppb CO / 0.18 ppb N2O at 75 s."
+    parameters:
+      - target_gas
+      - target_transition
+      - line_strength
+      - interfering_species
+      - spectral_database_version
+      - line_shape_model
+      - laser_type
+      - laser_center_wavelength
+      - wavelength_scan_range
+      - scan_rate
+      - modulation_frequency
+      - modulation_depth
+      - harmonic_detection_scheme
+      - demodulation_method
+      - optical_path_length
+      - cell_type
+      - gas_pressure
+      - gas_temperature
+      - mole_fraction_range
+      - baseline_treatment
+      - spectral_fitting_method
+      - calibration_method
+      - detection_limit
+      - allan_deviation_analysis
+      - averaging_time
+      - measurement_precision
+      - detector_type
+      - sampling_rate
+
+  - id: zhao2016_stabilized_das
+    title: "Intensity-stabilized fast-scanned direct absorption spectroscopy instrumentation based on a distributed feedback laser with detection sensitivity down to 4x10^-6"
+    authors: "G. Zhao, W. Tan, M. Jia, J. Hou, W. Ma, L. Dong, L. Zhang, X. Feng, X. Wu, W. Yin, O. Axner, S. Jia"
+    year: 2016
+    journal: "Sensors (MDPI) 16(9):1544"
+    doi: "10.3390/s16091544"
+    technique: DA
+    target_gas: "near-IR demonstration species (DFB-laser DAS instrumentation)"
+    notes: "Fast-scanned DA with active intensity stabilization (RIN suppression); fractional-absorbance sensitivity 4e-6, fringe/baseline noise dominated."
+    parameters:
+      - target_gas
+      - target_transition
+      - line_shape_model
+      - laser_type
+      - laser_center_wavelength
+      - laser_output_power
+      - wavelength_scan_range
+      - scan_rate
+      - scan_waveform
+      - wavelength_calibration_method
+      - optical_path_length
+      - gas_pressure
+      - gas_temperature
+      - mole_fraction_range
+      - detector_type
+      - detector_bandwidth
+      - sampling_rate
+      - averaging_time
+      - baseline_treatment
+      - spectral_fitting_method
+      - optical_fringe_level
+      - detection_limit
+      - allan_deviation_analysis
+      - snr
+
+  - id: goldenstein2017_ir_review
+    title: "Infrared laser-absorption sensing for combustion gases"
+    authors: "C. S. Goldenstein, R. M. Spearrin, J. B. Jeffries, R. K. Hanson"
+    year: 2017
+    journal: "Progress in Energy and Combustion Science 60:132-176"
+    doi: "10.1016/j.pecs.2016.12.002"
+    technique: both
+    target_gas: "review (CO, CO2, H2O, CH4, NO, NH3, ... combustion species)"
+    role: review
+    notes: "Canonical review of DA and WMS sensor design; enumerates the full reporting chain from line selection through uncertainty."
+    parameters:
+      - target_gas
+      - target_transition
+      - line_strength
+      - lower_state_energy
+      - pressure_broadening_coefficients
+      - broadening_temperature_exponent
+      - pressure_shift_coefficient
+      - isotopologue
+      - spectral_database_version
+      - line_shape_model
+      - interfering_species
+      - laser_type
+      - laser_center_wavelength
+      - laser_output_power
+      - laser_linewidth
+      - wavelength_scan_range
+      - scan_rate
+      - scan_waveform
+      - laser_tuning_coefficient
+      - wavelength_calibration_method
+      - laser_intensity_modulation_parameters
+      - modulation_frequency
+      - modulation_depth
+      - modulation_index
+      - harmonic_detection_scheme
+      - demodulation_method
+      - optical_path_length
+      - cell_type
+      - gas_temperature
+      - gas_pressure
+      - mole_fraction_range
+      - matrix_gas
+      - detector_type
+      - detector_bandwidth
+      - sampling_rate
+      - baseline_treatment
+      - spectral_fitting_method
+      - calibration_method
+      - detection_limit
+      - snr
+      - measurement_precision
+      - measurement_accuracy
+      - measurement_rate_time_resolution
+
+  - id: shao2019_co_ch4_wms
+    title: "Simultaneous detection of atmospheric CO and CH4 based on TDLAS using a single 2.3 um DFB laser"
+    authors: "L. Shao, B. Fang, F. Zheng, X. Qiu, Q. He, J. Wei, C. Li, W. Zhao"
+    year: 2019
+    journal: "Spectrochimica Acta Part A: Molecular and Biomolecular Spectroscopy 222:117118"
+    doi: "10.1016/j.saa.2019.117118"
+    technique: WMS
+    target_gas: "CO, CH4 (neighboring lines near 2.33 um, single laser)"
+    notes: "WMS-2f/1f with Herriott multipass cell and FPGA lock-in; 48 h continuous atmospheric monitoring; Allan analysis for drift."
+    parameters:
+      - target_gas
+      - target_transition
+      - line_strength
+      - interfering_species
+      - spectral_database_version
+      - laser_type
+      - laser_center_wavelength
+      - laser_operating_setpoint
+      - scan_rate
+      - modulation_frequency
+      - modulation_depth
+      - harmonic_detection_scheme
+      - demodulation_method
+      - adc_resolution
+      - optical_path_length
+      - cell_type
+      - number_of_passes
+      - gas_pressure
+      - gas_temperature
+      - mole_fraction_range
+      - sample_flow_rate
+      - detector_type
+      - sampling_rate
+      - averaging_time
+      - calibration_method
+      - reference_gas_standard
+      - detection_limit
+      - allan_deviation_analysis
+      - long_term_drift
+      - linearity
+
+  - id: lou2019_breath_co2
+    title: "Near-infrared tunable diode laser absorption spectroscopy-based determination of carbon dioxide in human exhaled breath"
+    authors: "C. Lou, C. Jing, X. Wang, Y. Chen, J. Zhang, K. Hou, J. Yao, X. Liu"
+    year: 2019
+    journal: "Biomedical Optics Express 10(11):5486"
+    doi: "10.1364/BOE.10.005486"
+    technique: WMS
+    target_gas: "CO2 (exhaled breath, 6330.82 cm-1)"
+    notes: "VCSEL at 1579 nm, 20 m Herriott cell at reduced pressure (2.5 kPa), 10 kHz modulation; precision ~100 ppm at 168 s."
+    parameters:
+      - target_gas
+      - target_transition
+      - line_strength
+      - interfering_species
+      - isotopologue
+      - spectral_database_version
+      - laser_type
+      - laser_center_wavelength
+      - laser_output_power
+      - modulation_frequency
+      - modulation_depth
+      - harmonic_detection_scheme
+      - demodulation_method
+      - lock_in_filter_settings
+      - optical_path_length
+      - cell_type
+      - cell_volume
+      - gas_pressure
+      - sample_conditioning
+      - gas_temperature
+      - mole_fraction_range
+      - matrix_gas
+      - detector_type
+      - sampling_rate
+      - averaging_time
+      - calibration_method
+      - reference_gas_standard
+      - detection_limit
+      - measurement_precision
+      - response_time
+      - linearity
+
+  - id: li2022_co_icl_openpath
+    title: "CO detection system based on TDLAS using a 4.625 um interband cascaded laser"
+    authors: "K. Li, B. Wang, M. Yuan, Z. Yang, C. Yu, W. Zheng"
+    year: 2022
+    journal: "International Journal of Environmental Research and Public Health 19(19):12828"
+    doi: "10.3390/ijerph191912828"
+    technique: WMS
+    target_gas: "CO (open path ~8 m, mid-IR ICL)"
+    notes: "FPGA-driven modulation and lock-in 2f extraction over an open optical path; MDL ~10.32 ppm*m (path-integrated concentration units)."
+    parameters:
+      - target_gas
+      - target_transition
+      - line_strength
+      - spectral_database_version
+      - laser_type
+      - laser_center_wavelength
+      - scan_rate
+      - modulation_frequency
+      - modulation_depth
+      - harmonic_detection_scheme
+      - demodulation_method
+      - adc_resolution
+      - optical_path_length
+      - cell_type
+      - gas_temperature
+      - gas_pressure
+      - mole_fraction_range
+      - detector_type
+      - sampling_rate
+      - calibration_method
+      - detection_limit
+      - snr
+      - linearity
+
+  - id: duan2022_multipass_3gas
+    title: "A laser-based multipass absorption sensor for sub-ppm detection of methane, acetylene and ammonia"
+    authors: "W. Duan, F. Yan, Y. Wang, H. Zhang, L. Ma, D. Wen, W. Wang, G. Sheng, Q. Wang"
+    year: 2022
+    journal: "Sensors (MDPI) 22(2):556"
+    doi: "10.3390/s22020556"
+    technique: WMS
+    target_gas: "CH4, C2H2, NH3 (6046.95 / 6534.36 / 6612.70 cm-1)"
+    notes: "Three DFB lasers, compact 3 m multipass cell (75 mL), 3 kHz modulation with per-gas optimized depth; MDL 0.16-0.32 ppm at 1 s, 20-34 ppb Allan minimum."
+    parameters:
+      - target_gas
+      - target_transition
+      - line_strength
+      - interfering_species
+      - spectral_database_version
+      - laser_type
+      - laser_center_wavelength
+      - laser_operating_setpoint
+      - scan_rate
+      - modulation_frequency
+      - modulation_depth
+      - harmonic_detection_scheme
+      - demodulation_method
+      - optical_path_length
+      - cell_type
+      - number_of_passes
+      - cell_volume
+      - gas_pressure
+      - gas_temperature
+      - mole_fraction_range
+      - matrix_gas
+      - sample_flow_rate
+      - detector_type
+      - sampling_rate
+      - averaging_time
+      - calibration_method
+      - reference_gas_standard
+      - detection_limit
+      - allan_deviation_analysis
+      - linearity
+      - response_time
+
+  - id: festabianchet2022_ch4_flux
+    title: "A wavelength modulation spectroscopy-based methane flux sensor for quantification of venting sources at oil and gas sites"
+    authors: "S. A. Festa-Bianchet, S. P. Seymour, D. R. Tyner, M. R. Johnson"
+    year: 2022
+    journal: "Sensors (MDPI) 22(11):4175"
+    doi: "10.3390/s22114175"
+    technique: WMS
+    target_gas: "CH4 (0-100 vol.%, R1F1(1) line of 2v3 band at 6026.23 cm-1) + flow velocity"
+    notes: "WMS-2f at 10 kHz mod / 30 Hz sweep over 10.5 cm path; full-range mole fraction retrieval and mass-flux uncertainty budget."
+    parameters:
+      - target_gas
+      - target_transition
+      - line_strength
+      - spectral_database_version
+      - line_shape_model
+      - laser_type
+      - laser_center_wavelength
+      - scan_rate
+      - modulation_frequency
+      - modulation_depth
+      - harmonic_detection_scheme
+      - demodulation_method
+      - optical_path_length
+      - gas_pressure
+      - gas_temperature
+      - mole_fraction_range
+      - matrix_gas
+      - detector_type
+      - sampling_rate
+      - calibration_method
+      - reference_gas_standard
+      - measurement_accuracy
+      - uncertainty_budget
+      - measurement_rate_time_resolution
+
+  - id: lin2022_sensitivity_review
+    title: "Improvement of the detection sensitivity for tunable diode laser absorption spectroscopy: a review"
+    authors: "S. Lin, J. Chang, J. Sun, P. Xu"
+    year: 2022
+    journal: "Frontiers in Physics 10:853966"
+    doi: "10.3389/fphy.2022.853966"
+    technique: both
+    target_gas: "review (trace-gas TDLAS sensitivity enhancement)"
+    role: review
+    notes: "Surveys noise sources (fringe, RIN, drift) and mitigation (modulation optimization, denoising, averaging) across DA and WMS systems."
+    parameters:
+      - target_gas
+      - target_transition
+      - laser_type
+      - laser_center_wavelength
+      - modulation_frequency
+      - modulation_depth
+      - harmonic_detection_scheme
+      - demodulation_method
+      - denoising_method
+      - optical_path_length
+      - cell_type
+      - optical_fringe_level
+      - detector_type
+      - averaging_time
+      - baseline_treatment
+      - calibration_method
+      - detection_limit
+      - allan_deviation_analysis
+      - snr
+      - long_term_drift
+
+  - id: chang2023_o2_multipass
+    title: "Development of a stable oxygen sensor using a 761 nm DFB laser and multi-pass absorption spectroscopy for field measurements"
+    authors: "J. Chang, Q. He, M. Li"
+    year: 2023
+    journal: "Sensors (MDPI) 23(9):4274"
+    doi: "10.3390/s23094274"
+    technique: WMS
+    target_gas: "O2 (760.89 nm, 3.5-20.9 vol.%)"
+    notes: "WMS-2f/1f, 3.3 m Herriott cell, 2 kHz modulation; Allan MDL 540 ppmv at 1 s -> 90 ppmv at 60 s; field deployment stability."
+    parameters:
+      - target_gas
+      - target_transition
+      - line_strength
+      - spectral_database_version
+      - laser_type
+      - laser_center_wavelength
+      - laser_operating_setpoint
+      - scan_rate
+      - modulation_frequency
+      - modulation_depth
+      - harmonic_detection_scheme
+      - demodulation_method
+      - optical_path_length
+      - cell_type
+      - number_of_passes
+      - gas_pressure
+      - gas_temperature
+      - mole_fraction_range
+      - matrix_gas
+      - detector_type
+      - averaging_time
+      - calibration_method
+      - reference_gas_standard
+      - detection_limit
+      - allan_deviation_analysis
+      - response_time
+      - linearity
+      - long_term_drift
+
+  - id: jaeger2025_ch4_slip
+    title: "Calibration-free wavelength modulation spectroscopy approach for practical logging measurements of methane slip from natural gas engines"
+    authors: "N. S. B. Jaeger, M. Mhanna, J. Rochussen, P. Kirchen"
+    year: 2025
+    journal: "Applied Optics 64(4):1028-1035"
+    doi: "doi-unverified"
+    technique: WMS
+    target_gas: "CH4 (wet, hot exhaust of a marine NG engine; 20 Hz logging)"
+    notes: "Calibration-free 2f/1f matches calibrated 2f/1f within 2.17% over 3 h at sea; laser characterization and drift handling for long-duration field use."
+    parameters:
+      - target_gas
+      - target_transition
+      - line_strength
+      - pressure_broadening_coefficients
+      - spectral_database_version
+      - line_shape_model
+      - interfering_species
+      - laser_type
+      - laser_center_wavelength
+      - laser_tuning_coefficient
+      - laser_intensity_modulation_parameters
+      - scan_rate
+      - modulation_frequency
+      - modulation_depth
+      - modulation_index
+      - harmonic_detection_scheme
+      - demodulation_method
+      - optical_path_length
+      - gas_temperature
+      - gas_pressure
+      - mole_fraction_range
+      - matrix_gas
+      - detector_type
+      - sampling_rate
+      - calibration_method
+      - measurement_accuracy
+      - measurement_rate_time_resolution
+      - long_term_drift
+
+  - id: mu2025_ch4_denoise
+    title: "Sub-ppb methane detection via EMD-wavelet adaptive thresholding in wavelength modulation TDLAS: a hybrid denoising approach for trace gas sensing"
+    authors: "T. Mu, X. Tian, P. Ni, S. Chen, Y. Cao, G. Cheng"
+    year: 2025
+    journal: "Sensors (MDPI) 25(16):5167"
+    doi: "10.3390/s25165167"
+    technique: WMS
+    target_gas: "CH4 (1654 nm, 29.37 m multipass cell)"
+    notes: "6 kHz modulation; EMD + wavelet adaptive-threshold denoising lifts SNR 7.52 -> 29.79; MDL 0.53 ppb at 230 s (Allan)."
+    parameters:
+      - target_gas
+      - target_transition
+      - line_strength
+      - spectral_database_version
+      - laser_type
+      - laser_center_wavelength
+      - scan_rate
+      - modulation_frequency
+      - modulation_depth
+      - harmonic_detection_scheme
+      - demodulation_method
+      - denoising_method
+      - optical_path_length
+      - cell_type
+      - number_of_passes
+      - gas_pressure
+      - gas_temperature
+      - mole_fraction_range
+      - matrix_gas
+      - detector_type
+      - sampling_rate
+      - averaging_time
+      - detection_limit
+      - allan_deviation_analysis
+      - snr
+      - linearity
+
+  - id: meshcherinov2026_eddy
+    title: "An open-path eddy-covariance laser spectrometer for simultaneous monitoring of CO2, CH4, and H2O"
+    authors: "V. Meshcherinov, I. Gazizov, B. Pravuk, V. Kazakov, S. Zenevich, M. Spiridonov, S. Gazizov, G. Suvorov, O. Kuricheva, Y. Lebedev, I. Vinogradov, A. Rodin"
+    year: 2026
+    journal: "Sensors (MDPI) 26(2):462"
+    doi: "10.3390/s26020462"
+    technique: both
+    target_gas: "CO2, CH4, H2O (2.78 um + 3.24 um, open-path 135 cm four-pass, 20 Hz)"
+    notes: "TDLAS DA plus simplified WMS; 10 Hz precisions 311 ppb CO2 / 8.87 ppb CH4 / 788 ppb H2O; calibration linearity R2 ~0.999."
+    parameters:
+      - target_gas
+      - target_transition
+      - line_strength
+      - interfering_species
+      - spectral_database_version
+      - line_shape_model
+      - laser_type
+      - laser_center_wavelength
+      - laser_output_power
+      - wavelength_scan_range
+      - scan_rate
+      - modulation_frequency
+      - harmonic_detection_scheme
+      - demodulation_method
+      - optical_path_length
+      - cell_type
+      - number_of_passes
+      - gas_temperature
+      - gas_pressure
+      - mole_fraction_range
+      - detector_type
+      - sampling_rate
+      - baseline_treatment
+      - spectral_fitting_method
+      - calibration_method
+      - reference_gas_standard
+      - measurement_precision
+      - linearity
+      - measurement_rate_time_resolution
