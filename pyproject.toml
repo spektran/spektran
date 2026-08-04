@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "spektran"
-version = "0.1.0"
-description = "Open-source simulation engine, data standard, and ML benchmark suite for tunable diode laser absorption spectroscopy (TDLAS)"
+version = "0.2.0"
+description = "Open-source simulation engine, data standard, and ML benchmark suite for tunable diode laser absorption spectroscopy (TDLAS) — multi-species, multi-harmonic"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "Apache-2.0" }

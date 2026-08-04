@@ -1,6 +1,6 @@
 {
   "title": "SPEKTRAN: an open simulation engine, data standard, and ML benchmark for TDLAS",
-  "description": "Open-source simulation engine, data standard, and benchmark suite for machine learning on tunable diode laser absorption spectroscopy (TDLAS). Generates physically rigorous, fully reproducible synthetic spectra with realistic instrument noise and defines standardized tasks for concentration regression, spectral denoising, and cross-instrument generalization.",
+  "description": "Open-source simulation engine, data standard, and benchmark suite for machine learning on tunable diode laser absorption spectroscopy (TDLAS). Generates physically rigorous, fully reproducible synthetic spectra with realistic instrument noise. v0.2: multi-species (CH4, H2O, CO2, CO), higher-harmonic WMS (3f/4f), expanded benchmarks (T4-T6), and standardized tasks for concentration regression, spectral denoising, cross-instrument generalization, WMS concentration, drift compensation, and OOD detection.",
   "license": "Apache-2.0",
   "upload_type": "software",
   "keywords": [
