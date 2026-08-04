@@ -35,7 +35,7 @@ from .tips import tips_q_ratio
 # backward compatibility and as the accuracy baseline that `tips_q_ratio`
 # (see tips.py) is benchmarked against in tests/test_tips.py. Superseded as
 # the default by `tips_q_ratio` below.
-_LINEAR_MOLECULES = {"CO2", "N2O", "CO", "O2"}
+_LINEAR_MOLECULES = {"CO2", "N2O", "CO", "O2", "NO", "HCl", "HF"}
 
 
 def default_q_ratio(molecule: str, temperature_K: float, T_ref_K: float = T_REF_K) -> float:

@@ -6,9 +6,11 @@ and cached under ``.hitran_cache/``. The HITRAN edition and fetch date are
 recorded so that every record's provenance can pin the exact line data used.
 
 Offline use: ``LineList`` can be constructed directly from arrays, and
-``demo_ch4_2nu3()``, ``demo_h2o()``, ``demo_co2()``, ``demo_co()`` each return
-an APPROXIMATE built-in line list for examples and unit tests that must not
-touch the network. Official dataset generation always uses hapi-fetched data.
+``demo_ch4_2nu3()``, ``demo_h2o()``, ``demo_co2()``, ``demo_co()``,
+``demo_nh3()``, ``demo_no()``, ``demo_no2()``, ``demo_so2()``, ``demo_hcl()``,
+``demo_hf()`` each return an APPROXIMATE built-in line list for examples and
+unit tests that must not touch the network. Official dataset generation
+always uses hapi-fetched data.
 """
 
 from __future__ import annotations
@@ -28,7 +30,12 @@ MOLECULE_IDS = {
     "CO": 5,
     "CH4": 6,
     "O2": 7,
+    "NO": 8,
+    "SO2": 9,
+    "NO2": 10,
     "NH3": 11,
+    "HF": 14,
+    "HCl": 15,
 }
 
 # Molar mass of the principal isotopologue [amu] (HITRAN isotopologue metadata)
@@ -40,6 +47,11 @@ PRINCIPAL_ISO_MASS_AMU = {
     "CH4": 16.031300,
     "O2": 31.989830,
     "NH3": 17.026549,
+    "NO": 29.997989,
+    "SO2": 63.961901,
+    "NO2": 45.992904,
+    "HCl": 35.976678,
+    "HF": 20.006229,
 }
 
 DEFAULT_CACHE_DIR = ".hitran_cache"
@@ -239,6 +251,138 @@ def demo_co() -> LineList:
         n_air=np.array([0.70, 0.71]),
         delta_air=np.array([-0.0065, -0.0071]),
         elower_cm1=np.array([80.74, 107.66]),
+        source="builtin-demo (approximate values, not for production)",
+        hitran_data_version="n/a (demo)",
+    )
+
+
+def demo_nh3() -> LineList:
+    """Built-in APPROXIMATE NH3 line list near 6548 cm-1 (nu1+nu3 combination
+    band, ~1527 nm, used in industrial ammonia monitoring by TDLAS).
+
+    For offline examples and unit tests ONLY. Parameter values are
+    representative of this near-IR NH3 region but are NOT authoritative
+    HITRAN data -- official dataset generation must use :func:`fetch_lines`.
+    """
+    return LineList(
+        molecule="NH3",
+        nu0_cm1=np.array([6548.610, 6548.150, 6549.070]),
+        sw_cm_per_molec=np.array([1.5e-22, 8.2e-23, 5.1e-23]),
+        gamma_air=np.array([0.0720, 0.0695, 0.0740]),
+        gamma_self=np.array([0.430, 0.415, 0.445]),
+        n_air=np.array([0.69, 0.72, 0.67]),
+        delta_air=np.array([-0.0022, -0.0018, -0.0025]),
+        elower_cm1=np.array([396.52, 271.84, 521.18]),
+        source="builtin-demo (approximate values, not for production)",
+        hitran_data_version="n/a (demo)",
+    )
+
+
+def demo_no() -> LineList:
+    """Built-in APPROXIMATE NO line list near 1900 cm-1 (fundamental
+    v=1<-0 R-branch, ~5263 nm, used in combustion/emissions NO sensing).
+
+    For offline examples and unit tests ONLY. Parameter values are
+    representative of this mid-IR NO region but are NOT authoritative
+    HITRAN data -- official dataset generation must use :func:`fetch_lines`.
+    """
+    return LineList(
+        molecule="NO",
+        nu0_cm1=np.array([1900.076, 1900.523]),
+        sw_cm_per_molec=np.array([4.8e-20, 3.9e-20]),
+        gamma_air=np.array([0.0540, 0.0525]),
+        gamma_self=np.array([0.0680, 0.0665]),
+        n_air=np.array([0.73, 0.71]),
+        delta_air=np.array([-0.0003, -0.0005]),
+        elower_cm1=np.array([123.14, 178.92]),
+        source="builtin-demo (approximate values, not for production)",
+        hitran_data_version="n/a (demo)",
+    )
+
+
+def demo_no2() -> LineList:
+    """Built-in APPROXIMATE NO2 line list near 6324 cm-1 (2nu3 overtone,
+    ~1581 nm, used in near-IR NO2 TDLAS sensing for air quality).
+
+    For offline examples and unit tests ONLY. Parameter values are
+    representative of this near-IR NO2 region but are NOT authoritative
+    HITRAN data -- official dataset generation must use :func:`fetch_lines`.
+    """
+    return LineList(
+        molecule="NO2",
+        nu0_cm1=np.array([6324.180, 6324.650, 6325.100]),
+        sw_cm_per_molec=np.array([3.8e-24, 2.1e-24, 1.4e-24]),
+        gamma_air=np.array([0.0680, 0.0710, 0.0655]),
+        gamma_self=np.array([0.0820, 0.0845, 0.0795]),
+        n_air=np.array([0.68, 0.65, 0.71]),
+        delta_air=np.array([-0.0015, -0.0020, -0.0010]),
+        elower_cm1=np.array([457.82, 318.45, 596.10]),
+        source="builtin-demo (approximate values, not for production)",
+        hitran_data_version="n/a (demo)",
+    )
+
+
+def demo_so2() -> LineList:
+    """Built-in APPROXIMATE SO2 line list near 2500 cm-1 (nu3 fundamental,
+    ~4000 nm, used in stack emission and volcanic SO2 sensing).
+
+    For offline examples and unit tests ONLY. Parameter values are
+    representative of this mid-IR SO2 region but are NOT authoritative
+    HITRAN data -- official dataset generation must use :func:`fetch_lines`.
+    """
+    return LineList(
+        molecule="SO2",
+        nu0_cm1=np.array([2500.570, 2501.080, 2500.120]),
+        sw_cm_per_molec=np.array([8.5e-21, 5.2e-21, 3.1e-21]),
+        gamma_air=np.array([0.1050, 0.1020, 0.1080]),
+        gamma_self=np.array([0.1680, 0.1650, 0.1710]),
+        n_air=np.array([0.75, 0.73, 0.77]),
+        delta_air=np.array([-0.0045, -0.0038, -0.0052]),
+        elower_cm1=np.array([352.40, 231.88, 478.56]),
+        source="builtin-demo (approximate values, not for production)",
+        hitran_data_version="n/a (demo)",
+    )
+
+
+def demo_hcl() -> LineList:
+    """Built-in APPROXIMATE HCl line list near 2886 cm-1 (fundamental
+    v=1<-0 R-branch, ~3465 nm, used in HCl process monitoring).
+
+    For offline examples and unit tests ONLY. Parameter values are
+    representative of this mid-IR HCl region but are NOT authoritative
+    HITRAN data -- official dataset generation must use :func:`fetch_lines`.
+    """
+    return LineList(
+        molecule="HCl",
+        nu0_cm1=np.array([2885.977, 2886.450]),
+        sw_cm_per_molec=np.array([3.2e-19, 2.8e-19]),
+        gamma_air=np.array([0.0410, 0.0395]),
+        gamma_self=np.array([0.0520, 0.0505]),
+        n_air=np.array([0.75, 0.73]),
+        delta_air=np.array([-0.0052, -0.0048]),
+        elower_cm1=np.array([59.56, 89.34]),
+        source="builtin-demo (approximate values, not for production)",
+        hitran_data_version="n/a (demo)",
+    )
+
+
+def demo_hf() -> LineList:
+    """Built-in APPROXIMATE HF line list near 4139 cm-1 (fundamental
+    v=1<-0 R-branch, ~2416 nm, used in HF leak detection and process sensing).
+
+    For offline examples and unit tests ONLY. Parameter values are
+    representative of this near-IR HF region but are NOT authoritative
+    HITRAN data -- official dataset generation must use :func:`fetch_lines`.
+    """
+    return LineList(
+        molecule="HF",
+        nu0_cm1=np.array([4138.330, 4139.120]),
+        sw_cm_per_molec=np.array([2.0e-18, 1.6e-18]),
+        gamma_air=np.array([0.0380, 0.0365]),
+        gamma_self=np.array([0.0510, 0.0495]),
+        n_air=np.array([0.68, 0.66]),
+        delta_air=np.array([-0.0035, -0.0030]),
+        elower_cm1=np.array([41.11, 82.22]),
         source="builtin-demo (approximate values, not for production)",
         hitran_data_version="n/a (demo)",
     )

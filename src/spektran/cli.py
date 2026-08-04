@@ -60,7 +60,19 @@ def cmd_generate(args: argparse.Namespace) -> int:
     else:
         instruments = _load_instruments("instrument_config")
 
-    from .physics import demo_ch4_2nu3, demo_co, demo_co2, demo_h2o, fetch_lines
+    from .physics import (
+        demo_ch4_2nu3,
+        demo_co,
+        demo_co2,
+        demo_h2o,
+        demo_hcl,
+        demo_hf,
+        demo_nh3,
+        demo_no,
+        demo_no2,
+        demo_so2,
+        fetch_lines,
+    )
 
     gas = cfg.get("gas", {})
     conc = gas.get("concentration_ppm", {})
@@ -70,7 +82,11 @@ def cmd_generate(args: argparse.Namespace) -> int:
         lo, hi = cfg.get("wavenumber_range_cm1", [6045.0, 6049.0])
         lines = fetch_lines(molecule, lo, hi)
     elif source == "demo":
-        demo_fns = {"CH4": demo_ch4_2nu3, "H2O": demo_h2o, "CO2": demo_co2, "CO": demo_co}
+        demo_fns = {
+            "CH4": demo_ch4_2nu3, "H2O": demo_h2o, "CO2": demo_co2, "CO": demo_co,
+            "NH3": demo_nh3, "NO": demo_no, "NO2": demo_no2,
+            "SO2": demo_so2, "HCl": demo_hcl, "HF": demo_hf,
+        }
         if molecule not in demo_fns:
             print(f"No demo lines for {molecule}", file=sys.stderr)
             return 1

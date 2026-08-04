@@ -3,16 +3,17 @@
 Replaces the power-law approximation in :func:`absorption.default_q_ratio`
 with a 7th-order polynomial fit to the total internal partition sum Q(T),
 for the principal isotopologue of each supported molecule (CH4, H2O, CO2,
-CO). The target curve approximates the TIPS-2017 tables (R.R. Gamache et
-al., "Total internal partition sums for the HITRAN2016 database", JQSRT 203
-(2017) 70, doi:10.1016/j.jqsrt.2017.03.045):
+CO, NH3, NO, NO2, SO2, HCl, HF). The target curve approximates the TIPS-2017
+tables (R.R. Gamache et al., "Total internal partition sums for the
+HITRAN2016 database", JQSRT 203 (2017) 70, doi:10.1016/j.jqsrt.2017.03.045):
 
 - A rigid-rotor-harmonic-oscillator (RRHO) partition function built from
   standard published rotational constants and fundamental vibrational
   wavenumbers for each molecule (independent-mode harmonic approximation),
 - normalized so Q(296 K) matches the standard HITRAN reference values
   (Gordon et al., JQSRT 277 (2022) 107949): CH4 590.48, H2O 174.58,
-  CO2 286.09, CO 107.42,
+  CO2 286.09, CO 107.42, NH3 1725.22, NO 1142.47, NO2 13577.33,
+  SO2 6340.07, HCl 507.14, HF 41.47,
 - then least-squares fit (relative-error weighted) to a degree-7 polynomial
   in T over 70-3000 K.
 
@@ -96,13 +97,86 @@ _Q_COEFFS: dict[str, np.ndarray] = {
             -1.6565e-21,
         ]
     ),
+    "NH3": np.array(
+        [
+            -4.9997e01,
+            2.6053e00,
+            1.4004e-02,
+            -1.4566e-05,
+            2.2887e-08,
+            -1.0183e-11,
+            3.4138e-15,
+            -2.8572e-19,
+        ]
+    ),
+    "NO": np.array(
+        [
+            -2.1621e00,
+            3.9035e00,
+            -1.5792e-04,
+            -1.3076e-07,
+            1.0162e-09,
+            -6.6284e-13,
+            1.7980e-16,
+            -1.8168e-20,
+        ]
+    ),
+    "NO2": np.array(
+        [
+            -4.3571e02,
+            2.1596e01,
+            9.4426e-02,
+            -6.9209e-05,
+            1.6808e-07,
+            -7.1027e-11,
+            2.0650e-14,
+            -2.2344e-18,
+        ]
+    ),
+    "SO2": np.array(
+        [
+            -1.7674e02,
+            9.4088e00,
+            3.7537e-02,
+            -8.2305e-07,
+            6.5268e-08,
+            -1.7874e-11,
+            5.9631e-15,
+            -6.6443e-19,
+        ]
+    ),
+    "HCl": np.array(
+        [
+            6.0284e-01,
+            1.6984e00,
+            1.0629e-04,
+            -3.0977e-07,
+            3.7925e-10,
+            -1.7207e-13,
+            3.7096e-17,
+            -3.1516e-21,
+        ]
+    ),
+    "HF": np.array(
+        [
+            2.3472e-02,
+            1.3957e-01,
+            3.0936e-06,
+            -6.7599e-09,
+            5.1954e-12,
+            -4.4337e-16,
+            -2.7864e-19,
+            5.1776e-23,
+        ]
+    ),
 }
 
 
 def tips_q_total(molecule: str, temperature_K: float) -> float:
     """Total internal partition sum Q(T) for the principal isotopologue.
 
-    Raises ``KeyError`` for molecules outside {CH4, H2O, CO2, CO}.
+    Raises ``KeyError`` for molecules outside {CH4, H2O, CO2, CO, NH3, NO,
+    NO2, SO2, HCl, HF}.
     """
     coeffs = _Q_COEFFS[molecule]
     return float(np.polyval(coeffs[::-1], temperature_K))

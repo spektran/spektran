@@ -1,7 +1,20 @@
 """Forward physics: HITRAN line data, line shapes, Beer-Lambert absorption."""
 
 from .absorption import absorption_coefficient, line_strength_at_T, simulate_absorbance
-from .hitran import LineList, demo_ch4_2nu3, demo_co, demo_co2, demo_h2o, fetch_lines
+from .hitran import (
+    LineList,
+    demo_ch4_2nu3,
+    demo_co,
+    demo_co2,
+    demo_h2o,
+    demo_hcl,
+    demo_hf,
+    demo_nh3,
+    demo_no,
+    demo_no2,
+    demo_so2,
+    fetch_lines,
+)
 from .lineshape import (
     doppler_hwhm_cm1,
     gaussian_profile,
@@ -20,6 +33,12 @@ __all__ = [
     "demo_co",
     "demo_co2",
     "demo_h2o",
+    "demo_hcl",
+    "demo_hf",
+    "demo_nh3",
+    "demo_no",
+    "demo_no2",
+    "demo_so2",
     "doppler_hwhm_cm1",
     "fetch_lines",
     "gaussian_profile",
