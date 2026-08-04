@@ -1,0 +1,15 @@
+# Official v0 split: t4-val (CH4 WMS). Reproducible: pinned seed + configs.
+dataset_id: ch4-t4-val-v0
+instrument_config:
+  - configs/instruments/vi-wms-easy-04.yaml
+  - configs/instruments/vi-wms-medium-05.yaml
+  - configs/instruments/vi-wms-hard-06.yaml
+n_records: 500
+master_seed: 104002
+gas:
+  molecule: CH4
+  concentration_ppm: {low: 1.0, high: 1000.0, log_uniform: true}
+  path_length_m: 10.0
+  matrix_gas: N2
+n_points: 2000
+line_source: demo

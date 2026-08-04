@@ -50,3 +50,49 @@ def degradation_ratio(metric_held_out: float, metric_in_dist: float) -> float:
     1.0 = no degradation; the flagship T3 headline number (plan §6.1).
     """
     return float(metric_held_out / max(metric_in_dist, 1e-12))
+
+
+def peak_height_ratio_mae(y_true: np.ndarray, y_pred: np.ndarray) -> float:
+    """MAE for WMS 2f peak-height concentration regression (T4)."""
+    return mae(y_true, y_pred)
+
+
+def allan_variance(
+    series: np.ndarray, tau_points: int = 20, dt: float = 1.0
+) -> dict[str, list[float]]:
+    """Overlapping Allan deviation for a 1-D time series."""
+    n = len(series)
+    max_m = n // 2
+    ms = np.unique(np.geomspace(1, max_m, tau_points).astype(int))
+    s = np.insert(np.cumsum(series), 0, 0.0)
+    taus, adevs = [], []
+    for m in ms:
+        tau = m * dt
+        segments = n - 2 * m
+        if segments < 1:
+            continue
+        # s has n+1 entries (leading 0), so all three windows below must be
+        # sliced to the same `segments` length explicitly — s[m:-m] is off
+        # by one whenever m != 0, which silently breaks the m=0 edge case.
+        diff2 = (s[2 * m : 2 * m + segments] - 2 * s[m : m + segments] + s[:segments]) ** 2
+        adev = float(np.sqrt(np.mean(diff2) / (2.0 * tau * tau)))
+        taus.append(float(tau))
+        adevs.append(adev)
+    return {"taus": taus, "adevs": adevs}
+
+
+def ood_auroc(y_true: np.ndarray, y_scores: np.ndarray) -> float:
+    """Area under ROC curve for OOD instrument detection (T6).
+
+    y_true: 0 = in-distribution, 1 = out-of-distribution.
+    y_scores: model confidence that the sample is OOD.
+    """
+    pos = y_scores[y_true == 1]
+    neg = y_scores[y_true == 0]
+    n_pos, n_neg = len(pos), len(neg)
+    if n_pos == 0 or n_neg == 0:
+        return 0.5
+    count = 0.0
+    for p in pos:
+        count += np.sum(neg < p) + 0.5 * np.sum(neg == p)
+    return float(count / (n_pos * n_neg))
