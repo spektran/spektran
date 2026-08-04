@@ -2,7 +2,7 @@
 
 This roadmap is public and technical. It describes what the project intends to build, not what has been promised. Timelines are estimates. Contributions that accelerate any milestone are welcome.
 
-## Current state: v0.1.0-alpha (2026-08)
+## Current state: v0.2.0-alpha (2026-08)
 
 The TDLAS domain is fully functional:
 - Direct absorption (DA) and wavelength modulation (WMS) forward physics
@@ -13,36 +13,67 @@ The TDLAS domain is fully functional:
 - Noise realism envelope checks against 18-paper survey (G4)
 - HDF5 persistence + Hugging Face Hub integration
 - MkDocs documentation on GitHub Pages
+- TIPS partition-function polynomial for temperature scaling (CH4, H2O, CO2, CO)
+- Multi-species forward model with Beer-Lambert superposition
+- Schema v0.2 (higher harmonics, measurement block, backward compatible with v0.1)
+- 3f/4f WMS demodulation in generator
+- 9 virtual instruments (added 4-harmonic WMS config)
+- 6 benchmark tasks (T1-T6) with 8 dataset configs
+- Expanded CLI: `spektran generate`, `spektran benchmark`, `spektran download`
 
 ---
 
-## Phase 3: Depth & polish (v0.2.0)
+## Phase 3: Depth & polish (v0.2.0) — shipped 2026-08
 
 ### 3.1 HITRAN production run
-- Replace offline 3-line CH4 demo with full HITRAN fetch for all official splits
-- Add H2O, CO2, CO target molecules
-- Implement TIPS polynomial for accurate Q(T) ratio (replace power-law approximation)
+- [x] Add H2O, CO2, CO target molecules (demo line lists)
+- [x] Implement TIPS polynomial for accurate Q(T) ratio (replace power-law approximation)
+- [ ] Replace offline demo lines with full HITRAN fetch for all official splits *(deferred to Phase 3.1)*
 
 ### 3.2 Schema v0.2
-- Multi-species records (interferent + target in same cell)
-- Experimental-data fields (`data_origin: measured`, instrument metadata, uncertainty)
-- Versioned schema migration tool
+- [x] Multi-species records (interferent + target in same cell)
+- [x] Higher harmonics (demod_3f, demod_4f) signal slots
+- [x] Measurement block for experimental data fields
+- [x] Backward compatibility with v0.1 records
+- [ ] Versioned schema migration tool *(deferred to Phase 3.1)*
 
 ### 3.3 Enhanced WMS
-- Higher harmonics (3f, 4f) in demod chain
-- Nonlinear intensity modulation (laser diode current-tuning model)
-- WMS benchmark tasks (T4: 2f peak-height ratio → concentration)
+- [x] Higher harmonics (3f, 4f) in demod chain and generator
+- [x] WMS benchmark task (T4: 2f peak-height ratio → concentration)
+- [ ] Nonlinear intensity modulation (laser diode current-tuning model) *(deferred to Phase 4)*
 
 ### 3.4 Benchmark expansion
-- Time-series tasks (Allan variance prediction, drift compensation)
-- Anomaly detection task (out-of-distribution instrument identification)
-- Community leaderboard (static page or lightweight API)
+- [x] T4: WMS 2f concentration regression (MAE)
+- [x] T5: Time-series drift compensation (Allan variance improvement) — metrics and task spec defined; evaluation stub
+- [x] T6: Anomaly detection / OOD instrument identification (AUROC) — metrics and task spec defined; evaluation stub
+- [ ] Community leaderboard *(deferred to Phase 5)*
 
 ### 3.5 Quality-of-life
-- `spektran generate` CLI with progress bar and multi-format output (HDF5, Parquet, CSV)
-- `spektran benchmark run` one-command train-and-score for baselines
-- Pre-built dataset downloads via `spektran download`
+- [x] `spektran generate` CLI with timing output
+- [x] `spektran benchmark` one-command evaluation
+- [x] `spektran download` instructions for pre-built datasets
+- [ ] Multi-format output (Parquet, CSV) *(deferred to Phase 3.1)*
+- [ ] Docker image for reproducible environments *(deferred to Phase 3.1)*
+
+---
+
+## Phase 3.1: Polish & production (v0.2.x)
+
+### 3.1.1 HITRAN production splits
+- Full HITRAN fetch for all 8 official dataset configs
+- Isotopologue filtering for multi-species
+- CI-pinned HITRAN data snapshots for reproducibility
+
+### 3.1.2 Evaluation pipeline completion
+- T5 time-series evaluation (requires time-series HDF5 layout)
+- T6 OOD evaluation pipeline (requires OOD label format)
+- Full baselines for T4, T5, T6
+
+### 3.1.3 Developer experience
+- Parquet and CSV output formats in `spektran generate`
+- tqdm progress bar for generation
 - Docker image for reproducible environments
+- Versioned schema migration tool
 
 ---
 
@@ -64,7 +95,8 @@ The TDLAS domain is fully functional:
 - Benchmark: ring-down time → concentration
 
 ### 4.4 Cross-modality benchmark track
-- T5: Train on one modality, test on another (shared gas/concentration, different physics)
+- Train on one modality, test on another (shared gas/concentration, different physics)
+- Task IDs to be assigned when multi-modality data is available
 - Requires the `technique` field already present in the schema
 
 ---
