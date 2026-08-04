@@ -11,8 +11,8 @@ bound). Everything else is automated. Ordered; none blocks local development.
       Enable GitHub Pages (Actions build) for the docs site.
 - [ ] PyPI: register the `spektran` package name (first `twine upload` of
       an sdist/wheel built with `python -m build`, or PEP 694 reservation).
-- [x] Hugging Face: token configured (user `Deepnight`); official splits + card live at https://huggingface.co/datasets/Deepnight/spektran-ch4-v0  
-      Still open: create HF **org** `spektran` (web UI only) and transfer the dataset for canonical branding.
+- [x] Hugging Face: token configured (user `Deepnight`); official splits + card live at https://huggingface.co/datasets/spektran/spektran-ch4-v0  
+      HF org `spektran` created; dataset transferred from `Deepnight/` to `spektran/`.
 - [ ] Zenodo: link the GitHub repo (Zenodo-GitHub integration) so v1.0
       release auto-mints a DOI; `.zenodo.json` metadata is already in place.
 

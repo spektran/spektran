@@ -6,7 +6,7 @@ The official v0 splits are hosted on Hugging Face:
 
 ```python
 from datasets import load_dataset
-ds = load_dataset("Deepnight/spektran-ch4-v0")
+ds = load_dataset("spektran/spektran-ch4-v0")
 ```
 
 Everything below is for running the engine, regenerating data bit-for-bit,
