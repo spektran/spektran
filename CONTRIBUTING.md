@@ -2,13 +2,25 @@
 
 Thank you for your interest! Read access is fully open; write access (data ingestion, schema changes) goes through a curated flow: CI automated validation + maintainer review.
 
+## Contributor License Agreement (CLA)
+
+By submitting a pull request to this repository, you agree to the following terms:
+
+**Code contributions (Apache-2.0):** You grant the SPEKTRAN project and its maintainers a perpetual, worldwide, non-exclusive, royalty-free, irrevocable license to use, reproduce, modify, prepare derivative works of, publicly display, publicly perform, sublicense, and distribute your contribution and any derivative works under the Apache License 2.0. You represent that you have the legal right to grant this license.
+
+**Data contributions (CC BY 4.0):** If your contribution includes data (spectra, instrument configs, benchmark results), you grant a license under the Creative Commons Attribution 4.0 International License. You represent that you have the legal right to license the data under CC BY 4.0.
+
+**No obligation:** Submitting a contribution does not obligate the project to accept or merge it.
+
+The PR template includes a CLA checkbox that must be checked before merging.
+
 ## Code contributions
 
 1. Fork, create a feature branch, open a PR.
 2. CI must pass: unit tests, physics-correctness tests, schema validation, lint (`ruff`).
 3. Physics formulas must cite their literature source (DOI) in the docstring.
 4. All stochastic code must accept an explicit `seed`/`rng` argument. Non-reproducible default behavior is rejected.
-5. Code license: Apache-2.0. By submitting a PR you agree to license your contribution under Apache-2.0.
+5. Code license: Apache-2.0. By submitting a PR you agree to the CLA above.
 
 ## Schema changes
 
