@@ -1,4 +1,22 @@
-# Data schema (v0.1)
+# Data schema
+
+## Schema versions
+
+### v0.2 (current)
+
+Backward compatible with v0.1. New features:
+
+- **`schema_version`** is now an enum (`"0.1"` or `"0.2"`) instead of a const
+- **Higher harmonics**: `demod_3f` and `demod_4f` signal array slots for 3rd and 4th harmonic WMS demodulation
+- **`harmonic_scheme`** enum extended with `"3f"` and `"4f"` (full set: `"1f"`, `"2f"`, `"2f/1f"`, `"3f"`, `"4f"`, `"other"`)
+- **`measurement` block**: optional block for experimental-record metadata (`operator`, `date_utc`, `facility`, `instrument_serial`, `notes`), primarily for `data_origin: experimental/augmented`
+- **`harmonics` array** in the instrument config's `modulation` block: specifies which harmonics the instrument demodulates (default `[1, 2]`, extendable to `[1, 2, 3, 4]`)
+
+All v0.1 records validate against the v0.2 schema without modification.
+
+See [`schema/CHANGELOG.md`](https://github.com/spektran/spektran/blob/main/schema/CHANGELOG.md) for the full change history.
+
+### v0.1
 
 Every record = signal arrays (HDF5) + JSON metadata validated by
 [`schema/record.schema.json`](https://github.com/spektran/spektran/blob/main/schema/record.schema.json).

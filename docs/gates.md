@@ -12,6 +12,34 @@ All reports and reviewer verdicts are version-controlled under
 | G4 | Instrument noise statistics inside literature envelopes (18-paper anchors) | PASS + independent review |
 | G5 | Independent cold-start: install -> data -> train -> score from docs alone | see gates/reports/ |
 
+### Phase 3 extensions
+
+Phase 3 engine additions (TIPS polynomial, multi-species superposition,
+3f/4f demodulation) are covered by the existing G3 dual-implementation
+framework:
+
+- TIPS has its own cross-validation: independent reference implementation
+  (`tests/reference_impl/ref_tips.py`) with separately derived coefficients,
+  verified to < 0.5% relative error against the main implementation.
+- Multi-species superposition: `test_multi_species_absorbance_superposition`
+  (`tests/test_absorption.py`) confirms Beer-Lambert additivity numerically
+  (< 0.01% relative); `test_generate_record_with_interferent`
+  (`tests/test_generator.py`) exercises the full generator pipeline with a
+  CH4 target species plus an H2O interferent end to end.
+- 3f/4f demodulation reuses the existing `simulate_wms()` harmonic machinery
+  and the same independent reference implementation used for 1f/2f
+  (`ref_wms.py`'s Fourier-quadrature harmonic coefficients are generic in
+  harmonic order, not special-cased to 1f/2f). Dedicated tests check 3f/4f
+  output shape and physical plausibility; the G3-WMS random-point numerical
+  cross-validation sweep itself currently still samples only 1f/2f, so full
+  dual-implementation coverage of 3f/4f is open follow-up work rather than a
+  completed gate pass.
+
+No new gates were added: TIPS and multi-species superposition extend the
+existing G3 test suite directly, and 3f/4f demodulation shares G3's
+machinery and reference implementation without requiring new threshold
+scripts.
+
 Design principles: reviewers run in fresh sessions with read-only access;
 gate thresholds cannot be changed in the PR that passes them; every claim
 in the anchor tables is traceable to a cited paper.
