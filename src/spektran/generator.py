@@ -129,6 +129,8 @@ def generate_record(
         laser["center_wavenumber_cm1"],
         laser["scan_range_cm1"],
         laser.get("scan_nonlinearity_poly_cm1"),
+        tuning_model=laser.get("tuning_model"),
+        tuning_params=laser.get("tuning_params"),
     )
 
     # --- forward physics: clean absorbance ---

@@ -5,6 +5,7 @@ from .environment import jittered_conditions
 from .etalon import etalon_transmission, multi_etalon_transmission
 from .laser import (
     center_drift_cm1,
+    current_tuning_model,
     intensity_ramp,
     linewidth_convolve,
     scan_frequency_axis,
@@ -15,6 +16,7 @@ __all__ = [
     "adc_quantize",
     "baseline_polynomial",
     "center_drift_cm1",
+    "current_tuning_model",
     "etalon_transmission",
     "gain_nonlinearity",
     "intensity_fluctuation",

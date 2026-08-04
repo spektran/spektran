@@ -12,6 +12,13 @@
   instrument-detection task, stamped by `spektran generate` on records built
   from an `ood_task: true` dataset config. Additive; absent on all other
   records.
+- New optional `instrument.laser.tuning_model` (enum, currently
+  `"thermal_chirp"`) and `instrument.laser.tuning_params`
+  (`thermal_fraction`, `thermal_tau_norm`): physically motivated
+  current->frequency tuning model (instantaneous carrier chirp + lagged
+  thermal chirp) selectable as an alternative to
+  `scan_nonlinearity_poly_cm1`. Additive and opt-in; the polynomial path
+  remains the default.
 
 ## v0.1 (2026-08-04 — generator integration)
 

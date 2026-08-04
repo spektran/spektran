@@ -38,7 +38,26 @@
           "description": "Residual amplitude modulation, relative intensity amplitude."
         },
         "center_drift_cm1_per_s": { "$ref": "#/$defs/dist_or_number" },
-        "linewidth_MHz": { "$ref": "#/$defs/dist_or_number" }
+        "linewidth_MHz": { "$ref": "#/$defs/dist_or_number" },
+        "tuning_model": {
+          "enum": ["thermal_chirp"],
+          "description": "Optional physically-motivated current->frequency tuning model, replacing scan_nonlinearity_poly_cm1. 'thermal_chirp' splits scan_range_cm1 into an instantaneous current (plasma) term and a thermally-lagged term (see tuning_params)."
+        },
+        "tuning_params": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Parameters for tuning_model. Applies to 'thermal_chirp'.",
+          "properties": {
+            "thermal_fraction": {
+              "$ref": "#/$defs/dist_or_number",
+              "description": "Fraction of scan_range_cm1 due to thermal chirp (0 to 1); remainder is instantaneous current chirp."
+            },
+            "thermal_tau_norm": {
+              "$ref": "#/$defs/dist_or_number",
+              "description": "Thermal time constant normalized to scan duration (tau_th / T_scan)."
+            }
+          }
+        }
       }
     },
     "modulation": {
