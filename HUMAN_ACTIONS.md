@@ -1,36 +1,28 @@
-# Pending human actions
+# Human actions log
 
-Per plan §9, these are the only steps requiring a human (identity/credential
-bound). Everything else is automated. Ordered; none blocks local development.
+All identity/credential-bound actions completed as of v0.1.0 release. This file
+is now a historical record; future actions are tracked in `ROADMAP.md`.
 
-## 1. Platform registration (do soon — G1 name availability is perishable)
+## 1. Platform registration — ALL DONE
 
-- [x] GitHub: DONE — org `spektran` created; repo pushed; Pages enabled (docs live at https://spektran.github.io/spektran/); CI green  
-      (was: create org `spektran`, repo `spektran/spektran`, then
-      `git remote add origin ... && git push -u origin main` from this repo.
-      Enable GitHub Pages (Actions build) for the docs site.
-- [ ] PyPI: register the `spektran` package name (first `twine upload` of
-      an sdist/wheel built with `python -m build`, or PEP 694 reservation).
-- [x] Hugging Face: token configured (user `Deepnight`); official splits + card live at https://huggingface.co/datasets/spektran/spektran-ch4-v0  
-      HF org `spektran` created; dataset transferred from `Deepnight/` to `spektran/`.
-- [ ] Zenodo: link the GitHub repo (Zenodo-GitHub integration) so v1.0
-      release auto-mints a DOI; `.zenodo.json` metadata is already in place.
+- [x] GitHub: org `spektran` created; repo pushed; Pages enabled (docs live at https://spektran.github.io/spektran/); CI green
+- [x] PyPI: `spektran` v0.1.0 published via Trusted Publisher (OIDC, no token). Live at https://pypi.org/project/spektran/
+- [x] Hugging Face: org `spektran` created; dataset transferred to `spektran/spektran-ch4-v0`. Live at https://huggingface.co/datasets/spektran/spektran-ch4-v0
+- [x] Zenodo: GitHub repo linked; DOI `10.5281/zenodo.21790394` auto-minted on v0.1.0 release. Written into `CITATION.cff`.
 
-## 2. Token configuration
+## 2. Token configuration — ALL DONE
 
-- [x] `HF_TOKEN`: DONE — push executed 2026-08-04 (pushes the official v0 splits;
-      run after generating data locally — see docs/quickstart.md).
-- [ ] GitHub Actions secrets: none required for CI as written (public,
-      hermetic); PyPI publishing can use Trusted Publishers when set up.
+- [x] `HF_TOKEN`: push executed 2026-08-04 (4 splits, 7500 records, CC BY 4.0 card)
+- [x] GitHub Actions: PyPI uses Trusted Publishers (OIDC), no secrets needed. `pypi` environment created on GitHub.
 
-## 3. After registration
+## 3. Release — DONE
 
-- [x] `push_to_hf.py`: DONE — 4 splits (7500 records) uploaded with CC BY 4.0 card.
-- [ ] Update README badges/links if the final org name differs.
-- [ ] Cut tag `v0.1.0` -> triggers Zenodo DOI; put the DOI into CITATION.cff.
+- [x] `push_to_hf.py`: 4 splits uploaded
+- [x] All links updated to `spektran/` org branding
+- [x] Tag `v0.1.0` cut; Zenodo DOI minted; DOI written into `CITATION.cff`
 
-## 4. Outward communication (Phase 3, drafts will be prepared by the agent)
+## 4. Outward communication (Phase 3, future)
 
-- [ ] Data-descriptor paper submission (agent drafts; human signs/submits).
-- [ ] Emails inviting groups to contribute validation data (agent drafts;
-      human reviews and sends).
+- [ ] Data-descriptor paper submission (JOSS/SoftwareX; agent drafts, human signs/submits)
+- [ ] Emails inviting groups to contribute validation data
+- [ ] Trademark registration for "SPEKTRAN" and "SPEKTRAN Verified"
