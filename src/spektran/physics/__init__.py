@@ -22,6 +22,13 @@ from .lineshape import (
     lorentz_profile,
     voigt_profile,
 )
+from .ndir import (
+    bandpass_filter,
+    ndir_detector_signal,
+    ndir_ratio,
+    planck_spectral_radiance,
+    simulate_ndir,
+)
 from .tips import tips_q_ratio
 from .wms import WMSConfig, lockin_demodulate, simulate_wms
 
@@ -29,6 +36,7 @@ __all__ = [
     "LineList",
     "WMSConfig",
     "absorption_coefficient",
+    "bandpass_filter",
     "demo_ch4_2nu3",
     "demo_co",
     "demo_co2",
@@ -46,7 +54,11 @@ __all__ = [
     "lockin_demodulate",
     "lorentz_hwhm_cm1",
     "lorentz_profile",
+    "ndir_detector_signal",
+    "ndir_ratio",
+    "planck_spectral_radiance",
     "simulate_absorbance",
+    "simulate_ndir",
     "simulate_wms",
     "tips_q_ratio",
     "voigt_profile",
