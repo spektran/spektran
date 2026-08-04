@@ -1,0 +1,175 @@
+{
+  "gate": "G4",
+  "date": "2026-08-04",
+  "anchors_source": "configs/instruments/literature_anchors.yaml (18 papers)",
+  "method": {
+    "n_records_per_instrument": 24,
+    "n_scans_time_series": 480,
+    "scan_interval_s": 0.5,
+    "reference_condition": "100.0 ppm CH4, 10 m, 296 K, 1 atm",
+    "seed": 20260811
+  },
+  "envelopes": {
+    "snr": [
+      11.5,
+      464.0
+    ],
+    "nea": [
+      1.09e-06,
+      0.00036
+    ],
+    "fringe": [
+      3.7e-05,
+      0.00036
+    ],
+    "allan_turnover_s": [
+      9.7,
+      215.0
+    ]
+  },
+  "instruments": [
+    {
+      "instrument": "vi-da-easy-01",
+      "technique": "TDLAS-DA",
+      "held_out": false,
+      "nea_median": 4.3764034181777996e-05,
+      "snr_median": 357.1248468009337,
+      "fringe_total_median": 6.605571660841699e-05,
+      "allan_turnover_s": 32.0,
+      "allan_min_ppm": 0.011405542349485294,
+      "checks": {
+        "nea_in_envelope": true,
+        "snr_in_envelope": true,
+        "fringe_in_envelope": true,
+        "allan_turnover_in_envelope": true
+      },
+      "pass": true
+    },
+    {
+      "instrument": "vi-da-hard-03",
+      "technique": "TDLAS-DA",
+      "held_out": false,
+      "nea_median": 0.00020902898871538153,
+      "snr_median": 74.72172467432677,
+      "fringe_total_median": 0.00029647955593379525,
+      "allan_turnover_s": 32.0,
+      "allan_min_ppm": 0.49720543906327147,
+      "checks": {
+        "nea_in_envelope": true,
+        "snr_in_envelope": true,
+        "fringe_in_envelope": true,
+        "allan_turnover_in_envelope": true
+      },
+      "pass": true
+    },
+    {
+      "instrument": "vi-da-heldout-07",
+      "technique": "TDLAS-DA",
+      "held_out": true,
+      "nea_median": 0.00015516943248538857,
+      "snr_median": 101.04444661100449,
+      "fringe_total_median": 0.00022666183790126347,
+      "allan_turnover_s": 32.0,
+      "allan_min_ppm": 0.18709197158971463,
+      "checks": {
+        "nea_in_envelope": true,
+        "snr_in_envelope": true,
+        "fringe_in_envelope": true,
+        "allan_turnover_in_envelope": true
+      },
+      "pass": true
+    },
+    {
+      "instrument": "vi-da-medium-02",
+      "technique": "TDLAS-DA",
+      "held_out": false,
+      "nea_median": 0.00010851907587129477,
+      "snr_median": 144.7815492159793,
+      "fringe_total_median": 0.00021136059527674953,
+      "allan_turnover_s": 16.0,
+      "allan_min_ppm": 0.21465697892561017,
+      "checks": {
+        "nea_in_envelope": true,
+        "snr_in_envelope": true,
+        "fringe_in_envelope": true,
+        "allan_turnover_in_envelope": true
+      },
+      "pass": true
+    },
+    {
+      "instrument": "vi-wms-easy-04",
+      "technique": "TDLAS-WMS",
+      "held_out": false,
+      "nea_median": 4.755528218836001e-05,
+      "snr_median": 328.9213704703942,
+      "fringe_total_median": 7.63026593279893e-05,
+      "allan_turnover_s": 16.0,
+      "allan_min_ppm": 0.00890336550958323,
+      "checks": {
+        "nea_in_envelope": true,
+        "snr_in_envelope": true,
+        "fringe_in_envelope": true,
+        "allan_turnover_in_envelope": true
+      },
+      "pass": true
+    },
+    {
+      "instrument": "vi-wms-hard-06",
+      "technique": "TDLAS-WMS",
+      "held_out": false,
+      "nea_median": 0.00020547936964670027,
+      "snr_median": 76.57664869803469,
+      "fringe_total_median": 0.00029685370914268617,
+      "allan_turnover_s": 32.0,
+      "allan_min_ppm": 0.3837949539940325,
+      "checks": {
+        "nea_in_envelope": true,
+        "snr_in_envelope": true,
+        "fringe_in_envelope": true,
+        "allan_turnover_in_envelope": true
+      },
+      "pass": true
+    },
+    {
+      "instrument": "vi-wms-heldout-08",
+      "technique": "TDLAS-WMS",
+      "held_out": true,
+      "nea_median": 0.00013689094986791986,
+      "snr_median": 114.33758919567603,
+      "fringe_total_median": 0.00022895111491327635,
+      "allan_turnover_s": 32.0,
+      "allan_min_ppm": 0.20978169838300118,
+      "checks": {
+        "nea_in_envelope": true,
+        "snr_in_envelope": true,
+        "fringe_in_envelope": true,
+        "allan_turnover_in_envelope": true
+      },
+      "pass": true
+    },
+    {
+      "instrument": "vi-wms-medium-05",
+      "technique": "TDLAS-WMS",
+      "held_out": false,
+      "nea_median": 0.00011118538027158847,
+      "snr_median": 140.6526677688286,
+      "fringe_total_median": 0.00021695479518283272,
+      "allan_turnover_s": 32.0,
+      "allan_min_ppm": 0.14738612653492564,
+      "checks": {
+        "nea_in_envelope": true,
+        "snr_in_envelope": true,
+        "fringe_in_envelope": true,
+        "allan_turnover_in_envelope": true
+      },
+      "pass": true
+    }
+  ],
+  "family_spread": {
+    "min_nea_below_anchor_p50": true,
+    "max_nea_above_half_anchor_max": true,
+    "max_snr_above_anchor_p50": true
+  },
+  "known_limitation": "Validates statistical similarity of derived indicators to published systems, not point-wise physical truth (plan \u00a79 G4).",
+  "pass": true
+}

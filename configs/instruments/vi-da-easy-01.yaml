@@ -13,14 +13,16 @@ laser:
   linewidth_MHz: {dist: uniform, low: 1.0, high: 5.0}
 etalons:
   - free_spectral_range_cm1: {dist: uniform, low: 0.8, high: 1.2}
-    amplitude_rel: {dist: loguniform, low: 5.0e-5, high: 2.0e-4}
+    amplitude_rel: {dist: loguniform, low: 4.0e-5, high: 1.2e-4}
     phase_rad: {dist: uniform, low: 0.0, high: 6.283185307}
+    phase_drift_rad_per_s: {dist: uniform, low: 3.0e-4, high: 1.5e-3}
 optics:
+  transmittance_drift_rel_per_s: {dist: loguniform, low: 1.0e-6, high: 1.0e-5}
   intensity_ramp_slope_rel: {dist: uniform, low: 0.1, high: 0.3}
   baseline_poly_rel:
     - {dist: normal, mean: 0.0, sigma: 0.005}
 detector:
-  white_noise_rel: {dist: loguniform, low: 2.0e-5, high: 8.0e-5}
+  white_noise_rel: {dist: loguniform, low: 2.5e-5, high: 8.0e-5}
   adc_bits: 16
 environment:
   temperature_K: 296.0

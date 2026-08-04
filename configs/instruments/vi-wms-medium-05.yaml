@@ -17,14 +17,16 @@ modulation:
   lowpass_cutoff_Hz: 1000.0
 etalons:
   - free_spectral_range_cm1: {dist: uniform, low: 0.6, high: 1.0}
-    amplitude_rel: {dist: loguniform, low: 2.0e-4, high: 1.0e-3}
+    amplitude_rel: {dist: loguniform, low: 8.0e-5, high: 2.4e-4}
     phase_rad: {dist: uniform, low: 0.0, high: 6.283185307}
+    phase_drift_rad_per_s: {dist: uniform, low: 8.0e-4, high: 3.0e-3}
   - free_spectral_range_cm1: {dist: uniform, low: 0.15, high: 0.35}
-    amplitude_rel: {dist: loguniform, low: 1.0e-4, high: 5.0e-4}
+    amplitude_rel: {dist: loguniform, low: 4.0e-5, high: 1.2e-4}
     phase_rad: {dist: uniform, low: 0.0, high: 6.283185307}
+    phase_drift_rad_per_s: {dist: uniform, low: 8.0e-4, high: 3.0e-3}
 detector:
-  white_noise_rel: {dist: loguniform, low: 8.0e-5, high: 3.0e-4}
-  one_over_f_sigma_rel: {dist: loguniform, low: 3.0e-5, high: 2.0e-4}
+  white_noise_rel: {dist: loguniform, low: 7.0e-5, high: 2.0e-4}
+  one_over_f_sigma_rel: {dist: loguniform, low: 3.0e-5, high: 1.0e-4}
   one_over_f_slope: {dist: uniform, low: 0.9, high: 1.2}
 environment:
   temperature_K: 296.0

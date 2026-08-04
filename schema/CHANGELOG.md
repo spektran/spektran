@@ -1,5 +1,14 @@
 # Schema changelog
 
+## v0.1 (2026-08-04 — generator integration)
+
+- 2026-08-04 (later): `instrument` schema additions driven by the generator
+  implementation: `detector.one_over_f_sigma_rel` (total sigma of the 1/f
+  component), `optics.intensity_ramp_slope_rel` /
+  `optics.intensity_ramp_curvature_rel` (laser power change over the current
+  scan), `etalons[].phase_rad` (per-record fringe phase). All carry unit
+  suffixes; unit lint re-run clean; G2 coverage unaffected (additive).
+
 ## v0.1 (2026-08-04 — G2 candidate)
 
 - 2026-08-04: Literature-driven extension after the Gate G2 survey

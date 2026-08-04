@@ -1,0 +1,295 @@
+# OpenGasSpec Gate G4 literature anchors: reported numeric performance metrics
+# extracted from the Gate G2 survey papers (docs/literature/g2_papers.yaml).
+# Extraction date: 2026-08-04. Sources: survey notes cross-checked/extended via
+# open-access full texts (PMC mirrors of MDPI/BOE papers) and publisher
+# abstracts recovered by web search. Every value below is traceable to a paper
+# id from g2_papers.yaml and carries the context needed to interpret it.
+# Honesty policy: no value was invented; entries marked "derived" are simple
+# arithmetic on numbers reported in the paper, with the derivation stated.
+# Metrics a paper did not report are simply absent.
+
+survey_date: 2026-08-04
+n_papers: 18   # papers contributing at least one numeric metric below
+
+metrics:
+
+  snr:
+    unit: dimensionless (linear amplitude ratio)
+    description: >
+      Signal-to-noise ratio of the absorbance (DA) or harmonic (2f / 2f-1f)
+      signal, as defined by each paper. Definitions are heterogeneous
+      (single-scan 1-sigma SNR vs peak/noise ratio of averaged 2f traces).
+    values:
+      - {paper: witzel2013_vcsel_engine, value: 29,
+         context: "best single-scan 1-sigma SNR of DA H2O absorbance signal, in-cylinder IC engine, 100 us time resolution"}
+      - {paper: klein2014_tdm_da_wms, value: 217,
+         context: "dTDLAS absorbance signal at 3500 ppmv H2O (peak absorbance 3.4e-2), 12.7 cm path"}
+      - {paper: klein2014_tdm_da_wms, value: 19,
+         context: "dTDLAS absorbance signal at 280 ppmv H2O (peak absorbance 3.1e-3)"}
+      - {paper: klein2014_tdm_da_wms, value: 98,
+         context: "WMS-2f/1f channel at 280 ppmv H2O; 5x improvement over simultaneous dTDLAS"}
+      - {paper: lou2019_breath_co2, value: 97.42,
+         context: "2f signal SNR at ~2.5% CO2 (breath), 20 m Herriott cell, 2.5 kPa"}
+      - {paper: chang2023_o2_multipass, value: 597,
+         context: "derived: 2f amplitude 1.206 mV / noise 2.02 uV at 3.5% O2 (paper reports 27.06 dB); 3.3 m multipass"}
+      - {paper: mu2025_ch4_denoise, value: 7.52,
+         context: "raw 2f-signal SNR before denoising, CH4 at 1654 nm, 29.37 m multipass"}
+      - {paper: mu2025_ch4_denoise, value: 29.79,
+         context: "2f-signal SNR after EMD + wavelet adaptive-threshold denoising (same system)"}
+    n_values: 8
+    p5: 11.5
+    p50: 63.6
+    p95: 464
+
+  noise_equivalent_absorbance:
+    unit: dimensionless (fractional absorbance / optical density)
+    description: >
+      Minimum detectable (noise-equivalent) absorbance. Only 4 values were
+      recoverable, so min/median/max are given instead of p5/p50/p95.
+    values:
+      - {paper: zhao2016_stabilized_das, value: 4.0e-6,
+         context: "1-sigma fractional-absorbance detection limit, intensity-stabilized fast-scanned DAS, 1 s averaging (1 Hz bandwidth), 40 cm cell; ~2 orders above shot-noise limit of 1.6e-8"}
+      - {paper: duan2022_multipass_3gas, value: 1.0e-4,
+         context: "minimum detectable absorbance criterion (0.01%) used to state per-gas MDLs, 3.0 m multipass WMS-2f/1f"}
+      - {paper: lin2022_sensitivity_review, value: 1.093e-6,
+         context: "review-cited best case: absorption sensitivity for H2O at 1368.597 nm over only 10 cm path (corresponds to 71.8 ppb); value originates from a system surveyed in the review, doi of primary source not resolved here"}
+      - {paper: klein2014_tdm_da_wms, value: 1.6e-4,
+         context: "derived: peak absorbance 3.1e-3 / SNR 19 (dTDLAS channel at 280 ppmv, single scan); consistent with 3.4e-2/217 = 1.57e-4 at high concentration"}
+    n_values: 4
+    min: 1.09e-6
+    median: 5.2e-5
+    max: 1.6e-4
+
+  detection_limit:
+    unit: as reported per entry (ppb, ppm, ppm*m); ppb_equiv used for statistics
+    description: >
+      Reported minimum detection limit / precision with its averaging time.
+      Statistics are computed over the best-reported ppb-equivalent volumetric
+      values per paper-species (path-integrated ppm*m entries excluded from
+      stats). NOTE: averaging times, sigma conventions (1-sigma vs 3-sigma) and
+      species differ across entries; the percentiles describe the spread of the
+      literature, not a like-for-like comparison.
+    values:
+      - {paper: witzel2013_vcsel_engine, value: 39, unit: "ppm*m",
+         context: "1-sigma H2O precision (0.046 vol%), 100 us resolution, in-cylinder; path-integrated, excluded from ppb stats"}
+      - {paper: goldenstein2014_rde_wms, value: 2.0e6, unit: ppb,
+         context: "0.2% H2O detection limit at 50 kHz measurement rate, scanned-WMS-2f/1f, rotating detonation engine"}
+      - {paper: li2016_ethane_icl, value: 1.0, unit: ppb,
+         context: "C2H6 MDL, WMS, 4 s averaging, 54.6 m multipass, <100 Torr (survey notes; companion Appl. Phys. B paper reports 1.19 ppbv)"}
+      - {paper: li2016_ethane_icl, value: 0.239, unit: ppb,
+         context: "C2H6 Allan-minimum MDL (239 pptv) at 208 s"}
+      - {paper: li2016_qcl_dual_spec, value: 1.64, unit: ppb,
+         context: "CO precision at 1 s (Allan), DAS-calibrated WMS-2f, 4566 nm QCL"}
+      - {paper: li2016_qcl_dual_spec, value: 0.21, unit: ppb,
+         context: "CO precision at 75 s averaging"}
+      - {paper: li2016_qcl_dual_spec, value: 0.18, unit: ppb,
+         context: "N2O precision at 75 s averaging (1.15 ppb at 1 s)"}
+      - {paper: shao2019_co_ch4_wms, value: 0.73, unit: ppb,
+         context: "CO Allan-minimum MDL at 122 s, 72 m Herriott cell, 2.3 um DFB"}
+      - {paper: shao2019_co_ch4_wms, value: 36, unit: ppb,
+         context: "CH4 Allan-minimum MDL at 137 s (same instrument)"}
+      - {paper: lou2019_breath_co2, value: 7.69e5, unit: ppb,
+         context: "minimum detectable CO2 concentration 0.769 permille (3-sigma), 20 m cell at 2.5 kPa; precision ~100 ppm at 168 s"}
+      - {paper: li2022_co_icl_openpath, value: 10.32, unit: "ppm*m",
+         context: "CO MDL over ~8 m open path, mid-IR ICL WMS-2f; path-integrated, excluded from ppb stats"}
+      - {paper: duan2022_multipass_3gas, value: 320, unit: ppb,
+         context: "CH4 MDL at 1 s, 3.0 m multipass WMS-2f/1f (C2H2 160 ppb, NH3 230 ppb at 1 s)"}
+      - {paper: duan2022_multipass_3gas, value: 20, unit: ppb,
+         context: "CH4 Allan-minimum MDL at ~60 s (C2H2 ~20 ppb at 100 s; NH3 34 ppb at 148 s)"}
+      - {paper: chang2023_o2_multipass, value: 5.4e5, unit: ppb,
+         context: "O2 MDL 0.054% (540 ppmv) at 1 s, 3.3 m multipass; 90 ppmv at ~60 s"}
+      - {paper: mu2025_ch4_denoise, value: 0.53, unit: ppb,
+         context: "CH4 Allan MDL at 230 s after EMD-wavelet denoising (2.31 ppb before denoising)"}
+      - {paper: meshcherinov2026_eddy, value: 0.8, unit: ppb,
+         context: "CH4 Allan minimum at 19.4 s, 135 cm open four-pass path (CO2 57.5 ppb at 13 s; H2O 129 ppb at 13.6 s)"}
+    n_values_in_stats: 15   # ppb-equivalent best-reported per paper-species
+    stats_basis: "[0.18, 0.21, 0.239, 0.53, 0.73, 0.8, 20, 20, 34, 36, 57.5, 129, 9.0e4, 7.69e5, 2.0e6] ppb"
+    p5: 0.20
+    p50: 20
+    p95: 1.14e6
+
+  allan_normalized_ppb_sqrtHz:
+    unit: "ppb Hz^-1/2 (ppb at 1 s equivalent)"
+    description: >
+      Short-term precision normalized to 1 s / unit bandwidth. Entries marked
+      "derived" apply tau^-1/2 scaling or path division to reported numbers.
+      Spread is dominated by species/absorption-strength differences (O2 at
+      percent level vs mid-IR CO at ppb level); heavy caveat on percentiles.
+    values:
+      - {paper: klein2014_tdm_da_wms, value: 268,
+         context: "derived: reported optimum WMS normalized sensitivity 34 ppbv*m*Hz^-1/2 divided by 12.7 cm path (H2O)"}
+      - {paper: klein2014_tdm_da_wms, value: 1181,
+         context: "derived: reported dTDLAS 150 ppbv*m*Hz^-1/2 at 1 s divided by 12.7 cm path (H2O)"}
+      - {paper: li2016_ethane_icl, value: 2.0,
+         context: "derived: 1 ppbv MDL at 4 s x sqrt(4), assumes white-noise scaling (C2H6, 54.6 m cell)"}
+      - {paper: li2016_qcl_dual_spec, value: 1.64,
+         context: "CO precision at 1 s integration (reported directly)"}
+      - {paper: li2016_qcl_dual_spec, value: 1.15,
+         context: "N2O precision at 1 s integration (reported directly)"}
+      - {paper: duan2022_multipass_3gas, value: 320,
+         context: "CH4 MDL at 1 s (reported directly), 3.0 m multipass"}
+      - {paper: duan2022_multipass_3gas, value: 160,
+         context: "C2H2 MDL at 1 s (reported directly)"}
+      - {paper: duan2022_multipass_3gas, value: 230,
+         context: "NH3 MDL at 1 s (reported directly)"}
+      - {paper: chang2023_o2_multipass, value: 5.4e5,
+         context: "O2 540 ppmv at 1 s (reported directly); percent-level species, dominates upper tail"}
+      - {paper: meshcherinov2026_eddy, value: 98,
+         context: "derived: CO2 0.31 ppm precision at 10 Hz x sqrt(0.1 s) (sWMS channel)"}
+      - {paper: meshcherinov2026_eddy, value: 2.80,
+         context: "derived: CH4 8.87 ppb precision at 10 Hz x sqrt(0.1 s) (sWMS channel)"}
+      - {paper: meshcherinov2026_eddy, value: 1284,
+         context: "derived: H2O 4.06 ppm precision at 10 Hz x sqrt(0.1 s) (sWMS channel)"}
+    n_values: 12
+    p5: 1.42
+    p50: 195
+    p95: 2.44e5
+
+  fringe_amplitude_rel_to_peak:
+    unit: dimensionless (absorbance units, NOT relative to peak - see note)
+    description: >
+      Residual etalon-fringe / baseline-structure amplitude. HONESTY NOTE: none
+      of the surveyed papers quantified fringe amplitude relative to the
+      absorption peak; the only recoverable numbers are fringe/RIN-limited
+      baseline absorbance floors from zhao2016 (Allan-deviation floors
+      attributed by the authors to residual intensity noise and baseline/fringe
+      structure). Two values only, so min/max are given; the commonly cited
+      "limiting absorbance 1e-4..1e-3" regime is consistent with the
+      unstabilized value. lin2022_sensitivity_review discusses fringes as the
+      dominant sensitivity limit but gives no portable number.
+    values:
+      - {paper: zhao2016_stabilized_das, value: 3.6e-4,
+         context: "Allan-deviation floor (absorbance) of conventional fast-scanned DAS without intensity stabilization; fringe/RIN-dominated, reached within <1 s"}
+      - {paper: zhao2016_stabilized_das, value: 3.7e-5,
+         context: "Allan-deviation floor (absorbance) after active intensity stabilization, at 15 s integration"}
+    n_values: 2
+    min: 3.7e-5
+    max: 3.6e-4
+
+  allan_optimum_time_s:
+    unit: s
+    description: >
+      Optimum averaging time at which the Allan(-Werle) deviation reaches its
+      minimum (onset of drift domination).
+    values:
+      - {paper: klein2014_tdm_da_wms, value: 2,
+         context: "WMS channel optimum reached after 2 s (125 scans at 125 Hz)"}
+      - {paper: zhao2016_stabilized_das, value: 15,
+         context: "intensity-stabilized DAS; Allan minimum 3.7e-5 absorbance"}
+      - {paper: li2016_qcl_dual_spec, value: 75,
+         context: "CO/N2O QCL sensor optimum averaging"}
+      - {paper: li2016_ethane_icl, value: 208,
+         context: "C2H6 ICL sensor, Allan minimum 239 pptv"}
+      - {paper: shao2019_co_ch4_wms, value: 122, context: "CO channel"}
+      - {paper: shao2019_co_ch4_wms, value: 137, context: "CH4 channel"}
+      - {paper: lou2019_breath_co2, value: 168,
+         context: "CO2 breath sensor, ~100 ppm precision at optimum"}
+      - {paper: duan2022_multipass_3gas, value: 60, context: "CH4 channel"}
+      - {paper: duan2022_multipass_3gas, value: 100, context: "C2H2 channel"}
+      - {paper: duan2022_multipass_3gas, value: 148, context: "NH3 channel"}
+      - {paper: chang2023_o2_multipass, value: 60,
+         context: "O2 sensor, 540 -> 90 ppmv from 1 s to 60 s"}
+      - {paper: mu2025_ch4_denoise, value: 230,
+         context: "CH4 denoised system, Allan MDL 0.53 ppb"}
+      - {paper: meshcherinov2026_eddy, value: 13, context: "CO2 channel (open path)"}
+      - {paper: meshcherinov2026_eddy, value: 19.4, context: "CH4 channel (open path)"}
+      - {paper: meshcherinov2026_eddy, value: 13.6, context: "H2O channel (open path)"}
+    n_values: 15
+    p5: 9.7
+    p50: 75
+    p95: 215
+
+  baseline_drift_timescale_s:
+    unit: s
+    description: >
+      Time scale beyond which baseline drift dominates over white noise. For
+      most papers this is identical to the Allan turnover time (the two
+      sections deliberately overlap); zhao2016's unstabilized entry shows how
+      short the drift timescale can be when fringe/RIN structure is not
+      suppressed. Drift-magnitude anchors that are not turnover times are
+      recorded in the notes, not in the stats.
+    values:
+      - {paper: zhao2016_stabilized_das, value: 1,
+         context: "UPPER BOUND: without intensity stabilization the Allan minimum is reached 'within a fraction of a second'"}
+      - {paper: zhao2016_stabilized_das, value: 15, context: "with intensity stabilization"}
+      - {paper: klein2014_tdm_da_wms, value: 2, context: "WMS channel turnover"}
+      - {paper: li2016_qcl_dual_spec, value: 75, context: "turnover"}
+      - {paper: li2016_ethane_icl, value: 208, context: "turnover"}
+      - {paper: shao2019_co_ch4_wms, value: 122, context: "CO turnover; 48 h continuous atmospheric operation demonstrated"}
+      - {paper: shao2019_co_ch4_wms, value: 137, context: "CH4 turnover"}
+      - {paper: lou2019_breath_co2, value: 168, context: "turnover"}
+      - {paper: duan2022_multipass_3gas, value: 60, context: "CH4 turnover"}
+      - {paper: duan2022_multipass_3gas, value: 100, context: "C2H2 turnover"}
+      - {paper: duan2022_multipass_3gas, value: 148, context: "NH3 turnover"}
+      - {paper: chang2023_o2_multipass, value: 60, context: "turnover; 2.2 h stable continuous run demonstrated"}
+      - {paper: mu2025_ch4_denoise, value: 230, context: "turnover after denoising"}
+      - {paper: meshcherinov2026_eddy, value: 13, context: "CO2 turnover"}
+      - {paper: meshcherinov2026_eddy, value: 13.6, context: "H2O turnover"}
+      - {paper: meshcherinov2026_eddy, value: 19.4, context: "CH4 turnover"}
+    n_values: 16
+    p5: 1.75
+    p50: 67.5
+    p95: 213
+
+  accuracy_relative_pct:
+    unit: percent (relative)
+    description: >
+      Extra metric (not in the requested list but reported by several papers
+      that report none of the noise metrics): relative accuracy of retrieved
+      mole fraction against a reference. Fewer than 8 values -> min/median/max.
+    values:
+      - {paper: goldenstein2014_hp_wms, value: 3.5,
+         context: "upper bound of reported 1.5-3.5% H2O/temperature accuracy vs known shock-tube conditions, 700-2400 K, 2-25 atm"}
+      - {paper: pogany2015_metrology_da, value: 3.0,
+         context: "upper bound of 2-3% relative expanded uncertainty (k=2) for CO2 and H2O amount fractions, traceable calibration-free dTDLAS"}
+      - {paper: klein2014_tdm_da_wms, value: 1.8,
+         context: "average relative deviation between DA and WMS channels over 50-3000 ppmv (max 3%)"}
+      - {paper: jaeger2025_ch4_slip, value: 2.17,
+         context: "average error of calibration-free vs calibrated 2f/1f CH4 over 3 h marine-engine logging at 20 Hz"}
+      - {paper: festabianchet2022_ch4_flux, value: 1.0,
+         context: "CH4 volume-fraction uncertainty <10000 ppm (1% of full scale) over 0-100% range; flux uncertainty +/-0.85 to 2.55 kg/h (95% CI) depending on scenario"}
+    n_values: 5
+    min: 1.0
+    median: 2.17
+    max: 3.5
+
+notes: |
+  Caveats for Gate G4 use:
+  - Heterogeneity: papers span DA and WMS, near-IR and mid-IR, path lengths
+    from 10.5 cm (festabianchet2022) to 72 m (shao2019), pressures from
+    2.5 kPa to 25 atm, and targets from ppb-level trace gases to percent-level
+    O2/H2O. Percentiles characterize the spread of the literature, not a
+    single instrument class. Do not treat p5/p95 as physical bounds.
+  - SNR definitions differ (single-scan 1-sigma of absorbance vs peak/noise of
+    averaged 2f traces vs dB); chang2023's value was converted from 27.06 dB
+    using the paper's own amplitude/noise voltages (1.206 mV / 2.02 uV).
+  - detection_limit statistics mix 1-sigma and 3-sigma conventions and
+    averaging times from 20 us-equivalent (50 kHz) to 230 s; ppm*m
+    (path-integrated) entries are listed but excluded from percentiles.
+  - allan_normalized_ppb_sqrtHz entries marked "derived" assume white-noise
+    tau^-1/2 scaling (valid below the Allan turnover) or divide reported
+    ppb*m*Hz^-1/2 sensitivities by the instrument path length.
+  - fringe_amplitude_rel_to_peak: no surveyed paper reported fringe amplitude
+    explicitly relative to the absorption peak; only zhao2016 gives usable
+    absolute absorbance floors (3.6e-4 unstabilized, 3.7e-5 stabilized). For
+    G4 noise realism, a residual-fringe absorbance in the 1e-5..4e-4 range is
+    literature-consistent; anything much below 1e-5 absorbance is not
+    supported by this survey for scanned-DA/WMS systems without cavity
+    enhancement.
+  - baseline_drift: Allan turnover times (median ~68 s, p5-p95 ~2-213 s) are
+    the best available proxy for drift-domination timescale. Additional
+    drift-magnitude anchors excluded from stats: jaeger2025 maintained 2.17%
+    average error over 3 h (10800 s) at sea; shao2019 ran 48 h continuously;
+    chang2023 ran 2.2 h with stable baseline.
+  - Attribution nuances: li2016_ethane_icl values follow the g2 survey notes
+    for the Sensors & Actuators B paper (doi 10.1016/j.snb.2016.03.141); the
+    same group's companion Appl. Phys. B paper (doi 10.1007/s00340-016-6460-6,
+    same 54.6 m instrument) reports DAS 7.92 ppbv @ 1 s and WMS 1.19 ppbv @
+    4 s, consistent with the values used. lin2022_sensitivity_review's NEA
+    entry is a review-cited best case whose primary source doi was not
+    resolved here (doi-unverified for the primary source; the review doi
+    10.3389/fphy.2022.853966 is verified).
+  - Papers contributing no numeric metric (metadata-only in this file's
+    scope): rieker2009_cfwms, sun2013_scanned_wms, upadhyay2015_ram_nulling,
+    sur2014_gasifier_wms, goldenstein2017_ir_review (review; its quantitative
+    content is tabulations of other papers' results).

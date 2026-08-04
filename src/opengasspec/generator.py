@@ -70,10 +70,23 @@ def generate_record(
     spec: GenerationSpec,
     instrument_cfg: dict,
     seed_seq: np.random.SeedSequence,
+    scan_time_s: float = 0.0,
+    frozen_instrument: dict | None = None,
 ) -> dict:
-    """Generate one record: returns {'meta': <schema record>, 'arrays': {...}}."""
+    """Generate one record: returns {'meta': <schema record>, 'arrays': {...}}.
+
+    ``scan_time_s`` is the wall-clock time of this scan since instrument
+    start; it drives slow time-dependent effects (etalon phase drift,
+    transmittance decay). ``frozen_instrument`` reuses a previously sampled
+    concrete instrument (time-series mode: one physical instrument, many
+    consecutive scans) instead of re-sampling the config distributions.
+    """
     rng = np.random.default_rng(seed_seq)
-    inst = sample_instrument(instrument_cfg, rng)
+    if frozen_instrument is None:
+        inst = sample_instrument(instrument_cfg, rng)
+    else:
+        inst = frozen_instrument
+        sample_instrument(instrument_cfg, rng)  # keep stream layout identical
     technique = inst["technique"]
 
     concentration_ppm = _sample_concentration(spec, rng)
@@ -123,8 +136,11 @@ def generate_record(
     )
     baseline = baseline_polynomial(ramp, optics.get("baseline_poly_rel", []) or [])
     etalons = inst.get("etalons", []) or []
-    fringes = multi_etalon_transmission(nu, etalons) if etalons else 1.0
-    transmitted = intensity0 * baseline * fringes * np.exp(-absorbance_measured)
+    fringes = multi_etalon_transmission(nu, etalons, t_s=scan_time_s) if etalons else 1.0
+    decay = 1.0 - optics.get("transmittance_drift_rel_per_s", 0.0) * scan_time_s
+    transmitted = intensity0 * baseline * fringes * max(decay, 0.0) * np.exp(
+        -absorbance_measured
+    )
 
     # --- detector chain ---
     sigma_w = det.get("white_noise_rel", 0.0)
@@ -308,3 +324,31 @@ def generate_dataset(
     root = np.random.SeedSequence(master_seed)
     children = root.spawn(n_records)
     return [generate_record(spec, instrument_cfg, child) for child in children]
+
+
+def generate_time_series(
+    spec: GenerationSpec,
+    instrument_cfg: dict,
+    n_scans: int,
+    master_seed: int,
+    scan_interval_s: float,
+) -> list[dict]:
+    """Consecutive scans of ONE instrument realization (drift/Allan studies).
+
+    The instrument parameters are sampled once (first child stream) and then
+    frozen; per-scan noise stays independent while slow effects (etalon phase
+    drift, transmittance decay) evolve with wall-clock time k*scan_interval_s.
+    """
+    root = np.random.SeedSequence(master_seed)
+    children = root.spawn(n_scans + 1)
+    inst = sample_instrument(instrument_cfg, np.random.default_rng(children[0]))
+    return [
+        generate_record(
+            spec,
+            instrument_cfg,
+            children[k + 1],
+            scan_time_s=k * scan_interval_s,
+            frozen_instrument=inst,
+        )
+        for k in range(n_scans)
+    ]

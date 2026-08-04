@@ -17,10 +17,11 @@ modulation:
   lowpass_cutoff_Hz: 1000.0
 etalons:
   - free_spectral_range_cm1: {dist: uniform, low: 0.8, high: 1.2}
-    amplitude_rel: {dist: loguniform, low: 5.0e-5, high: 2.0e-4}
+    amplitude_rel: {dist: loguniform, low: 4.0e-5, high: 1.2e-4}
     phase_rad: {dist: uniform, low: 0.0, high: 6.283185307}
+    phase_drift_rad_per_s: {dist: uniform, low: 3.0e-4, high: 1.5e-3}
 detector:
-  white_noise_rel: {dist: loguniform, low: 2.0e-5, high: 8.0e-5}
+  white_noise_rel: {dist: loguniform, low: 2.5e-5, high: 8.0e-5}
 environment:
   temperature_K: 296.0
   pressure_atm: 1.0

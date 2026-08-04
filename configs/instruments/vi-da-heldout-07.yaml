@@ -16,19 +16,22 @@ laser:
   linewidth_MHz: {dist: uniform, low: 8.0, high: 15.0}
 etalons:
   - free_spectral_range_cm1: {dist: uniform, low: 0.35, high: 0.55}
-    amplitude_rel: {dist: loguniform, low: 6.0e-4, high: 2.5e-3}
+    amplitude_rel: {dist: loguniform, low: 9.0e-5, high: 2.2e-4}
     phase_rad: {dist: uniform, low: 0.0, high: 6.283185307}
+    phase_drift_rad_per_s: {dist: uniform, low: 1.0e-3, high: 4.0e-3}
   - free_spectral_range_cm1: {dist: uniform, low: 0.04, high: 0.12}
-    amplitude_rel: {dist: loguniform, low: 3.0e-4, high: 1.2e-3}
+    amplitude_rel: {dist: loguniform, low: 4.5e-5, high: 1.3e-4}
     phase_rad: {dist: uniform, low: 0.0, high: 6.283185307}
+    phase_drift_rad_per_s: {dist: uniform, low: 1.0e-3, high: 4.0e-3}
 optics:
+  transmittance_drift_rel_per_s: {dist: loguniform, low: 1.0e-6, high: 1.0e-5}
   intensity_ramp_slope_rel: {dist: uniform, low: 0.35, high: 0.55}
   baseline_poly_rel:
     - {dist: normal, mean: 0.015, sigma: 0.008}
     - {dist: normal, mean: -0.012, sigma: 0.008}
 detector:
-  white_noise_rel: {dist: loguniform, low: 1.5e-4, high: 6.0e-4}
-  one_over_f_sigma_rel: {dist: loguniform, low: 6.0e-5, high: 4.0e-4}
+  white_noise_rel: {dist: loguniform, low: 9.0e-5, high: 2.4e-4}
+  one_over_f_sigma_rel: {dist: loguniform, low: 4.0e-5, high: 1.4e-4}
   one_over_f_slope: {dist: uniform, low: 1.1, high: 1.5}
   adc_bits: 13
 environment:
