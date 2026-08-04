@@ -1,0 +1,13 @@
+# Official dataset config: CH4 direct absorption, medium-difficulty instrument.
+# Fully reproducible: same file + same generator version => bit-identical data.
+dataset_id: ch4-da-medium-v0
+instrument_config: configs/instruments/vi-da-medium-02.yaml
+n_records: 10000
+master_seed: 20260810
+gas:
+  molecule: CH4
+  concentration_ppm: {low: 1.0, high: 1000.0, log_uniform: true}
+  path_length_m: 10.0
+  matrix_gas: N2
+n_points: 2000
+line_source: demo

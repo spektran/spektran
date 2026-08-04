@@ -65,6 +65,7 @@
             "$ref": "#/$defs/dist_or_number",
             "description": "Fringe amplitude relative to DC transmitted intensity."
           },
+          "phase_rad": { "$ref": "#/$defs/dist_or_number" },
           "phase_drift_rad_per_s": { "$ref": "#/$defs/dist_or_number" }
         }
       }
@@ -78,6 +79,11 @@
           "items": { "$ref": "#/$defs/dist_or_number" },
           "description": "Distributions for slow polynomial baseline coefficients (relative)."
         },
+        "intensity_ramp_slope_rel": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Linear laser-intensity change over the current scan (relative, edge-to-edge/2)."
+        },
+        "intensity_ramp_curvature_rel": { "$ref": "#/$defs/dist_or_number" },
         "intensity_fluctuation_rel": { "$ref": "#/$defs/dist_or_number" },
         "transmittance_drift_rel_per_s": { "$ref": "#/$defs/dist_or_number" }
       }
@@ -89,6 +95,10 @@
         "white_noise_rel": {
           "$ref": "#/$defs/dist_or_number",
           "description": "White-noise sigma relative to full-scale signal."
+        },
+        "one_over_f_sigma_rel": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Total sigma of the 1/f^slope noise component, relative to full scale."
         },
         "one_over_f_corner_Hz": { "$ref": "#/$defs/dist_or_number" },
         "one_over_f_slope": { "$ref": "#/$defs/dist_or_number" },

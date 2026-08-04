@@ -1,0 +1,37 @@
+# Medium tier: field-instrument noise, two fringe systems, 1/f noise
+instrument_config_id: vi-da-medium-02
+schema_version: "0.1"
+technique: TDLAS-DA
+held_out: false
+description: "Field DA instrument: moderate white + 1/f noise, two etalons, visible baseline."
+laser:
+  center_wavenumber_cm1: 6047.0
+  scan_range_cm1: {dist: uniform, low: 1.7, high: 2.3}
+  scan_rate_Hz: 100.0
+  scan_nonlinearity_poly_cm1:
+    - {dist: normal, mean: 0.0, sigma: 0.03}
+    - {dist: normal, mean: 0.0, sigma: 0.02}
+  linewidth_MHz: {dist: uniform, low: 2.0, high: 10.0}
+etalons:
+  - free_spectral_range_cm1: {dist: uniform, low: 0.6, high: 1.0}
+    amplitude_rel: {dist: loguniform, low: 2.0e-4, high: 1.0e-3}
+    phase_rad: {dist: uniform, low: 0.0, high: 6.283185307}
+  - free_spectral_range_cm1: {dist: uniform, low: 0.15, high: 0.35}
+    amplitude_rel: {dist: loguniform, low: 1.0e-4, high: 5.0e-4}
+    phase_rad: {dist: uniform, low: 0.0, high: 6.283185307}
+optics:
+  intensity_ramp_slope_rel: {dist: uniform, low: 0.15, high: 0.4}
+  intensity_ramp_curvature_rel: {dist: normal, mean: 0.0, sigma: 0.05}
+  baseline_poly_rel:
+    - {dist: normal, mean: 0.0, sigma: 0.01}
+    - {dist: normal, mean: 0.0, sigma: 0.01}
+detector:
+  white_noise_rel: {dist: loguniform, low: 8.0e-5, high: 3.0e-4}
+  one_over_f_sigma_rel: {dist: loguniform, low: 3.0e-5, high: 2.0e-4}
+  one_over_f_slope: {dist: uniform, low: 0.9, high: 1.2}
+  adc_bits: 14
+environment:
+  temperature_K: 296.0
+  pressure_atm: 1.0
+  temperature_jitter_K: {dist: uniform, low: 0.1, high: 0.5}
+  pressure_jitter_atm: {dist: uniform, low: 0.001, high: 0.005}

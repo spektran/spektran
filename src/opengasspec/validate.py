@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import sys
+from functools import lru_cache
 from importlib import resources
 from pathlib import Path
 
@@ -32,12 +33,14 @@ def _load_schema(name: str) -> dict:
     return json.loads(path.read_text())
 
 
+@lru_cache(maxsize=None)
 def record_validator() -> Draft202012Validator:
     schema = _load_schema("record.schema.json")
     Draft202012Validator.check_schema(schema)
     return Draft202012Validator(schema)
 
 
+@lru_cache(maxsize=None)
 def instrument_validator() -> Draft202012Validator:
     schema = _load_schema("instrument.schema.json")
     Draft202012Validator.check_schema(schema)

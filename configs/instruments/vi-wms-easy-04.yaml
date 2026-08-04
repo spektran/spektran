@@ -1,0 +1,27 @@
+# WMS easy tier
+instrument_config_id: vi-wms-easy-04
+schema_version: "0.1"
+technique: TDLAS-WMS
+held_out: false
+description: "Laboratory WMS instrument: clean 2f, low RAM, weak fringes."
+laser:
+  center_wavenumber_cm1: 6047.0
+  scan_range_cm1: {dist: uniform, low: 0.8, high: 1.2}
+  scan_rate_Hz: 25.0
+  ram_amplitude_rel: {dist: uniform, low: 0.05, high: 0.15}
+  linewidth_MHz: {dist: uniform, low: 1.0, high: 5.0}
+modulation:
+  frequency_Hz: 10000.0
+  depth_cm1: {dist: uniform, low: 0.04, high: 0.08}
+  lockin_phase_error_rad: {dist: normal, mean: 0.0, sigma: 0.02}
+  lowpass_cutoff_Hz: 1000.0
+etalons:
+  - free_spectral_range_cm1: {dist: uniform, low: 0.8, high: 1.2}
+    amplitude_rel: {dist: loguniform, low: 5.0e-5, high: 2.0e-4}
+    phase_rad: {dist: uniform, low: 0.0, high: 6.283185307}
+detector:
+  white_noise_rel: {dist: loguniform, low: 2.0e-5, high: 8.0e-5}
+environment:
+  temperature_K: 296.0
+  pressure_atm: 1.0
+  temperature_jitter_K: {dist: uniform, low: 0.0, high: 0.1}

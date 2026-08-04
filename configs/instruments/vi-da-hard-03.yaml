@@ -1,0 +1,42 @@
+# Hard tier: low SNR, three strong fringes, strong baseline, gain nonlinearity
+instrument_config_id: vi-da-hard-03
+schema_version: "0.1"
+technique: TDLAS-DA
+held_out: false
+description: "Harsh-environment DA: strong fringes and drift, nonlinear gain, coarse ADC."
+laser:
+  center_wavenumber_cm1: 6047.0
+  scan_range_cm1: {dist: uniform, low: 1.6, high: 2.4}
+  scan_rate_Hz: 100.0
+  scan_nonlinearity_poly_cm1:
+    - {dist: normal, mean: 0.0, sigma: 0.06}
+    - {dist: normal, mean: 0.0, sigma: 0.04}
+  linewidth_MHz: {dist: uniform, low: 5.0, high: 30.0}
+etalons:
+  - free_spectral_range_cm1: {dist: uniform, low: 0.5, high: 0.9}
+    amplitude_rel: {dist: loguniform, low: 1.0e-3, high: 5.0e-3}
+    phase_rad: {dist: uniform, low: 0.0, high: 6.283185307}
+  - free_spectral_range_cm1: {dist: uniform, low: 0.1, high: 0.3}
+    amplitude_rel: {dist: loguniform, low: 5.0e-4, high: 2.0e-3}
+    phase_rad: {dist: uniform, low: 0.0, high: 6.283185307}
+  - free_spectral_range_cm1: {dist: uniform, low: 0.02, high: 0.08}
+    amplitude_rel: {dist: loguniform, low: 2.0e-4, high: 1.0e-3}
+    phase_rad: {dist: uniform, low: 0.0, high: 6.283185307}
+optics:
+  intensity_ramp_slope_rel: {dist: uniform, low: 0.2, high: 0.5}
+  intensity_ramp_curvature_rel: {dist: normal, mean: 0.0, sigma: 0.1}
+  baseline_poly_rel:
+    - {dist: normal, mean: 0.0, sigma: 0.03}
+    - {dist: normal, mean: 0.0, sigma: 0.02}
+    - {dist: normal, mean: 0.0, sigma: 0.02}
+detector:
+  white_noise_rel: {dist: loguniform, low: 3.0e-4, high: 1.2e-3}
+  one_over_f_sigma_rel: {dist: loguniform, low: 1.0e-4, high: 8.0e-4}
+  one_over_f_slope: {dist: uniform, low: 0.8, high: 1.4}
+  gain_nonlinearity_rel: {dist: uniform, low: 0.0, high: 0.02}
+  adc_bits: 12
+environment:
+  temperature_K: 296.0
+  pressure_atm: 1.0
+  temperature_jitter_K: {dist: uniform, low: 0.5, high: 2.0}
+  pressure_jitter_atm: {dist: uniform, low: 0.005, high: 0.02}

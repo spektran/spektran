@@ -1,0 +1,33 @@
+# HELD-OUT WMS instrument (generalization track; test-set only).
+instrument_config_id: vi-wms-heldout-08
+schema_version: "0.1"
+technique: TDLAS-WMS
+held_out: true
+description: "Held-out WMS instrument for the cross-instrument generalization track."
+laser:
+  center_wavenumber_cm1: 6047.0
+  scan_range_cm1: {dist: uniform, low: 0.9, high: 1.1}
+  scan_rate_Hz: 25.0
+  ram_amplitude_rel: {dist: uniform, low: 0.3, high: 0.45}
+  linewidth_MHz: {dist: uniform, low: 10.0, high: 20.0}
+modulation:
+  frequency_Hz: 12500.0
+  depth_cm1: {dist: uniform, low: 0.06, high: 0.11}
+  lockin_phase_error_rad: {dist: normal, mean: 0.1, sigma: 0.1}
+  lowpass_cutoff_Hz: 1250.0
+etalons:
+  - free_spectral_range_cm1: {dist: uniform, low: 0.35, high: 0.55}
+    amplitude_rel: {dist: loguniform, low: 6.0e-4, high: 2.5e-3}
+    phase_rad: {dist: uniform, low: 0.0, high: 6.283185307}
+  - free_spectral_range_cm1: {dist: uniform, low: 0.04, high: 0.12}
+    amplitude_rel: {dist: loguniform, low: 3.0e-4, high: 1.2e-3}
+    phase_rad: {dist: uniform, low: 0.0, high: 6.283185307}
+detector:
+  white_noise_rel: {dist: loguniform, low: 1.5e-4, high: 6.0e-4}
+  one_over_f_sigma_rel: {dist: loguniform, low: 6.0e-5, high: 4.0e-4}
+  one_over_f_slope: {dist: uniform, low: 1.1, high: 1.5}
+environment:
+  temperature_K: 296.0
+  pressure_atm: 1.0
+  temperature_jitter_K: {dist: uniform, low: 0.3, high: 1.0}
+  pressure_jitter_atm: {dist: uniform, low: 0.003, high: 0.01}
