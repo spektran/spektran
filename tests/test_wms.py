@@ -32,6 +32,13 @@ def settled_mean(x: np.ndarray, frac: float = 0.3) -> float:
     return float(np.mean(x[lo:hi]))
 
 
+def settled_peak(x: np.ndarray, frac: float = 0.3) -> float:
+    """Max magnitude of the central portion, discarding filter edge transients."""
+    n = len(x)
+    lo, hi = int(n * frac), int(n * (1.0 - frac))
+    return float(np.max(np.abs(x[lo:hi])))
+
+
 class TestLockinBasics:
     def test_pure_tone_demodulates_to_amplitude(self):
         fs, fm, dur = 2e6, 1e4, 0.02
@@ -133,3 +140,52 @@ class TestDeterminism:
         a = simulate_wms(cfg, make_absorbance(1e-2))
         b = simulate_wms(cfg, make_absorbance(1e-2))
         assert a["x_2f"].tobytes() == b["x_2f"].tobytes()
+
+
+def test_3f_4f_demodulation_returns_signals():
+    """simulate_wms with harmonics=(1,2,3,4) returns all four harmonic outputs."""
+    import numpy as np
+
+    from spektran.physics.wms import WMSConfig, simulate_wms
+
+    cfg = WMSConfig(
+        modulation_frequency_Hz=10000.0,
+        modulation_depth_cm1=0.05,
+        sampling_rate_Hz=500000.0,
+        duration_s=0.01,
+        center_wavenumber_cm1=6047.0,
+    )
+    result = simulate_wms(cfg, lambda nu: np.zeros_like(nu), harmonics=(1, 2, 3, 4))
+    for h in (1, 2, 3, 4):
+        assert f"x_{h}f" in result, f"missing x_{h}f"
+        assert f"y_{h}f" in result, f"missing y_{h}f"
+        assert f"r_{h}f" in result, f"missing r_{h}f"
+
+
+def test_3f_4f_with_absorbing_gas():
+    """3f/4f harmonics are nonzero for absorbing gas and smaller than 2f."""
+    from spektran.physics.absorption import absorption_coefficient
+    from spektran.physics.hitran import demo_ch4_2nu3
+    from spektran.physics.wms import WMSConfig, simulate_wms
+
+    lines = demo_ch4_2nu3()
+    cfg = WMSConfig(
+        modulation_frequency_Hz=10000.0,
+        modulation_depth_cm1=0.03,
+        sampling_rate_Hz=1000000.0,
+        # 0.02 s = 20 time constants of the default lowpass (cutoff = f_m/10 =
+        # 1 kHz), long enough for the zero-phase filter to settle away from
+        # the edges; peaks are read via settled_peak() for the same reason.
+        duration_s=0.02,
+        center_wavenumber_cm1=6046.9647,
+    )
+
+    def abs_fn(nu):
+        return absorption_coefficient(nu, lines, 100e-6, 296.0, 1.0) * 1000.0
+
+    result = simulate_wms(cfg, abs_fn, harmonics=(1, 2, 3, 4))
+    r2f_peak = settled_peak(result["r_2f"])
+    for h in (3, 4):
+        r_peak = settled_peak(result[f"r_{h}f"])
+        assert r_peak > 0, f"{h}f peak should be nonzero"
+        assert r_peak < r2f_peak, f"{h}f peak should be smaller than 2f"

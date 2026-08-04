@@ -205,6 +205,10 @@ def generate_record(
         f_m = mod["frequency_Hz"]
         fs = f_m * 50.0
         scan_rate = laser.get("scan_rate_Hz", 10.0)
+        # sample_instrument() casts every leaf (incl. list items) to float, so
+        # cast back to int here -- f"x_{h}f" must key off "1", not "1.0".
+        harmonics_cfg = mod.get("harmonics", [1, 2])
+        harmonics = tuple(int(h) for h in harmonics_cfg)
         cfg = WMSConfig(
             modulation_frequency_Hz=f_m,
             modulation_depth_cm1=mod["depth_cm1"],
@@ -226,9 +230,19 @@ def generate_record(
                 temperature_K=temperature_K,
                 pressure_atm=pressure_atm,
             )
-            return a * spec.path_length_m * 100.0
+            total = a * spec.path_length_m * 100.0
+            for interf in spec.interferents:
+                a_i = absorption_coefficient(
+                    np.asarray(nu_arr, dtype=float),
+                    interf["lines"],
+                    mole_fraction=interf["concentration_ppm"] * 1e-6,
+                    temperature_K=temperature_K,
+                    pressure_atm=pressure_atm,
+                )
+                total += a_i * spec.path_length_m * 100.0
+            return total
 
-        out = simulate_wms(cfg, absorbance_fn, harmonics=(1, 2))
+        out = simulate_wms(cfg, absorbance_fn, harmonics=harmonics)
         n_t = len(out["t_s"])
         noisy = out["intensity"]
         if sigma_w:
@@ -238,7 +252,7 @@ def generate_record(
         from .physics.wms import lockin_demodulate
 
         stride = max(1, n_t // n)
-        for h in (1, 2):
+        for h in harmonics:
             x, _ = lockin_demodulate(
                 noisy, out["t_s"], f_m, h, cfg.lockin_phase_rad,
                 cfg.lowpass_cutoff_Hz, fs,
