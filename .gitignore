@@ -33,3 +33,6 @@ baselines/*/predictions_*.h5
 
 # Private validation seeds — NEVER commit
 private/
+
+# Local AI agent config (contains account names and internal info)
+CLAUDE.md
