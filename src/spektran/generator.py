@@ -28,8 +28,10 @@ import numpy as np
 from . import __version__
 from .instrument.detector import (
     adc_quantize,
+    dark_current_noise,
     gain_nonlinearity,
     one_over_f_noise,
+    thermal_noise_scale,
     white_noise,
 )
 from .instrument.environment import jittered_conditions
@@ -195,7 +197,22 @@ def generate_record(
     # --- detector chain ---
     sigma_w = det.get("white_noise_rel", 0.0)
     if sigma_w:
+        det_temp = det.get("detector_temperature_K")
+        if det_temp is not None:
+            sigma_w = sigma_w * thermal_noise_scale(
+                det_temp, det.get("reference_temperature_K", 296.0)
+            )
         transmitted = transmitted + white_noise(rng, n, sigma_w)
+    sigma_dark = det.get("dark_current_sigma_rel", 0.0)
+    if sigma_dark:
+        transmitted = transmitted + dark_current_noise(
+            rng,
+            n,
+            sigma_dark,
+            det.get("detector_temperature_K", temperature_K),
+            det.get("reference_temperature_K", 296.0),
+            det.get("dark_current_activation_eV", 0.37),
+        )
     sigma_f = det.get("one_over_f_sigma_rel", 0.0)
     if sigma_f:
         transmitted = transmitted + one_over_f_noise(

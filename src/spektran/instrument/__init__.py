@@ -1,6 +1,13 @@
 """Instrument-effects layer: the noise chain that makes simulated spectra real."""
 
-from .detector import adc_quantize, gain_nonlinearity, one_over_f_noise, white_noise
+from .detector import (
+    adc_quantize,
+    dark_current_noise,
+    gain_nonlinearity,
+    one_over_f_noise,
+    thermal_noise_scale,
+    white_noise,
+)
 from .environment import jittered_conditions
 from .etalon import etalon_transmission, multi_etalon_transmission
 from .laser import (
@@ -24,6 +31,7 @@ __all__ = [
     "beam_wander",
     "center_drift_cm1",
     "current_tuning_model",
+    "dark_current_noise",
     "etalon_transmission",
     "gain_nonlinearity",
     "intensity_fluctuation",
@@ -33,6 +41,7 @@ __all__ = [
     "multi_etalon_transmission",
     "one_over_f_noise",
     "scan_frequency_axis",
+    "thermal_noise_scale",
     "transmittance_decay",
     "white_noise",
     "window_contamination",

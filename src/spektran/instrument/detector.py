@@ -68,3 +68,56 @@ def adc_quantize(
     step = full_scale / levels
     clipped = np.clip(signal, 0.0, full_scale)
     return np.round(clipped / step) * step
+
+
+def thermal_noise_scale(
+    temperature_K: float,
+    reference_temperature_K: float = 296.0,
+) -> float:
+    """Johnson-Nyquist thermal noise scaling factor.
+
+    Thermal noise voltage scales as sqrt(T). Returns the multiplicative
+    factor to apply to a noise sigma specified at T_ref to get the
+    equivalent sigma at temperature T.
+
+    sigma(T) = sigma(T_ref) * thermal_noise_scale(T, T_ref)
+    """
+    if temperature_K <= 0 or reference_temperature_K <= 0:
+        raise ValueError("Temperature must be positive")
+    return float(np.sqrt(temperature_K / reference_temperature_K))
+
+
+def dark_current_noise(
+    rng: np.random.Generator,
+    n: int,
+    sigma_ref: float,
+    temperature_K: float,
+    reference_temperature_K: float = 296.0,
+    activation_energy_eV: float = 0.37,
+) -> np.ndarray:
+    """Temperature-dependent dark-current shot noise.
+
+    Dark current in semiconductor photodetectors follows an Arrhenius
+    temperature dependence: I_dark ~ exp(-Ea/(2*kB*T)). The shot noise
+    from dark current scales as sqrt(I_dark), giving:
+
+    sigma_dark(T) = sigma_ref * exp(-Ea/(2*kB) * (1/T - 1/T_ref))
+
+    where Ea is the activation energy (~0.37 eV for InGaAs near 1.5 um
+    cutoff, ~0.56 eV for Ge, ~0.18 eV for extended InGaAs).
+
+    Parameters
+    ----------
+    sigma_ref : float
+        Dark-current noise sigma at reference temperature.
+    temperature_K : float
+        Actual detector temperature.
+    activation_energy_eV : float
+        Bandgap-related activation energy. Default 0.37 eV (InGaAs).
+    """
+    kB_eV_per_K = 8.617333262e-5
+    exponent = -activation_energy_eV / (2.0 * kB_eV_per_K) * (
+        1.0 / temperature_K - 1.0 / reference_temperature_K
+    )
+    scale = float(np.exp(exponent))
+    return rng.normal(0.0, sigma_ref * scale, n)

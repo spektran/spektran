@@ -145,7 +145,23 @@
         "one_over_f_slope": { "$ref": "#/$defs/dist_or_number" },
         "gain_nonlinearity_rel": { "$ref": "#/$defs/dist_or_number" },
         "adc_bits": { "$ref": "#/$defs/dist_or_number" },
-        "bandwidth_Hz": { "$ref": "#/$defs/dist_or_number" }
+        "bandwidth_Hz": { "$ref": "#/$defs/dist_or_number" },
+        "detector_temperature_K": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Detector operating temperature [K]. Defaults to environment T if absent."
+        },
+        "reference_temperature_K": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Reference temperature for noise specs [K]. Default 296."
+        },
+        "dark_current_sigma_rel": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Dark-current noise sigma at reference temperature (relative to full scale)."
+        },
+        "dark_current_activation_eV": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Activation energy for dark current Arrhenius scaling [eV]. InGaAs ~0.37."
+        }
       }
     },
     "environment": {
