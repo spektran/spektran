@@ -28,6 +28,31 @@ identical bytes for everyone at the same generator version.
 - T6: train 3000 (in-distribution only: easy+medium+hard DA) / test 1000
   (500 in-distribution + 500 held-out `vi-da-heldout-07`, `ood_task: true`).
 
+## Dataset scale options
+
+The official splits above use moderate sizes for fast iteration. For training
+larger models or studying scaling behavior, large-scale configs are available:
+
+| Config | Records | Seed | Purpose |
+|---|---|---|---|
+| `ch4-t1-train-v0` | 5,000 | 101001 | Standard training |
+| `ch4-t1-train-v0-50k` | 50,000 | 201001 | Large-scale training |
+| `ch4-t1-val-v0` | 500 | 101002 | Standard validation |
+| `ch4-t1-val-v0-5k` | 5,000 | 201002 | Large-scale validation |
+| `ch4-t1-test-v0` | 1,000 | 101003 | Standard test |
+| `ch4-t1-test-v0-10k` | 10,000 | 201003 | Large-scale test |
+
+Generate large-scale data:
+
+```bash
+for s in t1-train-v0-50k t1-val-v0-5k t1-test-v0-10k; do
+  spektran generate configs/datasets/ch4-$s.yaml --out data
+done
+```
+
+Large-scale seeds (201xxx) are disjoint from standard seeds (101xxx), so no
+records overlap between scale tiers.
+
 ## Rules
 
 1. Train on the official train split; tune only on val. The test truths ship

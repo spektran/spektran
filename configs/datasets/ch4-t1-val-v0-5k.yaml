@@ -1,0 +1,15 @@
+# Large-scale v0 split: t1-val 5K (CH4 DA).
+dataset_id: ch4-t1-val-v0-5k
+instrument_config:
+  - configs/instruments/vi-da-easy-01.yaml
+  - configs/instruments/vi-da-medium-02.yaml
+  - configs/instruments/vi-da-hard-03.yaml
+n_records: 5000
+master_seed: 201002
+gas:
+  molecule: CH4
+  concentration_ppm: {low: 1.0, high: 1000.0, log_uniform: true}
+  path_length_m: 10.0
+  matrix_gas: N2
+n_points: 2000
+line_source: demo
