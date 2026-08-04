@@ -23,6 +23,8 @@ identical bytes for everyone at the same generator version.
   whose parameter ranges are excluded from the training distribution.
 - T4: train 5000 / val 500 / test 1000, mixture of easy+medium+hard WMS
   instruments. Uses the same generation pipeline as T1 but with WMS configs.
+- T5: train 20 / test 10 time series of 200 consecutive 1 s scans each, one
+  frozen `vi-da-medium-02` realization per series (`mode: time_series`).
 
 ## Rules
 
@@ -47,10 +49,19 @@ calibration-free 2f peak-height.
 
 ### T5: Drift compensation
 
-Input: a time series of repeated scans from a single instrument session.
-Output: drift-corrected concentration trajectory. Primary metric: Allan
-variance improvement (ratio of ADEV before/after correction). Evaluation
-stub pending time-series HDF5 layout.
+Input: a time series of repeated scans from a single instrument session
+(`spektran generate` with `mode: time_series` in the config, one frozen
+instrument realization per series; the true concentration is fixed per
+series -- only the *measured* value drifts). Output: drift-corrected
+concentration trajectory. Primary metric: Allan deviation of the prediction
+error (`n_scans`, `mae_ppm`, `adev_shortest_tau`/`adev_longest_tau`, and the
+full `adev_curve` over `adev_taus_s`). `evaluate_drift` recovers series
+boundaries from truth-concentration jumps (every scan in a series shares an
+exactly equal true concentration by construction) so Allan deviation is
+computed within each series and averaged, never across a series boundary.
+Prediction format is the same CSV as T1 (`record_id,concentration_ppm`).
+Reference baseline: `baselines/moving_avg_t5` (ridge + per-series moving
+average).
 
 ### T6: OOD instrument detection
 

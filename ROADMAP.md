@@ -18,7 +18,7 @@ The TDLAS domain is fully functional:
 - Schema v0.2 (higher harmonics, measurement block, backward compatible with v0.1)
 - 3f/4f WMS demodulation in generator
 - 9 virtual instruments (added 4-harmonic WMS config)
-- 6 benchmark tasks (T1-T6) with 8 dataset configs
+- 6 benchmark tasks (T1-T6) with 10 dataset configs
 - Expanded CLI: `spektran generate`, `spektran benchmark`, `spektran download`
 
 ---
@@ -44,7 +44,7 @@ The TDLAS domain is fully functional:
 
 ### 3.4 Benchmark expansion
 - [x] T4: WMS 2f concentration regression (MAE)
-- [x] T5: Time-series drift compensation (Allan variance improvement) — metrics and task spec defined; evaluation stub
+- [x] T5: Time-series drift compensation (Allan variance improvement) — full pipeline shipped (dataset configs, evaluation, moving-average baseline)
 - [x] T6: Anomaly detection / OOD instrument identification (AUROC) — metrics and task spec defined; evaluation stub
 - [ ] Community leaderboard *(deferred to Phase 5)*
 
@@ -65,9 +65,8 @@ The TDLAS domain is fully functional:
 - CI-pinned HITRAN data snapshots for reproducibility
 
 ### 3.1.2 Evaluation pipeline completion
-- T5 time-series evaluation (requires time-series HDF5 layout)
 - T6 OOD evaluation pipeline (requires OOD label format)
-- Full baselines for T4, T5, T6
+- Full baselines for T6
 
 ### 3.1.3 Developer experience
 - Parquet and CSV output formats in `spektran generate`

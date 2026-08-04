@@ -1,4 +1,6 @@
 """Tests for v0.2 benchmark metrics and task specs."""
+from pathlib import Path
+
 import numpy as np
 import pytest
 
@@ -50,3 +52,44 @@ def test_task_specs_include_t4_t5_t6():
     assert "T4-wms-concentration" in TASK_SPECS
     assert "T5-drift-compensation" in TASK_SPECS
     assert "T6-ood-instrument" in TASK_SPECS
+
+
+def test_evaluate_drift_separates_series_boundaries(tmp_path):
+    """A multi-series truth file must never let Allan variance cross a series
+    boundary -- this is the whole reason evaluate_drift recovers series from
+    truth-concentration jumps instead of just flattening the file."""
+    from spektran.benchmark.evaluate import evaluate_drift
+    from spektran.generator import GenerationSpec, generate_time_series
+    from spektran.instrument.sampling import load_instrument_config
+    from spektran.io import write_time_series
+    from spektran.physics import demo_ch4_2nu3
+
+    cfg_dir = Path(__file__).resolve().parents[1] / "configs" / "instruments"
+    inst = load_instrument_config(cfg_dir / "vi-da-easy-01.yaml")
+
+    all_records = []
+    for i, c in enumerate([80.0, 120.0]):
+        spec = GenerationSpec(
+            lines=demo_ch4_2nu3(), n_points=100,
+            concentration_ppm_low=c, concentration_ppm_high=c,
+            log_uniform_concentration=False,
+        )
+        all_records.extend(
+            generate_time_series(spec, inst, n_scans=6, master_seed=500 + i, scan_interval_s=1.0)
+        )
+
+    truth_path = tmp_path / "truth.h5"
+    write_time_series(truth_path, all_records, scan_interval_s=1.0)
+
+    preds_path = tmp_path / "preds.csv"
+    with open(preds_path, "w") as f:
+        f.write("record_id,concentration_ppm\n")
+        for r in all_records:
+            truth = r["meta"]["labels"]["species"][0]["concentration_ppm"]
+            f.write(f"{r['meta']['record_id']},{truth + 0.5}\n")
+
+    scores = evaluate_drift(truth_path, preds_path)
+    assert scores["n_scans"] == 12
+    assert scores["n_series"] == 2
+    assert scores["mae_ppm"] == pytest.approx(0.5, abs=1e-6)
+    assert len(scores["adev_curve"]) == len(scores["adev_taus_s"])

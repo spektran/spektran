@@ -14,13 +14,20 @@ def cmd_validate(args: argparse.Namespace) -> int:
 
 def cmd_generate(args: argparse.Namespace) -> int:
     import time
+    from dataclasses import replace
     from pathlib import Path
 
+    import numpy as np
     import yaml
 
-    from .generator import GenerationSpec, generate_dataset
+    from .generator import (
+        GenerationSpec,
+        generate_dataset,
+        generate_time_series,
+        sample_concentration,
+    )
     from .instrument.sampling import load_instrument_config
-    from .io import write_records
+    from .io import write_records, write_time_series
 
     repo = Path(args.config).resolve().parents[0]
     while not (repo / "pyproject.toml").exists() and repo != repo.parent:
@@ -84,9 +91,44 @@ def cmd_generate(args: argparse.Namespace) -> int:
         n_points=int(cfg.get("n_points", 2000)),
         interferents=interferent_specs,
     )
-    n = args.n if args.n else int(cfg["n_records"])
     seed = int(cfg["master_seed"])
     out_dir = Path(args.out)
+    out_path = out_dir / f"{cfg['dataset_id']}.h5"
+
+    if cfg.get("mode") == "time_series":
+        # Time-series mode (T5 drift compensation): one frozen instrument per
+        # series, so the true concentration is fixed for every scan in that
+        # series (drift shows up in the MEASURED value, not the truth). Only
+        # a single instrument config is meaningful here -- extra entries
+        # would silently apply to no series.
+        n_series = int(cfg.get("n_series", 1))
+        n_scans = int(cfg["n_scans_per_series"])
+        interval = float(cfg.get("scan_interval_s", 1.0))
+        inst = instruments[0]
+
+        t0 = time.time()
+        series_rng = np.random.default_rng(seed)
+        all_records = []
+        for s in range(n_series):
+            c = sample_concentration(spec, series_rng)
+            series_spec = replace(
+                spec,
+                concentration_ppm_low=c,
+                concentration_ppm_high=c,
+                log_uniform_concentration=False,
+            )
+            all_records.extend(
+                generate_time_series(series_spec, inst, n_scans, seed + s + 1, interval)
+            )
+        t1 = time.time()
+
+        write_time_series(out_path, all_records, interval)
+        t2 = time.time()
+        print(f"{cfg['dataset_id']}: {n_series} series x {n_scans} scans "
+              f"(gen {t1 - t0:.1f}s, write {t2 - t1:.1f}s) -> {out_path}")
+        return 0
+
+    n = args.n if args.n else int(cfg["n_records"])
 
     t0 = time.time()
     records = []
@@ -97,7 +139,6 @@ def cmd_generate(args: argparse.Namespace) -> int:
         records.extend(generate_dataset(spec, inst, n_i, seed + i))
     t1 = time.time()
 
-    out_path = out_dir / f"{cfg['dataset_id']}.h5"
     write_records(out_path, records, validate=True)
     t2 = time.time()
     print(f"{cfg['dataset_id']}: {n} records "

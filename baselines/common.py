@@ -10,7 +10,7 @@ import numpy as np
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 
-from spektran.io import read_records  # noqa: E402
+from spektran.io import read_records, read_time_series  # noqa: E402
 
 DATA = REPO / "data"
 
@@ -36,6 +36,22 @@ def load_wms_split(name: str) -> tuple[np.ndarray, np.ndarray, list[str]]:
     records = read_records(DATA / f"{name}.h5")
     records.sort(key=lambda r: r["meta"]["record_id"])
     X = np.stack([r["arrays"]["demod_2f"] for r in records])
+    y = np.array(
+        [r["meta"]["labels"]["species"][0]["concentration_ppm"] for r in records]
+    )
+    ids = [r["meta"]["record_id"] for r in records]
+    return X, y, ids
+
+
+def load_time_series_split(name: str) -> tuple[np.ndarray, np.ndarray, list[str]]:
+    """Load a T5 time-series split: X = raw_scan [n, n_points], y = concentration [ppm].
+
+    Unlike load_split/load_wms_split, records are kept in temporal
+    (generation) order, NOT sorted by record_id -- downstream series-boundary
+    detection (spektran.benchmark.evaluate.evaluate_drift) depends on it.
+    """
+    records, _ = read_time_series(DATA / f"{name}.h5")
+    X = np.stack([r["arrays"]["raw_scan"] for r in records])
     y = np.array(
         [r["meta"]["labels"]["species"][0]["concentration_ppm"] for r in records]
     )

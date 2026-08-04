@@ -23,7 +23,9 @@ Tasks (v0.2 additions):
   configs shipped (``ch4-t4-*-v0.yaml``); evaluation reuses the T1 pipeline.
 - **T5 drift compensation**: input = raw_scan_timeseries; output =
   drift-corrected concentration [ppm]. Metrics: Allan variance improvement
-  (primary), MAE. Evaluation pending a time-series HDF5 layout.
+  (primary), MAE. Dataset configs shipped (``ch4-t5-*-v0.yaml``, time-series
+  HDF5 layout via ``io.write_time_series``/``read_time_series``); evaluation
+  computes Allan deviation per series (see ``evaluate.evaluate_drift``).
 - **T6 OOD instrument detection**: input = raw_scan; output = ood_label
   (in-/out-of-distribution). Metrics: AUROC. Evaluation pending an OOD
   label format.

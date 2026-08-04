@@ -6,9 +6,9 @@ Usage (also exposed as ``python -m spektran.benchmark.evaluate``):
                 --predictions preds.csv [--json-out scores.json]
 
 Prediction formats:
-- T1/T3/T4: CSV with header ``record_id,concentration_ppm``
+- T1/T3/T4/T5: CSV with header ``record_id,concentration_ppm``
 - T2: HDF5 with /predictions/<record_id> arrays (denoised absorbance)
-- T5/T6: not yet implemented (raises NotImplementedError; see docs/benchmark.md)
+- T6: not yet implemented (raises NotImplementedError; see docs/benchmark.md)
 """
 
 from __future__ import annotations
@@ -79,6 +79,68 @@ def evaluate_denoising(truth_h5: Path, predictions_h5: Path) -> dict:
     }
 
 
+def evaluate_drift(truth_h5: Path, predictions_csv: Path) -> dict:
+    """T5: Allan-deviation curve of the drift-corrected concentration error.
+
+    A T5 truth file is a concatenation of independent time series -- each a
+    fixed-truth-concentration run of one frozen instrument realization (see
+    ``cli.py``'s ``mode: time_series`` generation). Records from different
+    series must never be treated as consecutive scans of the same drift
+    process, or Allan variance would pick up a spurious jump at every series
+    boundary. Series are recovered without extra metadata: every scan in one
+    series shares an exactly equal true concentration by construction (each
+    series uses a degenerate ``low == high`` truth range, and
+    ``generator.sample_concentration`` returns that bound exactly every draw
+    -- see its docstring), so a change in truth concentration marks a new
+    series. Allan deviation is
+    computed within each series and averaged across series (they share the
+    same ``taus`` grid since every official T5 series has the same length).
+    """
+    from ..io import read_time_series
+
+    records, scan_interval_s = read_time_series(truth_h5)
+    ids = [r["meta"]["record_id"] for r in records]
+    truth_conc = np.array(
+        [r["meta"]["labels"]["species"][0]["concentration_ppm"] for r in records]
+    )
+
+    preds: dict[str, float] = {}
+    with open(predictions_csv) as f:
+        for row in csv.DictReader(f):
+            preds[row["record_id"]] = float(row["concentration_ppm"])
+    missing = [rid for rid in ids if rid not in preds]
+    if missing:
+        raise SystemExit(
+            f"predictions missing {len(missing)} record_ids (first: {missing[:3]})"
+        )
+    pred_conc = np.array([preds[rid] for rid in ids])
+
+    errors = pred_conc - truth_conc
+    boundaries = np.flatnonzero(np.diff(truth_conc) != 0) + 1
+    series = np.split(errors, boundaries)
+
+    if len({len(s) for s in series}) == 1:
+        curves = [M.allan_variance(s, tau_points=20, dt=scan_interval_s) for s in series]
+        taus = curves[0]["taus"]
+        adevs = np.mean([c["adevs"] for c in curves], axis=0).tolist()
+    else:
+        # Irregular series lengths (e.g. a hand-built truth file): fall back
+        # to one Allan-variance pass over the full concatenation rather than
+        # averaging incompatible tau grids.
+        av = M.allan_variance(errors, tau_points=20, dt=scan_interval_s)
+        taus, adevs = av["taus"], av["adevs"]
+
+    return {
+        "n_scans": len(records),
+        "n_series": len(series),
+        "mae_ppm": M.mae(truth_conc, pred_conc),
+        "adev_shortest_tau": adevs[0] if adevs else 0.0,
+        "adev_longest_tau": adevs[-1] if adevs else 0.0,
+        "adev_taus_s": taus,
+        "adev_curve": adevs,
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--task", required=True,
@@ -101,9 +163,7 @@ def main(argv: list[str] | None = None) -> int:
     elif args.task == "T2-denoising":
         scores = evaluate_denoising(Path(args.truth), Path(args.predictions))
     elif args.task == "T5-drift-compensation":
-        raise NotImplementedError(
-            "T5 evaluation requires time-series data format; see docs/benchmark.md"
-        )
+        scores = evaluate_drift(Path(args.truth), Path(args.predictions))
     elif args.task == "T6-ood-instrument":
         raise NotImplementedError(
             "T6 evaluation requires OOD label format; see docs/benchmark.md"

@@ -1,0 +1,7 @@
+{
+  "ridge_alpha": 10.0,
+  "window": 100,
+  "window_selected_on": "train (in-sample MAE, per-series smoothing)",
+  "train_mae_ppm": 0.23183548013684985,
+  "test_mae_ppm": 0.2699728656200829
+}

@@ -68,7 +68,16 @@ class GenerationSpec:
     interferents: list[dict] = field(default_factory=list)
 
 
-def _sample_concentration(spec: GenerationSpec, rng: np.random.Generator) -> float:
+def sample_concentration(spec: GenerationSpec, rng: np.random.Generator) -> float:
+    """Sample one concentration [ppm] from ``spec``'s truth distribution.
+
+    ``low == high`` is a degenerate point distribution (time-series mode
+    fixes one true concentration per series): ``rng.uniform(low, high)``
+    computes ``low + (high - low) * u``, and IEEE754 subtraction of two
+    equal finite floats is always exactly 0.0, so this returns exactly
+    ``low`` for every draw, not merely approximately -- callers that detect
+    series boundaries by truth-concentration equality depend on this.
+    """
     lo, hi = spec.concentration_ppm_low, spec.concentration_ppm_high
     if spec.log_uniform_concentration:
         return float(np.exp(rng.uniform(np.log(lo), np.log(hi))))
@@ -98,7 +107,7 @@ def generate_record(
         sample_instrument(instrument_cfg, rng)  # keep stream layout identical
     technique = inst["technique"]
 
-    concentration_ppm = _sample_concentration(spec, rng)
+    concentration_ppm = sample_concentration(spec, rng)
     env = inst.get("environment", {})
     temperature_K, pressure_atm = jittered_conditions(
         rng,

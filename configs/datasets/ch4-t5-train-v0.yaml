@@ -1,0 +1,16 @@
+# Official v0 split: t5-train (CH4 drift compensation). 20 time series of 200
+# consecutive scans each, one frozen vi-da-medium-02 realization per series.
+dataset_id: ch4-t5-train-v0
+mode: time_series
+instrument_config: configs/instruments/vi-da-medium-02.yaml
+n_series: 20
+n_scans_per_series: 200
+scan_interval_s: 1.0
+master_seed: 105001
+gas:
+  molecule: CH4
+  concentration_ppm: {low: 50.0, high: 200.0, log_uniform: false}
+  path_length_m: 10.0
+  matrix_gas: N2
+n_points: 2000
+line_source: demo

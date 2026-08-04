@@ -113,6 +113,54 @@ class TestHDF5RoundTrip:
             write_records(tmp_path / "bad.h5", recs)
 
 
+class TestTimeSeries:
+    def test_write_read_round_trip(self, da_cfg, tmp_path):
+        from spektran.generator import generate_time_series
+        from spektran.io import read_time_series, write_time_series
+
+        recs = generate_time_series(
+            make_spec(n_points=100), da_cfg, n_scans=5, master_seed=31, scan_interval_s=2.0
+        )
+        path = tmp_path / "ts.h5"
+        write_time_series(path, recs, scan_interval_s=2.0)
+        back, interval = read_time_series(path)
+
+        assert interval == 2.0
+        assert [r["meta"]["record_id"] for r in back] == [r["meta"]["record_id"] for r in recs]
+        for a, b in zip(recs, back):
+            assert a["meta"] == b["meta"]
+            for k in a["arrays"]:
+                assert np.array_equal(a["arrays"][k], b["arrays"][k])
+
+    def test_frozen_instrument_shared_across_scans(self, da_cfg):
+        from spektran.generator import generate_time_series
+
+        recs = generate_time_series(
+            make_spec(n_points=100), da_cfg, n_scans=4, master_seed=32, scan_interval_s=1.0
+        )
+        inst_ids = {r["meta"]["provenance"]["instrument_config_id"] for r in recs}
+        assert len(inst_ids) == 1
+
+    def test_fixed_concentration_series_is_bit_identical(self):
+        """A degenerate (low == high) spec must yield the exact same truth every draw.
+
+        This underpins evaluate_drift's series-boundary detection (a change in
+        truth concentration marks a new series), so it must hold exactly, not
+        just approximately.
+        """
+        from spektran.generator import GenerationSpec, sample_concentration
+
+        spec = GenerationSpec(
+            lines=demo_ch4_2nu3(),
+            concentration_ppm_low=77.0,
+            concentration_ppm_high=77.0,
+            log_uniform_concentration=False,
+        )
+        rng = np.random.default_rng(5)
+        vals = [sample_concentration(spec, rng) for _ in range(10)]
+        assert all(v == 77.0 for v in vals)
+
+
 def test_generate_record_with_interferent():
     """Records with interferents must list them in conditions and add their absorption."""
     import numpy as np

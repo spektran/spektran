@@ -60,6 +60,54 @@ python -m spektran.benchmark.evaluate --task T4-wms-concentration \
   --predictions baselines/cnn1d_wms_t4/predictions_t4-test.csv
 ```
 
+## T5 Results (v0 time-series split, CH4 DA, 2026-08-05)
+
+| Model | Window | Test MAE (ppm) | ADEV @ tau=1s | ADEV @ tau=78s |
+|---|---|---|---|---|
+| Moving average (ridge + per-series smoothing) | 100 | **0.270** | 0.0040 | 0.129 |
+
+The official v0 split is 20 train / 10 test time series of 200 consecutive
+1 s scans each, one frozen `vi-da-medium-02` realization per series (the true
+concentration is fixed per series -- only the *measured* value drifts).
+`evaluate_drift` recovers series boundaries from truth-concentration jumps
+with no extra metadata (every scan in a series shares an exactly equal true
+concentration by construction), computes Allan deviation within each series
+so a series boundary is never mistaken for a drift jump, and averages the
+per-series ADEV curves. Reproduce:
+
+```bash
+for s in t5-train t5-test; do
+  spektran generate configs/datasets/ch4-$s-v0.yaml --out data
+done
+python baselines/moving_avg_t5/train.py    # ~10 s
+python -m spektran.benchmark.evaluate --task T5-drift-compensation \
+  --truth data/ch4-t5-test-v0.h5 \
+  --predictions baselines/moving_avg_t5/predictions_t5-test.csv
+```
+
+Observations (honest, not tuned away):
+
+- Per-scan ridge alone (window=1) gets 0.41 ppm test MAE; a per-series
+  moving average keeps reducing it as the window grows, still improving at
+  window=100 (half the series length) with no turnaround. For this v0 split
+  (medium-tier instrument, 200 s series) averageable noise dominates and no
+  Allan-variance "bathtub" turnaround from drift shows up within this
+  timescale -- a longer series or a harder-tier instrument would be needed
+  to see one.
+- The Allan-deviation curve of the *residual* (smoothed prediction minus
+  truth) still rises from 0.0040 ppm at tau=1s to 0.129 ppm at tau=78s: the
+  moving average removes fast per-scan noise but leaves a slower structured
+  error uncorrected -- exactly the gap a purpose-built drift-compensation
+  model should close relative to this reference smoother.
+- The window is selected by MAE on the training series themselves, not on
+  test (T5 v0 has no dedicated val split -- seeds are reserved per split in
+  `benchmark/tasks.py` and none is reserved for a T5 val set yet).
+- A naive `np.convolve(..., mode="same")` moving average implicitly zero-pads
+  past each series' ends, biasing edge predictions toward zero badly enough
+  to make every window choice look worse than no smoothing at all; the
+  shipped implementation renormalizes by the true per-position overlap count
+  instead (see `moving_avg_t5/train.py:moving_average`).
+
 ## Reproduce
 
 ```bash
@@ -105,7 +153,7 @@ Added in schema v0.2:
 | Task | Input | Output | Primary metric | Status |
 |---|---|---|---|---|
 | T4 WMS concentration | 2f demod signal | ppm | MAE | Dataset configs shipped; baselines shipped |
-| T5 Drift compensation | Time-series scans | Drift-corrected ppm | Allan variance improvement | Evaluation stub; baselines pending |
+| T5 Drift compensation | Time-series scans | Drift-corrected ppm | Allan variance improvement | Full pipeline shipped |
 | T6 OOD instrument | Raw scan | In/out-of-distribution | AUROC | Evaluation stub; baselines pending |
 
 T4 dataset generation:
@@ -121,4 +169,24 @@ T4 evaluation uses the same pipeline as T1:
 ```bash
 python -m spektran.benchmark.evaluate --task T4-wms-concentration \
   --truth data/ch4-t4-test-v0.h5 --predictions preds_t4.csv
+```
+
+### T5: Drift compensation
+
+T5 dataset generation (time-series mode: `spektran generate` detects
+`mode: time_series` in the config and calls `generate_time_series` per
+series instead of `generate_dataset`):
+
+```bash
+for s in t5-train t5-test; do
+  spektran generate configs/datasets/ch4-$s-v0.yaml --out data
+done
+```
+
+T5 evaluation reads the time-series HDF5 layout (`spektran.io.read_time_series`)
+and computes Allan deviation of the prediction error within each series:
+
+```bash
+python -m spektran.benchmark.evaluate --task T5-drift-compensation \
+  --truth data/ch4-t5-test-v0.h5 --predictions preds_t5.csv
 ```
