@@ -135,3 +135,48 @@ class TestInputValidation:
     def test_non_ch4_without_lines_raises(self):
         with pytest.raises(ValueError):
             simulate_absorbance(molecule="CO2")
+
+
+def test_demo_h2o_line_list():
+    from spektran.physics.hitran import demo_h2o
+
+    lines = demo_h2o()
+    assert lines.molecule == "H2O"
+    assert len(lines) >= 2
+    assert all(7185.0 < nu < 7190.0 for nu in lines.nu0_cm1)
+
+
+def test_demo_co2_line_list():
+    from spektran.physics.hitran import demo_co2
+
+    lines = demo_co2()
+    assert lines.molecule == "CO2"
+    assert len(lines) >= 2
+    assert all(4977.0 < nu < 4980.0 for nu in lines.nu0_cm1)
+
+
+def test_demo_co_line_list():
+    from spektran.physics.hitran import demo_co
+
+    lines = demo_co()
+    assert lines.molecule == "CO"
+    assert len(lines) >= 2
+    assert all(2169.0 < nu < 2174.0 for nu in lines.nu0_cm1)
+
+
+def test_multi_species_absorbance_superposition():
+    """Beer-Lambert: total absorbance = sum of individual species absorbances."""
+    import numpy as np
+
+    from spektran.physics.absorption import absorption_coefficient
+    from spektran.physics.hitran import demo_ch4_2nu3
+
+    lines = demo_ch4_2nu3()
+    nu = np.linspace(6046.0, 6048.0, 500)
+    alpha_10 = absorption_coefficient(nu, lines, 10e-6, 296.0, 1.0)
+    alpha_20 = absorption_coefficient(nu, lines, 20e-6, 296.0, 1.0)
+    alpha_30 = absorption_coefficient(nu, lines, 30e-6, 296.0, 1.0)
+    # Not bit-exact: mole fraction feeds the self-broadening term
+    # (gamma_self * x * P), so alpha(x) is linear in x only to the same
+    # ~1e-5-relative order documented in TestBeerLambertLinearity.test_doubling.
+    np.testing.assert_allclose(alpha_10 + alpha_20, alpha_30, rtol=1e-4)

@@ -6,9 +6,9 @@ and cached under ``.hitran_cache/``. The HITRAN edition and fetch date are
 recorded so that every record's provenance can pin the exact line data used.
 
 Offline use: ``LineList`` can be constructed directly from arrays, and
-``demo_ch4_2nu3()`` returns an APPROXIMATE built-in line list for examples and
-unit tests that must not touch the network. Official dataset generation always
-uses hapi-fetched data.
+``demo_ch4_2nu3()``, ``demo_h2o()``, ``demo_co2()``, ``demo_co()`` each return
+an APPROXIMATE built-in line list for examples and unit tests that must not
+touch the network. Official dataset generation always uses hapi-fetched data.
 """
 
 from __future__ import annotations
@@ -162,6 +162,83 @@ def demo_ch4_2nu3() -> LineList:
         n_air=np.array([0.72, 0.70, 0.74]),
         delta_air=np.array([-0.008, -0.007, -0.009]),
         elower_cm1=np.array([62.88, 104.77, 157.13]),
+        source="builtin-demo (approximate values, not for production)",
+        hitran_data_version="n/a (demo)",
+    )
+
+
+def demo_h2o() -> LineList:
+    """Built-in APPROXIMATE H2O line list near 7185-7190 cm-1 (1.4 um combination
+    band, ~1392 nm, widely used in industrial moisture/H2O TDLAS monitoring).
+
+    For offline examples and unit tests ONLY. Parameter values are
+    representative of this near-IR H2O region (correct order of magnitude for
+    line strength, broadening, lower-state energy) but are NOT authoritative
+    HITRAN data -- official dataset generation must use :func:`fetch_lines`.
+    Tests of physics correctness (normalization, Beer-Lambert linearity,
+    lineshape limits) are invariant to the exact parameter values.
+    """
+    return LineList(
+        molecule="H2O",
+        nu0_cm1=np.array([7185.597, 7186.758, 7189.132]),
+        sw_cm_per_molec=np.array([7.29e-23, 3.11e-23, 1.85e-23]),
+        gamma_air=np.array([0.0445, 0.0512, 0.0398]),
+        gamma_self=np.array([0.320, 0.365, 0.298]),
+        n_air=np.array([0.65, 0.61, 0.69]),
+        delta_air=np.array([-0.0040, 0.0030, -0.0060]),
+        elower_cm1=np.array([212.16, 142.28, 325.62]),
+        source="builtin-demo (approximate values, not for production)",
+        hitran_data_version="n/a (demo)",
+    )
+
+
+def demo_co2() -> LineList:
+    """Built-in APPROXIMATE CO2 line list near 4977-4979 cm-1 (combination
+    band, ~2009 nm, used in 2-um TDLAS/WMS CO2 sensing).
+
+    For offline examples and unit tests ONLY. Parameter values are
+    representative of this CO2 combination-band region (correct order of
+    magnitude for line strength, broadening, lower-state energy) but are NOT
+    authoritative HITRAN data -- official dataset generation must use
+    :func:`fetch_lines`. Tests of physics correctness (normalization,
+    Beer-Lambert linearity, lineshape limits) are invariant to the exact
+    parameter values.
+    """
+    return LineList(
+        molecule="CO2",
+        nu0_cm1=np.array([4977.696, 4978.304, 4978.902]),
+        sw_cm_per_molec=np.array([9.8e-24, 6.1e-24, 3.4e-24]),
+        gamma_air=np.array([0.0721, 0.0688, 0.0745]),
+        gamma_self=np.array([0.0942, 0.0895, 0.0968]),
+        n_air=np.array([0.68, 0.70, 0.66]),
+        delta_air=np.array([-0.0032, 0.0015, -0.0048]),
+        elower_cm1=np.array([667.38, 505.85, 848.91]),
+        source="builtin-demo (approximate values, not for production)",
+        hitran_data_version="n/a (demo)",
+    )
+
+
+def demo_co() -> LineList:
+    """Built-in APPROXIMATE CO line list near 2169-2173 cm-1 (fundamental
+    v=1<-0 R-branch, ~4604 nm, used in combustion/process CO sensing).
+
+    For offline examples and unit tests ONLY. Parameter values are
+    representative of the CO fundamental R-branch region (correct order of
+    magnitude for line strength, broadening, lower-state energy) but are NOT
+    authoritative HITRAN data -- official dataset generation must use
+    :func:`fetch_lines`. Tests of physics correctness (normalization,
+    Beer-Lambert linearity, lineshape limits) are invariant to the exact
+    parameter values.
+    """
+    return LineList(
+        molecule="CO",
+        nu0_cm1=np.array([2169.204, 2172.759]),
+        sw_cm_per_molec=np.array([2.6e-19, 2.4e-19]),
+        gamma_air=np.array([0.0745, 0.0721]),
+        gamma_self=np.array([0.0812, 0.0798]),
+        n_air=np.array([0.70, 0.71]),
+        delta_air=np.array([-0.0065, -0.0071]),
+        elower_cm1=np.array([80.74, 107.66]),
         source="builtin-demo (approximate values, not for production)",
         hitran_data_version="n/a (demo)",
     )
