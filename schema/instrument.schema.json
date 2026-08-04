@@ -4,7 +4,7 @@
   "title": "SPEKTRAN virtual instrument configuration",
   "description": "Schema (v0.1 draft) for a virtual-instrument YAML/JSON config. A virtual instrument defines DISTRIBUTIONS for every noise/instrument parameter; the generator samples one concrete value per record and writes it to the record's provenance.noise_config.",
   "type": "object",
-  "required": ["instrument_config_id", "schema_version", "technique", "laser", "detector"],
+  "required": ["instrument_config_id", "schema_version", "technique", "detector"],
   "additionalProperties": false,
   "properties": {
     "instrument_config_id": {
@@ -13,7 +13,7 @@
       "description": "Stable identifier, e.g. 'vi-easy-01'."
     },
     "schema_version": { "const": "0.1" },
-    "technique": { "enum": ["TDLAS-DA", "TDLAS-WMS"] },
+    "technique": { "enum": ["TDLAS-DA", "TDLAS-WMS", "NDIR"] },
     "held_out": {
       "type": "boolean",
       "default": false,
@@ -93,6 +93,28 @@
           "phase_rad": { "$ref": "#/$defs/dist_or_number" },
           "phase_drift_rad_per_s": { "$ref": "#/$defs/dist_or_number" }
         }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Broadband IR source parameters (NDIR instruments).",
+      "properties": {
+        "temperature_K": { "$ref": "#/$defs/dist_or_number", "description": "Blackbody source temperature" },
+        "temperature_drift_K_per_s": { "$ref": "#/$defs/dist_or_number", "description": "Source temperature drift rate" },
+        "intensity_fluctuation_rel": { "$ref": "#/$defs/dist_or_number", "description": "Common-mode source intensity fluctuation sigma" }
+      }
+    },
+    "filters": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Optical bandpass filter parameters (NDIR instruments).",
+      "properties": {
+        "active_center_cm1": { "$ref": "#/$defs/dist_or_number" },
+        "active_fwhm_cm1": { "$ref": "#/$defs/dist_or_number" },
+        "reference_center_cm1": { "$ref": "#/$defs/dist_or_number" },
+        "reference_fwhm_cm1": { "$ref": "#/$defs/dist_or_number" },
+        "shape": { "enum": ["gaussian", "tophat"], "default": "gaussian" }
       }
     },
     "optics": {
