@@ -39,14 +39,14 @@ from spektran.io import write_records  # noqa: E402
 
 
 def load_spec(cfg: dict) -> GenerationSpec:
-    from spektran.physics import demo_ch4_2nu3, fetch_lines
+    from spektran.physics import demo_ch4_2nu3, demo_co, demo_co2, demo_h2o, fetch_lines
 
     gas = cfg.get("gas", {})
     conc = gas.get("concentration_ppm", {})
     source = cfg.get("line_source", "demo")
     molecule = gas.get("molecule", "CH4")
+    lo, hi = cfg.get("wavenumber_range_cm1", [6045.0, 6049.0])
     if source == "hitran":
-        lo, hi = cfg.get("wavenumber_range_cm1", [6045.0, 6049.0])
         lines = fetch_lines(molecule, lo, hi)
     elif source == "demo":
         if molecule != "CH4":
@@ -54,6 +54,24 @@ def load_spec(cfg: dict) -> GenerationSpec:
         lines = demo_ch4_2nu3()
     else:
         raise SystemExit(f"unknown line_source: {source}")
+
+    interferent_specs = []
+    for interf_cfg in cfg.get("interferents", []):
+        mol = interf_cfg["molecule"]
+        if source == "demo":
+            demo_fns = {"H2O": demo_h2o, "CO2": demo_co2, "CO": demo_co}
+            if mol not in demo_fns:
+                raise SystemExit(f"No demo lines for interferent {mol}")
+            i_lines = demo_fns[mol]()
+        else:
+            i_lo, i_hi = interf_cfg.get("wavenumber_range_cm1", [lo, hi])
+            i_lines = fetch_lines(mol, i_lo, i_hi)
+        interferent_specs.append({
+            "molecule": mol,
+            "lines": i_lines,
+            "concentration_ppm": float(interf_cfg["concentration_ppm"]),
+        })
+
     return GenerationSpec(
         lines=lines,
         molecule=molecule,
@@ -63,6 +81,7 @@ def load_spec(cfg: dict) -> GenerationSpec:
         path_length_m=float(gas.get("path_length_m", 10.0)),
         matrix_gas=gas.get("matrix_gas", "N2"),
         n_points=int(cfg.get("n_points", 2000)),
+        interferents=interferent_specs,
     )
 
 

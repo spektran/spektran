@@ -111,3 +111,39 @@ class TestHDF5RoundTrip:
         del recs[0]["meta"]["conditions"]
         with pytest.raises(ValueError):
             write_records(tmp_path / "bad.h5", recs)
+
+
+def test_generate_record_with_interferent():
+    """Records with interferents must list them in conditions and add their absorption."""
+    import numpy as np
+
+    from spektran.generator import GenerationSpec, generate_record
+    from spektran.physics.hitran import demo_ch4_2nu3, demo_h2o
+
+    spec = GenerationSpec(
+        lines=demo_ch4_2nu3(),
+        molecule="CH4",
+        concentration_ppm_low=100.0,
+        concentration_ppm_high=100.0,
+        interferents=[
+            {
+                "molecule": "H2O",
+                "lines": demo_h2o(),
+                "concentration_ppm": 10000.0,
+            }
+        ],
+    )
+    inst_cfg = {
+        "instrument_config_id": "test-multi",
+        "schema_version": "0.1",
+        "technique": "TDLAS-DA",
+        "laser": {"center_wavenumber_cm1": 6047.0, "scan_range_cm1": 2.0},
+        "detector": {},
+    }
+    seed = np.random.SeedSequence(42)
+    rec = generate_record(spec, inst_cfg, seed)
+    meta = rec["meta"]
+    assert len(meta["labels"]["species"]) == 1  # only target species in labels
+    assert "interferents" in meta["conditions"]
+    assert meta["conditions"]["interferents"][0]["molecule"] == "H2O"
+    assert meta["conditions"]["interferents"][0]["concentration_ppm"] == 10000.0

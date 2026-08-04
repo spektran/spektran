@@ -44,7 +44,15 @@ from .physics.wms import WMSConfig, simulate_wms
 
 @dataclass
 class GenerationSpec:
-    """What to generate: gas truth distribution + sampling grid."""
+    """What to generate: gas truth distribution + sampling grid.
+
+    ``interferents`` are background absorbers superposed onto the target
+    species' absorbance (Beer-Lambert linearity) but excluded from
+    ``labels.species`` -- they are not a prediction target, only a source of
+    spectral cross-interference the model must learn to be robust to. Each
+    entry is a dict with keys ``molecule`` (str), ``lines`` (LineList) and
+    ``concentration_ppm`` (float).
+    """
 
     lines: LineList
     molecule: str = "CH4"
@@ -57,6 +65,7 @@ class GenerationSpec:
     matrix_gas: str = "N2"
     n_points: int = 2000
     extra_conditions: dict = field(default_factory=dict)
+    interferents: list[dict] = field(default_factory=list)
 
 
 def _sample_concentration(spec: GenerationSpec, rng: np.random.Generator) -> float:
@@ -122,6 +131,18 @@ def generate_record(
         pressure_atm=pressure_atm,
     )
     absorbance = alpha * spec.path_length_m * 100.0
+    # Beer-Lambert linearity: total absorbance is the sum of each absorber's
+    # own absorbance. Interferents are background species, not the
+    # prediction target -- they are omitted from labels.species below.
+    for interf in spec.interferents:
+        alpha_interf = absorption_coefficient(
+            nu,
+            interf["lines"],
+            mole_fraction=interf["concentration_ppm"] * 1e-6,
+            temperature_K=temperature_K,
+            pressure_atm=pressure_atm,
+        )
+        absorbance += alpha_interf * spec.path_length_m * 100.0
     step_est = abs(laser["scan_range_cm1"]) / n
     absorbance_measured = linewidth_convolve(
         absorbance, step_est, laser.get("linewidth_MHz", 0.0)
@@ -275,6 +296,20 @@ def generate_record(
             "pressure_atm": pressure_atm,
             "path_length_m": spec.path_length_m,
             "matrix_gas": spec.matrix_gas,
+            **(
+                {
+                    "interferents": [
+                        {
+                            "molecule": interf["molecule"],
+                            "hitran_molecule_id": MOLECULE_IDS[interf["molecule"]],
+                            "concentration_ppm": interf["concentration_ppm"],
+                        }
+                        for interf in spec.interferents
+                    ]
+                }
+                if spec.interferents
+                else {}
+            ),
         },
         "instrument": {
             "laser": {
