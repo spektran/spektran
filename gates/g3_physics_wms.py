@@ -36,7 +36,7 @@ GAMMA_L = 0.05
 
 
 def _absorbance_fn(peak: float):
-    from opengasspec.physics.lineshape import lorentz_profile
+    from spektran.physics.lineshape import lorentz_profile
 
     scale = peak / (1.0 / (np.pi * GAMMA_L))
 
@@ -52,7 +52,7 @@ def _settled_mean(x: np.ndarray, frac: float = 0.3) -> float:
 
 
 def check_chain() -> dict:
-    from opengasspec.physics.wms import WMSConfig, simulate_wms
+    from spektran.physics.wms import WMSConfig, simulate_wms
 
     from tests.reference_impl.ref_wms import wms_harmonic_ref
 
@@ -108,7 +108,7 @@ def check_chain() -> dict:
 
 
 def check_arndt() -> dict:
-    from opengasspec.physics.wms import WMSConfig, simulate_wms
+    from spektran.physics.wms import WMSConfig, simulate_wms
 
     from tests.reference_impl.ref_wms import arndt_lorentzian_h2_peak
 

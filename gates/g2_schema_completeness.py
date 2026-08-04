@@ -75,7 +75,7 @@ def _random_record(rng) -> dict:
         "data_origin": "simulated",
         "technique": technique,
         "provenance": {
-            "generator_version": "0.1.0.dev0",
+            "generator_version": "0.1.0",
             "hitran_data_version": "HITRAN2020",
             "random_seed": int(rng.integers(0, 2**31)),
             "instrument_config_id": f"vi-{int(rng.integers(0, 8)):02d}",
@@ -198,7 +198,7 @@ def _random_record(rng) -> dict:
 
 def _round_trip() -> dict:
     import numpy as np
-    from opengasspec.validate import validate_record
+    from spektran.validate import validate_record
 
     rng = np.random.default_rng(SEED)
     failures = []

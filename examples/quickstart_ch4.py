@@ -17,7 +17,7 @@ record = {
     "data_origin": "simulated",
     "technique": "TDLAS-DA",
     "provenance": {
-        "generator_version": "0.1.0.dev0",
+        "generator_version": "0.1.0",
         "hitran_data_version": "n/a (built-in demo lines)",
         "random_seed": 0,
         "instrument_config_id": "vi-clean-00",

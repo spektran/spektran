@@ -39,7 +39,7 @@ SEED_CHAIN = 20260805
 
 
 def check_lineshape() -> dict:
-    from opengasspec.physics import voigt_profile
+    from spektran.physics import voigt_profile
 
     from tests.reference_impl.ref_lineshape import voigt_profile_ref
 
@@ -67,9 +67,9 @@ def check_lineshape() -> dict:
 
 
 def check_forward_chain() -> dict:
-    from opengasspec.physics import demo_ch4_2nu3
-    from opengasspec.physics.absorption import absorption_coefficient, default_q_ratio
-    from opengasspec.physics.hitran import LineList
+    from spektran.physics import demo_ch4_2nu3
+    from spektran.physics.absorption import absorption_coefficient, default_q_ratio
+    from spektran.physics.hitran import LineList
 
     from tests.reference_impl.ref_absorption import absorbance_ref
 
@@ -128,8 +128,8 @@ def check_multi_line_sum() -> dict:
     """Cross-validate the multi-line summation path (added after independent
     review flagged that the chain check exercised single lines only).
     Reference total = sum of independent single-line reference absorbances."""
-    from opengasspec.physics import demo_ch4_2nu3
-    from opengasspec.physics.absorption import absorption_coefficient, default_q_ratio
+    from spektran.physics import demo_ch4_2nu3
+    from spektran.physics.absorption import absorption_coefficient, default_q_ratio
 
     from tests.reference_impl.ref_absorption import absorbance_ref
 
@@ -189,7 +189,7 @@ def check_pytest() -> dict:
 
 def check_doi_citations() -> dict:
     doi_re = re.compile(r"doi:\s*10\.\d{4,9}/\S+", re.IGNORECASE)
-    files = sorted((REPO / "src" / "opengasspec" / "physics").glob("*.py")) + sorted(
+    files = sorted((REPO / "src" / "spektran" / "physics").glob("*.py")) + sorted(
         (REPO / "tests" / "reference_impl").glob("ref_*.py")
     )
     per_file = {}

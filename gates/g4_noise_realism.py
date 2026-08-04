@@ -84,13 +84,13 @@ def _highpass_noise_std(x: np.ndarray) -> float:
 
 
 def instrument_metrics(cfg_path: str, anchors_env: dict) -> dict:
-    from opengasspec.generator import (
+    from spektran.generator import (
         GenerationSpec,
         generate_dataset,
         generate_time_series,
     )
-    from opengasspec.instrument.sampling import load_instrument_config
-    from opengasspec.physics import demo_ch4_2nu3
+    from spektran.instrument.sampling import load_instrument_config
+    from spektran.physics import demo_ch4_2nu3
 
     cfg = load_instrument_config(cfg_path)
     spec = GenerationSpec(

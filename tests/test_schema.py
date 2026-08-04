@@ -12,7 +12,7 @@ def make_valid_da_record() -> dict:
         "data_origin": "simulated",
         "technique": "TDLAS-DA",
         "provenance": {
-            "generator_version": "0.1.0.dev0+g0000000",
+            "generator_version": "0.1.0",
             "hitran_data_version": "n/a (demo)",
             "random_seed": 42,
             "instrument_config_id": "vi-clean-00",
