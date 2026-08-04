@@ -13,6 +13,7 @@ nav:
   - Quickstart: quickstart.md
   - Data schema: schema.md
   - Benchmark rules: benchmark.md
+  - Leaderboard: leaderboard.md
   - Reproducibility: reproduce.md
   - Quality gates: gates.md
 markdown_extensions:
