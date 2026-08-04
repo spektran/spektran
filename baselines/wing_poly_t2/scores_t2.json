@@ -1,0 +1,8 @@
+{
+  "task": "T2-denoising",
+  "scores": {
+    "n_records": 1000,
+    "spectral_rmse": 0.006312539151917462,
+    "peak_weighted_rmse": 0.008599360065889383
+  }
+}

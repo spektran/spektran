@@ -21,6 +21,9 @@ done
 | Ridge regression | **2.84** | **29.9** | **3.72** | **1.31x** |
 | 1D CNN | 15.58 | 42.2 | 28.30 | 1.82x |
 
+T2 denoising (classical reference, `wing_poly_t2`): spectral RMSE 6.31e-3,
+peak-weighted RMSE 8.60e-3 on the T1 test split.
+
 Observations (honest, not tuned away):
 
 - The linear model wins on this v0 configuration: napierian absorbance is

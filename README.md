@@ -58,6 +58,9 @@ nu, absorbance = simulate_absorbance(
 | Ridge regression (baseline) | 2.84 | 29.9 | 3.72 | 1.31x |
 | 1D CNN (baseline) | 15.58 | 42.2 | 28.30 | 1.82x |
 
+T2 denoising (same test split): wing-anchored cubic-polynomial baseline
+(classical reference) — spectral RMSE 6.31e-3, peak-weighted RMSE 8.60e-3.
+
 Reproduce with [`baselines/README.md`](baselines/README.md). Note the T3
 lesson already visible in the baselines: the deep model overfits instrument
 signatures harder than the linear one. Submissions: run

@@ -26,3 +26,7 @@ data/
 .DS_Store
 .idea/
 .vscode/
+
+# baseline prediction artifacts (regenerable)
+baselines/*/predictions_*.csv
+baselines/*/predictions_*.h5
