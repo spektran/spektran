@@ -9,8 +9,8 @@ import pytest
 
 pytest.importorskip("hapi")
 
-from opensensorsim.physics import fetch_lines  # noqa: E402
-from opensensorsim.physics.absorption import absorption_coefficient  # noqa: E402
+from spektran.physics import fetch_lines  # noqa: E402
+from spektran.physics.absorption import absorption_coefficient  # noqa: E402
 
 pytestmark = pytest.mark.hitran_online
 
@@ -34,7 +34,7 @@ class TestAgainstHapi:
             HITRAN_units=True,  # cm^2/molecule (cross-section per molecule)
         )
         # Our alpha [cm-1] = n_absorber * cross_section => compare shapes scaled
-        from opensensorsim.physics.constants import number_density_cm3
+        from spektran.physics.constants import number_density_cm3
 
         alpha_ours = absorption_coefficient(nu_grid, lines, x, 296.0, 1.0)
         alpha_hapi = coef_h * number_density_cm3(1.0, 296.0) * x

@@ -21,12 +21,12 @@ jobs:
       - name: Lint
         run: ruff check src tests
       - name: Unit + physics-correctness tests
-        run: pytest -m "not hitran_online" --cov=opensensorsim
+        run: pytest -m "not hitran_online" --cov=spektran
       # Schema validation of examples and official configs
       - name: Schema validation
         run: |
           if ls configs/datasets/*.yaml >/dev/null 2>&1; then
-            python -m opensensorsim.validate configs/
+            python -m spektran.validate configs/
           else
             echo "No official configs yet (Phase 0) — skipping"
           fi
@@ -47,6 +47,6 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .hitran_cache
-          key: hitran-${{ hashFiles('src/opensensorsim/physics/hitran.py') }}
+          key: hitran-${{ hashFiles('src/spektran/physics/hitran.py') }}
       - name: HITRAN reference comparison tests
         run: pytest -m hitran_online

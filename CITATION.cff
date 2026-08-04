@@ -1,10 +1,10 @@
 cff-version: 1.2.0
-message: "If you use OpenSensorSim, please cite it as below."
-title: "OpenSensorSim: an open simulation engine, data standard, and ML benchmark for TDLAS"
+message: "If you use SPEKTRAN, please cite it as below."
+title: "SPEKTRAN: an open simulation engine, data standard, and ML benchmark for TDLAS"
 type: software
 authors:
-  - name: "OpenSensorSim contributors"
-repository-code: "https://github.com/opensensorsim/opensensorsim"
+  - name: "SPEKTRAN contributors"
+repository-code: "https://github.com/spektran/spektran"
 license: Apache-2.0
 keywords:
   - TDLAS

@@ -3,9 +3,9 @@
 import numpy as np
 import pytest
 
-from opensensorsim.physics import demo_ch4_2nu3, line_strength_at_T, simulate_absorbance
-from opensensorsim.physics.absorption import absorption_coefficient, default_q_ratio
-from opensensorsim.physics.constants import number_density_cm3
+from spektran.physics import demo_ch4_2nu3, line_strength_at_T, simulate_absorbance
+from spektran.physics.absorption import absorption_coefficient, default_q_ratio
+from spektran.physics.constants import number_density_cm3
 from tests.reference_impl.ref_absorption import absorbance_ref
 
 RNG_SEED = 20260805
@@ -85,7 +85,7 @@ class TestAbsorptionCrossValidation:
             q = default_q_ratio("CH4", T)
 
             # Main implementation: single-line LineList slice
-            from opensensorsim.physics.hitran import LineList
+            from spektran.physics.hitran import LineList
 
             single = LineList(
                 molecule="CH4",

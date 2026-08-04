@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 from scipy.signal import welch
 
-from opensensorsim.instrument import (
+from spektran.instrument import (
     adc_quantize,
     baseline_polynomial,
     etalon_transmission,
@@ -124,7 +124,7 @@ class TestLaserEffects:
         assert i[0] == pytest.approx(0.9) and i[-1] == pytest.approx(1.1)
 
     def test_linewidth_convolution_broadens_and_conserves_area(self):
-        from opensensorsim.physics.lineshape import lorentz_profile
+        from spektran.physics.lineshape import lorentz_profile
 
         step = 1e-4
         nu = np.arange(6046.0, 6048.0, step)

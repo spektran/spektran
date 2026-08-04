@@ -5,11 +5,11 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from opensensorsim.generator import GenerationSpec, generate_dataset, generate_record
-from opensensorsim.instrument.sampling import load_instrument_config
-from opensensorsim.io import read_records, write_records
-from opensensorsim.physics import demo_ch4_2nu3
-from opensensorsim.validate import validate_record
+from spektran.generator import GenerationSpec, generate_dataset, generate_record
+from spektran.instrument.sampling import load_instrument_config
+from spektran.io import read_records, write_records
+from spektran.physics import demo_ch4_2nu3
+from spektran.validate import validate_record
 
 CONFIG_DIR = Path(__file__).resolve().parents[1] / "configs" / "instruments"
 

@@ -1,19 +1,19 @@
 #!/usr/bin/env python
-"""Push official OpenSensorSim splits to the Hugging Face Hub.
+"""Push official SPEKTRAN splits to the Hugging Face Hub.
 
 HUMAN ACTION REQUIRED before this works (plan §9, human responsibilities):
-  1. Create the 'opensensorsim' organization on huggingface.co
+  1. Create the 'spektran' organization on huggingface.co
   2. `pip install huggingface_hub datasets` and `hf auth login` with a
      write token (or set HF_TOKEN)
 
 Usage:
-    python scripts/push_to_hf.py [--repo opensensorsim/ch4-v0] [--private]
+    python scripts/push_to_hf.py [--repo spektran/ch4-v0] [--private]
 
 Converts the generated HDF5 splits under data/ into a datasets.DatasetDict
 (raw_scan + labels + conditions + record_id) and pushes with the CC BY 4.0
 license tag. ML users then need one line:
 
-    load_dataset("opensensorsim/ch4-v0")
+    load_dataset("spektran/ch4-v0")
 """
 
 from __future__ import annotations
@@ -36,7 +36,7 @@ SPLIT_FILES = {
 def build_dataset_dict():
     from datasets import Dataset, DatasetDict
 
-    from opensensorsim.io import read_records
+    from spektran.io import read_records
 
     splits = {}
     for split, fname in SPLIT_FILES.items():
@@ -69,7 +69,7 @@ def build_dataset_dict():
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--repo", default="opensensorsim/ch4-v0")
+    ap.add_argument("--repo", default="spektran/ch4-v0")
     ap.add_argument("--private", action="store_true")
     args = ap.parse_args()
     dd = build_dataset_dict()

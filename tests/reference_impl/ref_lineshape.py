@@ -9,7 +9,7 @@ Voigt definition integral
 
 (e.g. B.H. Armstrong, JQSRT 7 (1967) 61, doi:10.1016/0022-4073(67)90057-X).
 
-MUST NOT import from or share code with ``opensensorsim`` (see plan §9, G3).
+MUST NOT import from or share code with ``spektran`` (see plan §9, G3).
 The main implementation uses the Faddeeva function instead (scipy.special.wofz).
 """
 

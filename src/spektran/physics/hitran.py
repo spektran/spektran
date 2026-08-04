@@ -113,7 +113,7 @@ def fetch_lines(
         import hapi
     except ImportError as exc:  # pragma: no cover
         raise ImportError(
-            "hitran-api is required for HITRAN fetching: pip install 'opensensorsim[hitran]'"
+            "hitran-api is required for HITRAN fetching: pip install 'spektran[hitran]'"
         ) from exc
 
     mol_id = MOLECULE_IDS.get(molecule)

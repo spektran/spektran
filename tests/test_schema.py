@@ -2,7 +2,7 @@
 
 import uuid
 
-from opensensorsim.validate import instrument_validator, record_validator, validate_record
+from spektran.validate import instrument_validator, record_validator, validate_record
 
 
 def make_valid_da_record() -> dict:

@@ -10,7 +10,7 @@ import numpy as np
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 
-from opensensorsim.io import read_records  # noqa: E402
+from spektran.io import read_records  # noqa: E402
 
 DATA = REPO / "data"
 

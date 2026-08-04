@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://opensensorsim.github.io/opensensorsim/schema/record.schema.json",
-  "title": "OpenSensorSim spectral record",
-  "description": "Metadata schema (v0.1 draft) for a single OpenSensorSim spectral record. Signal arrays live in HDF5/Parquet; this JSON document describes them. All physical quantities embed their unit in the field name (e.g. _ppm, _K, _cm1). DRAFT: v0.1 is finalized only after Gate G2 (literature-anchored field-coverage check).",
+  "$id": "https://spektran.github.io/spektran/schema/record.schema.json",
+  "title": "SPEKTRAN spectral record",
+  "description": "Metadata schema (v0.1 draft) for a single SPEKTRAN spectral record. Signal arrays live in HDF5/Parquet; this JSON document describes them. All physical quantities embed their unit in the field name (e.g. _ppm, _K, _cm1). DRAFT: v0.1 is finalized only after Gate G2 (literature-anchored field-coverage check).",
   "type": "object",
   "required": [
     "record_id",
@@ -27,7 +27,7 @@
     },
     "data_origin": {
       "enum": ["simulated", "experimental", "augmented"],
-      "description": "Provenance class. All official OpenSensorSim releases are 'simulated'. 'experimental' and 'augmented' are reserved for future external contributions."
+      "description": "Provenance class. All official SPEKTRAN releases are 'simulated'. 'experimental' and 'augmented' are reserved for future external contributions."
     },
     "technique": {
       "enum": ["TDLAS-DA", "TDLAS-WMS"],
@@ -41,7 +41,7 @@
       "properties": {
         "generator_version": {
           "type": "string",
-          "description": "Git tag or commit hash of the opensensorsim generator that produced this record."
+          "description": "Git tag or commit hash of the spektran generator that produced this record."
         },
         "hitran_data_version": {
           "type": "string",

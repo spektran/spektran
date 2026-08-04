@@ -1,6 +1,6 @@
-site_name: OpenSensorSim
+site_name: SPEKTRAN
 site_description: Open simulation engine, data standard, and ML benchmark for TDLAS
-repo_url: https://github.com/opensensorsim/opensensorsim
+repo_url: https://github.com/spektran/spektran
 theme:
   name: material
   palette:

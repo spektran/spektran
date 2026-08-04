@@ -1,7 +1,7 @@
 # Data schema (v0.1)
 
 Every record = signal arrays (HDF5) + JSON metadata validated by
-[`schema/record.schema.json`](https://github.com/opensensorsim/opensensorsim/blob/main/schema/record.schema.json).
+[`schema/record.schema.json`](https://github.com/spektran/spektran/blob/main/schema/record.schema.json).
 
 Key design rules:
 

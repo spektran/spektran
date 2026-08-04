@@ -1,4 +1,4 @@
-# OpenSensorSim Gate G2: canonical TDLAS experimental-parameter superset
+# SPEKTRAN Gate G2: canonical TDLAS experimental-parameter superset
 # Deduplicated union of per-paper reporting checklists in g2_papers.yaml.
 # count = number of surveyed papers whose reproduction requires the parameter.
 survey_date: 2026-08-04

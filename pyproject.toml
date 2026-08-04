@@ -3,13 +3,13 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "opensensorsim"
+name = "spektran"
 version = "0.1.0.dev0"
 description = "Open-source simulation engine, data standard, and ML benchmark suite for tunable diode laser absorption spectroscopy (TDLAS)"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "Apache-2.0" }
-authors = [{ name = "OpenSensorSim contributors" }]
+authors = [{ name = "SPEKTRAN contributors" }]
 keywords = [
     "TDLAS",
     "absorption-spectroscopy",
@@ -44,21 +44,21 @@ dev = [
     "pytest>=7.4",
     "pytest-cov>=4.1",
     "ruff>=0.4",
-    "opensensorsim[io,hitran]",
+    "spektran[io,hitran]",
 ]
 
 [project.scripts]
-opensensorsim = "opensensorsim.cli:main"
+spektran = "spektran.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/opensensorsim/opensensorsim"
-Documentation = "https://opensensorsim.github.io/opensensorsim"
+Homepage = "https://github.com/spektran/spektran"
+Documentation = "https://spektran.github.io/spektran"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/opensensorsim"]
+packages = ["src/spektran"]
 
 [tool.hatch.build.targets.wheel.force-include]
-"schema" = "opensensorsim/schema"
+"schema" = "spektran/schema"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

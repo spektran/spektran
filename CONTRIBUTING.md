@@ -1,4 +1,4 @@
-# Contributing to OpenSensorSim
+# Contributing to SPEKTRAN
 
 Thank you for your interest! Read access is fully open; write access (data ingestion, schema changes) goes through a curated flow: CI automated validation + maintainer review.
 
@@ -22,7 +22,7 @@ Schema modifications are write-privileged:
 
 External data (experimental or simulated) will be accepted once the curated ingestion pipeline lands (Phase 3). Requirements preview:
 
-- Records must validate against the current `record.schema.json` (`opensensorsim validate`).
+- Records must validate against the current `record.schema.json` (`spektran validate`).
 - Unit-consistency lint must pass with zero warnings.
 - Physics-plausibility check: CI re-runs a HITRAN forward simulation from your metadata and compares it against the submitted spectrum; large deviations are flagged for human review.
 - **Data Submission Agreement**: the PR template requires you to affirm that you have the right to license the submitted data under CC BY 4.0.

@@ -1,6 +1,6 @@
 # Baselines
 
-Reference models for the OpenSensorSim benchmark. They chase reproducibility,
+Reference models for the SPEKTRAN benchmark. They chase reproducibility,
 not state of the art (plan §6.3): fixed seeds, published hyperparameters,
 one command each.
 
@@ -48,19 +48,19 @@ ratio, so always substitute your own model's number:
 
 ```bash
 # ridge
-python -m opensensorsim.benchmark.evaluate --task T1-concentration \
+python -m spektran.benchmark.evaluate --task T1-concentration \
   --truth data/ch4-t1-test-v0.h5 \
   --predictions baselines/ridge_regression/predictions_t1-test.csv
-python -m opensensorsim.benchmark.evaluate --task T3-generalization \
+python -m spektran.benchmark.evaluate --task T3-generalization \
   --truth data/ch4-t3-test-heldout-v0.h5 \
   --predictions baselines/ridge_regression/predictions_t3-test-heldout.csv \
   --t1-mae 2.8426   # <- ridge's own T1 MAE from the previous command
 
 # cnn1d
-python -m opensensorsim.benchmark.evaluate --task T1-concentration \
+python -m spektran.benchmark.evaluate --task T1-concentration \
   --truth data/ch4-t1-test-v0.h5 \
   --predictions baselines/cnn1d/predictions_t1-test.csv
-python -m opensensorsim.benchmark.evaluate --task T3-generalization \
+python -m spektran.benchmark.evaluate --task T3-generalization \
   --truth data/ch4-t3-test-heldout-v0.h5 \
   --predictions baselines/cnn1d/predictions_t3-test-heldout.csv \
   --t1-mae 15.5807  # <- cnn1d's own T1 MAE

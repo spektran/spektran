@@ -1,0 +1,38 @@
+{
+  "gate": "G1",
+  "title": "Name availability check — final rename to SPEKTRAN",
+  "date": "2026-08-04",
+  "context": "Owner direction: drop the Open- prefix; want a HITRAN-style short, memorable, pronounceable name (project has spectroscopy roots and sources line data from HITRAN). Owner's first proposal FITRAN failed (GitHub user taken; one letter from HITRAN — affiliation-confusion risk in the exact target community). Two candidate batches screened.",
+  "candidates_rejected": {
+    "fitran":   {"github_user": 200, "pypi": 404, "hf_org": 404, "hf_user": 404, "reason": "GitHub name taken; HITRAN one-letter confusion risk"},
+    "hable":    {"github_user": 200, "hf_user": 200, "reason": "GitHub + HF taken"},
+    "sensim":   {"github_user": 200, "hf_user": 200, "reason": "GitHub + HF taken"},
+    "sentran":  {"github_user": 200, "hf_user": 200, "reason": "GitHub + HF taken"},
+    "simora":   {"github_user": 200, "hf_user": 200, "reason": "GitHub + HF taken"},
+    "gentra":   {"github_user": 200, "hf_user": 200, "reason": "GitHub + HF taken"},
+    "simtra":   {"github_user": 200, "hf_user": 200, "reason": "GitHub + HF taken"},
+    "simspec":  {"pypi": 200, "reason": "PyPI taken"},
+    "specsim":  {"pypi": 200, "reason": "PyPI taken"},
+    "quantra":  {"github_user": 200, "pypi": 200, "reason": "GitHub + PyPI taken"},
+    "synthra":  {"github_user": 200, "pypi": 200, "reason": "GitHub + PyPI taken"},
+    "virtran":  {"github_user": 200, "reason": "GitHub taken"},
+    "novran":   {"github_user": 200, "reason": "GitHub taken"},
+    "syntran":  {"reason": "available but collides with the syntran language project (JeffIrwin/syntran); owner declined"},
+    "opensensorsim": {"reason": "available and previously adopted; owner requested non-Open-prefixed name"}
+  },
+  "selected": {
+    "name": "SPEKTRAN",
+    "package": "spektran",
+    "checks": {
+      "github_user_or_org": {"result": "404 Not Found", "pass": true},
+      "github_repo_search": {"result": "6 hits, all unrelated zero-star personal repos (school acronym 'spektranesger', EEG hobby projects); no active software project", "pass": true},
+      "pypi": {"result": "404 Not Found", "pass": true},
+      "huggingface_org_and_user": {"result": "404 / 404", "pass": true},
+      "general_search_confusion": {"result": "No software named 'spektran'. Nearest names reviewed: Spektrix (ticketing SaaS), Spekfy (discontinued PM tool), Spektrik (hardware firm), SpektralSoft (web agency) — all distinct spellings and domains.", "pass": true}
+    },
+    "rationale": "HITRAN-family '-TRAN' suffix keeps the spectroscopic lineage the project draws its line data from; 'Spektral' root states the founding domain; the k-spelling makes the name globally unique. Two syllables, easy to say and remember. As the platform grows beyond spectroscopy the name functions as a brand, as HITRAN itself outgrew 'transmission'."
+  },
+  "naming_history": "OpenGasSpec (g1_report.json) -> OpenSensorSim (g1_rename_report.json) -> SPEKTRAN (this report, final per owner confirmation)",
+  "human_action_required": "Register GitHub org/repo, PyPI package, HF org under 'spektran'. GitHub account 'spectramaster' authenticated locally; HF login still pending (hf auth login).",
+  "pass": true
+}

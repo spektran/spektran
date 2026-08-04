@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 
-from opensensorsim.physics import (
+from spektran.physics import (
     doppler_hwhm_cm1,
     gaussian_profile,
     lorentz_profile,

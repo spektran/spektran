@@ -1,19 +1,19 @@
-# OpenSensorSim
+# SPEKTRAN
 
 **Open-source simulation engines, data standards, and ML benchmarks for physical sensing — every modality where physically rigorous synthetic training data can be generated.**
 
-OpenSensorSim builds one platform pattern — parameterized forward physics + literature-anchored instrument-noise chains + reproducible benchmark splits — and applies it modality by modality. The first shipped domain is **laser gas absorption spectroscopy (TDLAS)**: fully reproducible synthetic spectra with realistic instrument noise (laser scan nonlinearity, etalon fringes, 1/f noise, baseline drift) and standardized tasks for concentration regression, spectral denoising, and cross-instrument generalization. NDIR, photoacoustic, and cavity-ringdown spectroscopy are the next planned techniques; the record schema carries a `technique` field from day one so new modalities extend, not fork, the standard.
+SPEKTRAN builds one platform pattern — parameterized forward physics + literature-anchored instrument-noise chains + reproducible benchmark splits — and applies it modality by modality. The first shipped domain is **laser gas absorption spectroscopy (TDLAS)**: fully reproducible synthetic spectra with realistic instrument noise (laser scan nonlinearity, etalon fringes, 1/f noise, baseline drift) and standardized tasks for concentration regression, spectral denoising, and cross-instrument generalization. NDIR, photoacoustic, and cavity-ringdown spectroscopy are the next planned techniques; the record schema carries a `technique` field from day one so new modalities extend, not fork, the standard.
 
 - **Code**: Apache-2.0 ([LICENSE](LICENSE))
 - **Data & schema**: CC BY 4.0 ([LICENSE-DATA](LICENSE-DATA))
 
 > ⚠️ **Status: alpha.** Gates G1–G5 (naming, schema completeness, physics correctness, noise realism, cold-start usability) all pass with archived adversarial reviews; APIs and schema v0.1 may still change until v1.0.
 
-## Why OpenSensorSim?
+## Why SPEKTRAN?
 
 Machine learning for physical sensing lacks what computer vision has had for a decade: standard datasets, standard tasks, and comparable baselines. Every paper simulates (or measures) its own signals, with its own noise assumptions, and reports metrics nobody else can reproduce.
 
-OpenSensorSim attacks this with three assets:
+SPEKTRAN attacks this with three assets:
 
 1. **A parameterized simulation engine** — HITRAN-based forward physics (direct absorption and wavelength-modulation spectroscopy) plus a modular instrument-noise chain modeled after real hardware.
 2. **A data standard** — a JSON Schema for spectra records with explicit units, full provenance (generator version, random seed, every sampled noise parameter), and a `technique` field ready for NDIR / PAS / CRDS extensions.
@@ -24,13 +24,13 @@ All shipped data is simulation-born and labeled `data_origin: simulated`. The si
 ## Quick start
 
 ```bash
-git clone https://github.com/opensensorsim/opensensorsim
-cd opensensorsim
+git clone https://github.com/spektran/spektran
+cd spektran
 pip install -e ".[dev]"
 ```
 
 ```python
-from opensensorsim.physics import simulate_absorbance
+from spektran.physics import simulate_absorbance
 
 # Clean CH4 direct-absorption spectrum near 6046.9 cm-1 (1653 nm, 2v3 band)
 nu, absorbance = simulate_absorbance(
@@ -65,7 +65,7 @@ T2 denoising (same test split): wing-anchored cubic-polynomial baseline
 Reproduce with [`baselines/README.md`](baselines/README.md). Note the T3
 lesson already visible in the baselines: the deep model overfits instrument
 signatures harder than the linear one. Submissions: run
-`python -m opensensorsim.benchmark.evaluate` on your predictions and open a PR
+`python -m spektran.benchmark.evaluate` on your predictions and open a PR
 adding your row with a link to reproducible code.
 
 ## Project quality gates
