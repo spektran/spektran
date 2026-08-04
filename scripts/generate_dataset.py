@@ -74,13 +74,22 @@ def main() -> int:
     args = ap.parse_args()
 
     cfg = yaml.safe_load(Path(args.config).read_text())
-    inst = load_instrument_config(REPO / cfg["instrument_config"])
+    # 'instrument_config' may be one path or a list (records split evenly, each
+    # sub-config with its own derived master seed for disjoint streams)
+    inst_paths = cfg["instrument_config"]
+    if isinstance(inst_paths, str):
+        inst_paths = [inst_paths]
+    instruments = [load_instrument_config(REPO / p) for p in inst_paths]
     spec = load_spec(cfg)
     n = args.n if args.n is not None else int(cfg["n_records"])
     seed = int(cfg["master_seed"])
 
     t0 = time.time()
-    records = generate_dataset(spec, inst, n, seed)
+    records = []
+    per = n // len(instruments)
+    counts = [per + (1 if i < n - per * len(instruments) else 0) for i in range(len(instruments))]
+    for i, (inst, n_i) in enumerate(zip(instruments, counts)):
+        records.extend(generate_dataset(spec, inst, n_i, seed + i))
     t1 = time.time()
     out_path = Path(args.out) / f"{cfg['dataset_id']}.h5"
     write_records(out_path, records, validate=True)

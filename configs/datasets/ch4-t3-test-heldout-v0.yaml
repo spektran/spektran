@@ -1,0 +1,13 @@
+# Official v0 split: t3-test-heldout (CH4 DA). Reproducible: pinned seed + configs.
+dataset_id: ch4-t3-test-heldout-v0
+instrument_config:
+  - configs/instruments/vi-da-heldout-07.yaml
+n_records: 1000
+master_seed: 103001
+gas:
+  molecule: CH4
+  concentration_ppm: {low: 1.0, high: 1000.0, log_uniform: true}
+  path_length_m: 10.0
+  matrix_gas: N2
+n_points: 2000
+line_source: demo

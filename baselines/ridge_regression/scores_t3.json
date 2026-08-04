@@ -1,0 +1,10 @@
+{
+  "task": "T3-generalization",
+  "scores": {
+    "n_records": 1000,
+    "mae_ppm": 3.7183757534072024,
+    "mape_pct": 34.87294302614587,
+    "rmse_ppm": 5.6447746049249785,
+    "degradation_ratio_vs_T1": 1.3080896902157189
+  }
+}

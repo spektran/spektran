@@ -43,13 +43,26 @@ nu, absorbance = simulate_absorbance(
 )
 ```
 
-## Benchmark tasks (planned, Phase 2)
+## Benchmark tasks
 
 | Task | Input | Output | Primary metric |
 |---|---|---|---|
-| **T1 Concentration regression** | Noisy 2f spectrum (or DA absorbance) | CH₄ concentration (ppm) | MAE, MAPE |
+| **T1 Concentration regression** | Noisy raw scan (DA) | CH₄ concentration (ppm) | MAE, MAPE |
 | **T2 Denoising / baseline correction** | Raw spectrum with fringes & drift | Clean absorbance spectrum | RMSE, peak-weighted RMSE |
 | **T3 Cross-instrument generalization** | Same as T1, held-out instruments | Concentration (ppm) | Generalization MAE, degradation vs T1 |
+
+### Leaderboard (v0 splits, CH4 DA)
+
+| Model | T1 MAE (ppm) | T1 MAPE (%) | T3 MAE (ppm) | T3 degradation |
+|---|---|---|---|---|
+| Ridge regression (baseline) | 2.84 | 29.9 | 3.72 | 1.31x |
+| 1D CNN (baseline) | 15.58 | 42.2 | 28.30 | 1.82x |
+
+Reproduce with [`baselines/README.md`](baselines/README.md). Note the T3
+lesson already visible in the baselines: the deep model overfits instrument
+signatures harder than the linear one. Submissions: run
+`python -m opengasspec.benchmark.evaluate` on your predictions and open a PR
+adding your row with a link to reproducible code.
 
 ## Project quality gates
 

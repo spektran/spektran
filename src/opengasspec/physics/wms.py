@@ -92,6 +92,9 @@ def lockin_demodulate(
 
     The factor 2 makes X equal the cosine-quadrature Fourier coefficient of
     s(t) at n*f (so a signal A*cos(n*w*t) demodulates to X = A at phi = 0).
+    Sign convention note: with the minus sign above, A*sin(n*w*t) demodulates
+    to Y = -A, i.e. Y is the NEGATIVE sine coefficient (some references use
+    the opposite sign; magnitudes R = hypot(X, Y) are unaffected).
     Zero-phase filtering (filtfilt) avoids group-delay distortion of the
     scan-resolved harmonic envelope.
     """

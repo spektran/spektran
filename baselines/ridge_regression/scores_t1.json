@@ -1,0 +1,9 @@
+{
+  "task": "T1-concentration",
+  "scores": {
+    "n_records": 1000,
+    "mae_ppm": 2.8426398104994233,
+    "mape_pct": 29.871294115406926,
+    "rmse_ppm": 4.4594031234866085
+  }
+}
