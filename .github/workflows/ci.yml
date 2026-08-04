@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install
+        run: pip install -e ".[dev]"
+      - name: Lint
+        run: ruff check src tests
+      - name: Unit + physics-correctness tests
+        run: pytest -m "not hitran_online" --cov=opengasspec
+      # Schema validation of examples and official configs
+      - name: Schema validation
+        run: |
+          if ls configs/datasets/*.yaml >/dev/null 2>&1; then
+            python -m opengasspec.validate configs/
+          else
+            echo "No official configs yet (Phase 0) — skipping"
+          fi
+
+  # Physics tests that need to download HITRAN line data run only on push to
+  # main (network-dependent; cached artifacts keep PR CI hermetic).
+  hitran-reference:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install
+        run: pip install -e ".[dev]"
+      - name: Cache HITRAN data
+        uses: actions/cache@v4
+        with:
+          path: .hitran_cache
+          key: hitran-${{ hashFiles('src/opengasspec/physics/hitran.py') }}
+      - name: HITRAN reference comparison tests
+        run: pytest -m hitran_online

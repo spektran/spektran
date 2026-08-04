@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://opengasspec.github.io/opengasspec/schema/instrument.schema.json",
+  "title": "OpenGasSpec virtual instrument configuration",
+  "description": "Schema (v0.1 draft) for a virtual-instrument YAML/JSON config. A virtual instrument defines DISTRIBUTIONS for every noise/instrument parameter; the generator samples one concrete value per record and writes it to the record's provenance.noise_config.",
+  "type": "object",
+  "required": ["instrument_config_id", "schema_version", "technique", "laser", "detector"],
+  "additionalProperties": false,
+  "properties": {
+    "instrument_config_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$",
+      "description": "Stable identifier, e.g. 'vi-easy-01'."
+    },
+    "schema_version": { "const": "0.1" },
+    "technique": { "enum": ["TDLAS-DA", "TDLAS-WMS"] },
+    "held_out": {
+      "type": "boolean",
+      "default": false,
+      "description": "Held-out instruments feed ONLY test splits (cross-instrument generalization track); their configs must not overlap the training distribution."
+    },
+    "description": { "type": "string" },
+    "laser": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["center_wavenumber_cm1", "scan_range_cm1"],
+      "properties": {
+        "center_wavenumber_cm1": { "$ref": "#/$defs/dist_or_number" },
+        "scan_range_cm1": { "$ref": "#/$defs/dist_or_number" },
+        "scan_rate_Hz": { "$ref": "#/$defs/dist_or_number" },
+        "scan_nonlinearity_poly": {
+          "type": "array",
+          "description": "Distributions for polynomial coefficients of current->wavenumber scan nonlinearity (order 2+ terms).",
+          "items": { "$ref": "#/$defs/dist_or_number" }
+        },
+        "ram_amplitude_rel": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Residual amplitude modulation, relative intensity amplitude."
+        },
+        "center_drift_cm1_per_s": { "$ref": "#/$defs/dist_or_number" },
+        "linewidth_MHz": { "$ref": "#/$defs/dist_or_number" }
+      }
+    },
+    "modulation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "frequency_Hz": { "$ref": "#/$defs/dist_or_number" },
+        "depth_cm1": { "$ref": "#/$defs/dist_or_number" },
+        "lockin_phase_error_rad": { "$ref": "#/$defs/dist_or_number" },
+        "lowpass_cutoff_Hz": { "$ref": "#/$defs/dist_or_number" }
+      }
+    },
+    "etalons": {
+      "type": "array",
+      "maxItems": 3,
+      "description": "Periodic interference fringes; each entry is one etalon.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["free_spectral_range_cm1", "amplitude_rel"],
+        "properties": {
+          "free_spectral_range_cm1": { "$ref": "#/$defs/dist_or_number" },
+          "amplitude_rel": {
+            "$ref": "#/$defs/dist_or_number",
+            "description": "Fringe amplitude relative to DC transmitted intensity."
+          },
+          "phase_drift_rad_per_s": { "$ref": "#/$defs/dist_or_number" }
+        }
+      }
+    },
+    "optics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "baseline_poly_rel": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/dist_or_number" },
+          "description": "Distributions for slow polynomial baseline coefficients (relative)."
+        },
+        "intensity_fluctuation_rel": { "$ref": "#/$defs/dist_or_number" },
+        "transmittance_drift_rel_per_s": { "$ref": "#/$defs/dist_or_number" }
+      }
+    },
+    "detector": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "white_noise_rel": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "White-noise sigma relative to full-scale signal."
+        },
+        "one_over_f_corner_Hz": { "$ref": "#/$defs/dist_or_number" },
+        "one_over_f_slope": { "$ref": "#/$defs/dist_or_number" },
+        "gain_nonlinearity_rel": { "$ref": "#/$defs/dist_or_number" },
+        "adc_bits": { "$ref": "#/$defs/dist_or_number" },
+        "bandwidth_Hz": { "$ref": "#/$defs/dist_or_number" }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "temperature_K": { "$ref": "#/$defs/dist_or_number" },
+        "pressure_atm": { "$ref": "#/$defs/dist_or_number" },
+        "temperature_jitter_K": { "$ref": "#/$defs/dist_or_number" },
+        "pressure_jitter_atm": { "$ref": "#/$defs/dist_or_number" }
+      }
+    }
+  },
+  "$defs": {
+    "dist_or_number": {
+      "description": "Either a fixed number or a sampling distribution.",
+      "oneOf": [
+        { "type": "number" },
+        {
+          "type": "object",
+          "required": ["dist"],
+          "oneOf": [
+            {
+              "properties": {
+                "dist": { "const": "uniform" },
+                "low": { "type": "number" },
+                "high": { "type": "number" }
+              },
+              "required": ["dist", "low", "high"],
+              "additionalProperties": false
+            },
+            {
+              "properties": {
+                "dist": { "const": "normal" },
+                "mean": { "type": "number" },
+                "sigma": { "type": "number", "minimum": 0 }
+              },
+              "required": ["dist", "mean", "sigma"],
+              "additionalProperties": false
+            },
+            {
+              "properties": {
+                "dist": { "const": "loguniform" },
+                "low": { "type": "number", "exclusiveMinimum": 0 },
+                "high": { "type": "number", "exclusiveMinimum": 0 }
+              },
+              "required": ["dist", "low", "high"],
+              "additionalProperties": false
+            },
+            {
+              "properties": {
+                "dist": { "const": "choice" },
+                "values": { "type": "array", "minItems": 1, "items": { "type": "number" } }
+              },
+              "required": ["dist", "values"],
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

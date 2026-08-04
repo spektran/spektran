@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+.ruff_cache/
+
+# HITRAN local cache (large downloaded line lists)
+.hitran_cache/
+*.data
+*.header
+
+# Generated datasets (official versions are published to HF/Zenodo, not git)
+data/
+*.h5
+*.hdf5
+*.parquet
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

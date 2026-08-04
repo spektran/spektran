@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use OpenGasSpec, please cite it as below."
+title: "OpenGasSpec: an open simulation engine, data standard, and ML benchmark for TDLAS"
+type: software
+authors:
+  - name: "OpenGasSpec contributors"
+repository-code: "https://github.com/opengasspec/opengasspec"
+license: Apache-2.0
+keywords:
+  - TDLAS
+  - absorption spectroscopy
+  - gas sensing
+  - machine learning
+  - benchmark
+version: 0.1.0.dev0
+date-released: "2026-08-04"

@@ -1,0 +1,43 @@
+{
+  "gate": "G3",
+  "scope": "DA forward physics (lineshape + Beer-Lambert). WMS pending Phase 1.",
+  "date": "2026-08-04",
+  "checks": {
+    "lineshape_cross_validation": {
+      "n_points": 1000,
+      "seed": 20260804,
+      "max_relative_deviation": 1.0747296559336318e-13,
+      "median_relative_deviation": 3.8163748328804205e-16,
+      "threshold": 0.001,
+      "pass": true
+    },
+    "forward_chain_cross_validation": {
+      "n_points": 1000,
+      "seed": 20260805,
+      "max_relative_deviation": 1.210615664234068e-14,
+      "median_relative_deviation": 2.4640243071356697e-16,
+      "threshold": 0.001,
+      "pass": true
+    },
+    "physics_test_suite": {
+      "exit_code": 0,
+      "summary": "=========================== short test summary info ============================\nSKIPPED [1] tests/test_hitran_online.py:10: could not import 'hapi': No module named 'hapi'\n27 passed, 1 skipped in 0.98s",
+      "pass": true
+    },
+    "doi_citations": {
+      "doi_citations_per_file": {
+        "src/opengasspec/physics/__init__.py": 0,
+        "src/opengasspec/physics/absorption.py": 3,
+        "src/opengasspec/physics/constants.py": 0,
+        "src/opengasspec/physics/hitran.py": 2,
+        "src/opengasspec/physics/lineshape.py": 4,
+        "tests/reference_impl/ref_absorption.py": 0,
+        "tests/reference_impl/ref_lineshape.py": 1
+      },
+      "total": 10,
+      "pass": true,
+      "note": "Independent reviewer must spot-check 10 citations against sources."
+    }
+  },
+  "pass": true
+}

@@ -1,0 +1,75 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "opengasspec"
+version = "0.1.0.dev0"
+description = "Open-source simulation engine, data standard, and ML benchmark suite for tunable diode laser absorption spectroscopy (TDLAS)"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [{ name = "OpenGasSpec contributors" }]
+keywords = [
+    "TDLAS",
+    "absorption-spectroscopy",
+    "gas-sensing",
+    "machine-learning",
+    "benchmark",
+    "simulation",
+    "HITRAN",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "jsonschema>=4.18",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+io = ["h5py>=3.8", "pyarrow>=14.0"]
+hitran = ["hitran-api>=1.2"]  # 'hapi' on import; official HITRAN API client
+dev = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+    "ruff>=0.4",
+    "opengasspec[io,hitran]",
+]
+
+[project.scripts]
+opengasspec = "opengasspec.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/opengasspec/opengasspec"
+Documentation = "https://opengasspec.github.io/opengasspec"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/opengasspec"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"schema" = "opengasspec/schema"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+markers = [
+    "hitran_online: requires hitran-api and network access to hitran.org",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "NPY"]

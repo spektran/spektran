@@ -1,0 +1,299 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://opengasspec.github.io/opengasspec/schema/record.schema.json",
+  "title": "OpenGasSpec spectral record",
+  "description": "Metadata schema (v0.1 draft) for a single OpenGasSpec spectral record. Signal arrays live in HDF5/Parquet; this JSON document describes them. All physical quantities embed their unit in the field name (e.g. _ppm, _K, _cm1). DRAFT: v0.1 is finalized only after Gate G2 (literature-anchored field-coverage check).",
+  "type": "object",
+  "required": [
+    "record_id",
+    "schema_version",
+    "data_origin",
+    "technique",
+    "signals",
+    "labels",
+    "conditions",
+    "instrument"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "record_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "UUIDv4 uniquely identifying this record."
+    },
+    "schema_version": {
+      "const": "0.1",
+      "description": "Version of this schema the record conforms to."
+    },
+    "data_origin": {
+      "enum": ["simulated", "experimental", "augmented"],
+      "description": "Provenance class. All official OpenGasSpec releases are 'simulated'. 'experimental' and 'augmented' are reserved for future external contributions."
+    },
+    "technique": {
+      "enum": ["TDLAS-DA", "TDLAS-WMS"],
+      "description": "Measurement technique. Enum will extend to NDIR / PAS / CRDS in schema v0.2+."
+    },
+    "provenance": {
+      "type": "object",
+      "description": "Full reproducibility trace. Required when data_origin is 'simulated': same generator_version + random_seed + configs must reproduce the record bit-for-bit.",
+      "required": ["generator_version", "random_seed", "instrument_config_id", "noise_config"],
+      "additionalProperties": false,
+      "properties": {
+        "generator_version": {
+          "type": "string",
+          "description": "Git tag or commit hash of the opengasspec generator that produced this record."
+        },
+        "hitran_data_version": {
+          "type": "string",
+          "description": "HITRAN edition / retrieval date of the line data used (e.g. 'HITRAN2020, fetched 2026-08-04')."
+        },
+        "random_seed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Seed of the per-record RNG stream."
+        },
+        "instrument_config_id": {
+          "type": "string",
+          "description": "Identifier of the virtual-instrument YAML config this record was sampled from."
+        },
+        "noise_config": {
+          "type": "object",
+          "description": "The concrete noise/instrument parameter values sampled for THIS record (not the distributions). Keys mirror the instrument-config module names."
+        }
+      }
+    },
+    "signals": {
+      "type": "object",
+      "description": "Descriptors of the signal arrays stored in the data file. At least one signal must be present.",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "properties": {
+        "raw_scan": {
+          "type": "object",
+          "description": "Raw detector signal over one laser scan (time domain).",
+          "required": ["array_ref", "n_samples", "sampling_rate_Hz"],
+          "additionalProperties": false,
+          "properties": {
+            "array_ref": { "$ref": "#/$defs/array_ref" },
+            "n_samples": { "type": "integer", "minimum": 2 },
+            "sampling_rate_Hz": { "type": "number", "exclusiveMinimum": 0 }
+          }
+        },
+        "absorbance": {
+          "type": "object",
+          "description": "Direct-absorption absorbance spectrum on a wavenumber axis.",
+          "required": ["array_ref", "n_samples", "wavenumber_axis"],
+          "additionalProperties": false,
+          "properties": {
+            "array_ref": { "$ref": "#/$defs/array_ref" },
+            "n_samples": { "type": "integer", "minimum": 2 },
+            "wavenumber_axis": { "$ref": "#/$defs/wavenumber_axis" }
+          }
+        },
+        "demod_1f": { "$ref": "#/$defs/demod_signal" },
+        "demod_2f": { "$ref": "#/$defs/demod_signal" }
+      }
+    },
+    "labels": {
+      "type": "object",
+      "required": ["species"],
+      "additionalProperties": false,
+      "properties": {
+        "species": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["molecule", "hitran_molecule_id", "concentration_ppm"],
+            "additionalProperties": false,
+            "properties": {
+              "molecule": {
+                "type": "string",
+                "description": "Chemical formula, e.g. 'CH4'."
+              },
+              "hitran_molecule_id": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "HITRAN molecule number (CH4 = 6, CO2 = 2)."
+              },
+              "concentration_ppm": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Mole fraction in parts-per-million (ppmv)."
+              },
+              "concentration_uncertainty_ppm": {
+                "type": "number",
+                "minimum": 0,
+                "description": "1-sigma uncertainty. For simulated data this is 0 unless label noise was deliberately injected."
+              }
+            }
+          }
+        }
+      }
+    },
+    "conditions": {
+      "type": "object",
+      "required": ["temperature_K", "pressure_atm", "path_length_m", "matrix_gas"],
+      "additionalProperties": false,
+      "properties": {
+        "temperature_K": { "type": "number", "exclusiveMinimum": 0 },
+        "pressure_atm": { "type": "number", "exclusiveMinimum": 0 },
+        "path_length_m": { "type": "number", "exclusiveMinimum": 0 },
+        "matrix_gas": {
+          "type": "string",
+          "description": "Bulk/bath gas, e.g. 'N2' or 'air'."
+        },
+        "interferents": {
+          "type": "array",
+          "description": "Interfering absorbers present in addition to the labeled target species.",
+          "items": {
+            "type": "object",
+            "required": ["molecule", "hitran_molecule_id", "concentration_ppm"],
+            "additionalProperties": false,
+            "properties": {
+              "molecule": { "type": "string" },
+              "hitran_molecule_id": { "type": "integer", "minimum": 1 },
+              "concentration_ppm": { "type": "number", "minimum": 0 }
+            }
+          }
+        }
+      }
+    },
+    "instrument": {
+      "type": "object",
+      "required": ["laser", "detector", "target_lines"],
+      "additionalProperties": false,
+      "properties": {
+        "laser": {
+          "type": "object",
+          "required": ["center_wavenumber_cm1", "scan_range_cm1"],
+          "additionalProperties": false,
+          "properties": {
+            "center_wavenumber_cm1": { "type": "number", "exclusiveMinimum": 0 },
+            "scan_range_cm1": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Total scanned optical frequency range."
+            },
+            "scan_rate_Hz": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Scan (ramp) repetition rate."
+            },
+            "linewidth_MHz": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Laser Lorentzian linewidth (FWHM). 0 = ideal monochromatic."
+            }
+          }
+        },
+        "modulation": {
+          "type": "object",
+          "description": "Wavelength-modulation parameters. Required when technique is TDLAS-WMS.",
+          "required": ["frequency_Hz", "depth_cm1"],
+          "additionalProperties": false,
+          "properties": {
+            "frequency_Hz": { "type": "number", "exclusiveMinimum": 0 },
+            "depth_cm1": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Optical-frequency modulation amplitude a in nu(t) = nu_c + a*cos(2*pi*f*t)."
+            },
+            "phase_rad": { "type": "number" }
+          }
+        },
+        "detector": {
+          "type": "object",
+          "required": ["type"],
+          "additionalProperties": false,
+          "properties": {
+            "type": { "type": "string", "description": "e.g. 'InGaAs photodiode'." },
+            "bandwidth_Hz": { "type": "number", "exclusiveMinimum": 0 }
+          }
+        },
+        "target_lines": {
+          "type": "array",
+          "minItems": 1,
+          "description": "HITRAN transitions targeted by this measurement.",
+          "items": {
+            "type": "object",
+            "required": ["hitran_molecule_id", "wavenumber_cm1"],
+            "additionalProperties": false,
+            "properties": {
+              "hitran_molecule_id": { "type": "integer", "minimum": 1 },
+              "isotopologue_id": { "type": "integer", "minimum": 1 },
+              "wavenumber_cm1": { "type": "number", "exclusiveMinimum": 0 }
+            }
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "data_origin": { "const": "simulated" } }
+      },
+      "then": { "required": ["provenance"] }
+    },
+    {
+      "if": {
+        "properties": { "technique": { "const": "TDLAS-WMS" } }
+      },
+      "then": {
+        "properties": {
+          "instrument": { "required": ["laser", "detector", "target_lines", "modulation"] },
+          "signals": {
+            "anyOf": [
+              { "required": ["demod_1f"] },
+              { "required": ["demod_2f"] }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "technique": { "const": "TDLAS-DA" } }
+      },
+      "then": {
+        "properties": {
+          "signals": {
+            "anyOf": [
+              { "required": ["absorbance"] },
+              { "required": ["raw_scan"] }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "array_ref": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Path of the array inside the container file, e.g. HDF5 dataset path '/records/<record_id>/absorbance' or Parquet column name."
+    },
+    "wavenumber_axis": {
+      "type": "object",
+      "description": "Uniform wavenumber axis: nu[i] = start_cm1 + i * step_cm1.",
+      "required": ["start_cm1", "step_cm1"],
+      "additionalProperties": false,
+      "properties": {
+        "start_cm1": { "type": "number", "exclusiveMinimum": 0 },
+        "step_cm1": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    },
+    "demod_signal": {
+      "type": "object",
+      "description": "Lock-in demodulated harmonic signal (WMS).",
+      "required": ["array_ref", "n_samples"],
+      "additionalProperties": false,
+      "properties": {
+        "array_ref": { "$ref": "#/$defs/array_ref" },
+        "n_samples": { "type": "integer", "minimum": 2 },
+        "lowpass_cutoff_Hz": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    }
+  }
+}

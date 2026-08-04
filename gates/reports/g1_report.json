@@ -1,0 +1,42 @@
+{
+  "gate": "G1",
+  "title": "Name availability check",
+  "date": "2026-08-04",
+  "candidate": "OpenGasSpec",
+  "package_name": "opengasspec",
+  "checks": {
+    "github_org_or_user": {
+      "method": "GET https://api.github.com/users/opengasspec",
+      "result": "404 Not Found",
+      "pass": true
+    },
+    "github_repo_search": {
+      "method": "GET https://api.github.com/search/repositories?q=opengasspec",
+      "result": "total_count = 0",
+      "pass": true
+    },
+    "pypi_package": {
+      "method": "GET https://pypi.org/pypi/opengasspec/json",
+      "result": "404 Not Found",
+      "pass": true
+    },
+    "huggingface_org": {
+      "method": "GET https://huggingface.co/api/organizations/opengasspec/overview and /api/users/opengasspec/overview",
+      "result": "404 Not Found (both)",
+      "pass": true
+    },
+    "general_search_confusion": {
+      "method": "Web search for \"OpenGasSpec\" (top results reviewed)",
+      "result": "No active software project named OpenGasSpec. Closest hit is 'OpenSpec' (openspec.dev), a spec-driven framework for coding agents — different domain, distinct full name, no confusing overlap. GitHub search for the looser term 'gasspec' returned 3 unrelated, inactive repositories.",
+      "pass": true
+    }
+  },
+  "similar_names_reviewed": [
+    {"name": "OpenSpec", "url": "https://openspec.dev/", "domain": "AI coding-agent spec framework", "confusable": false},
+    {"name": "haileyju/GasSpectroscopy", "activity": "inactive, no description", "confusable": false},
+    {"name": "Wataru811/GasSpecExtractor", "activity": "Google Sheets extractor example", "confusable": false}
+  ],
+  "decision": "PASS — name 'OpenGasSpec' (package 'opengasspec') selected. Fallback names (SpecBench, TDLAS-Bench) not needed.",
+  "human_action_required": "Register GitHub org/repo, PyPI package, Hugging Face org under 'opengasspec' and configure API tokens.",
+  "pass": true
+}
