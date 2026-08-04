@@ -7,7 +7,7 @@ SPEKTRAN builds one platform pattern — parameterized forward physics + literat
 - **Code**: Apache-2.0 ([LICENSE](LICENSE))
 - **Data & schema**: CC BY 4.0 ([LICENSE-DATA](LICENSE-DATA))
 
-> ⚠️ **Status: alpha (v0.3.0).** Gates G1–G5 all pass with archived adversarial reviews. 10 target molecules (CH4, H2O, CO2, CO, NH3, NO, NO2, SO2, HCl, HF), physically-motivated laser tuning model, window/beam path effects, temperature-dependent detector noise, and 6 benchmark tasks with complete pipelines and reference baselines. APIs and schema may still change until v1.0.
+> ⚠️ **Status: alpha (v0.3.1).** Gates G1–G5 all pass with archived adversarial reviews. 10 target molecules (CH4, H2O, CO2, CO, NH3, NO, NO2, SO2, HCl, HF), physically-motivated laser tuning model, window/beam path effects, temperature-dependent detector noise, 6 benchmark tasks with 10 baselines (including Transformer, U-Net, TCN deep learning models), and a public leaderboard. APIs and schema may still change until v1.0.
 
 ## Why SPEKTRAN?
 
@@ -81,24 +81,17 @@ alpha_h2o = absorption_coefficient(nu, demo_h2o(), 0.01, 296.0, 1.0)  # 1% H2O
 | Ridge regression (baseline) | 2.84 | 29.9 | 3.72 | 1.31x |
 | 1D CNN (baseline) | 15.58 | 42.2 | 28.30 | 1.82x |
 
-T2 denoising (same test split): wing-anchored cubic-polynomial baseline
-(classical reference) — spectral RMSE 6.31e-3, peak-weighted RMSE 8.60e-3.
+Deep learning baselines also available: Patchified Transformer (T1/T4),
+1D U-Net (T2 denoising), TCN (T5 drift compensation).
 
-T4 WMS concentration (2f demodulated signal, held-out test split): ridge
-regression 15.15 ppm MAE, 1D CNN 20.35 ppm MAE — the linear model wins again,
-same pattern as T1/T3.
+T2 denoising: wing-anchored cubic-polynomial baseline — spectral RMSE 6.31e-3,
+peak-weighted RMSE 8.60e-3. T4 WMS: ridge 15.15 ppm MAE, 1D CNN 20.35 ppm MAE.
+T5 drift: moving-average baseline 0.270 ppm MAE. T6 OOD: PCA + Mahalanobis
+0.672 AUROC.
 
-T5 drift compensation (10 held-out time series, 200 scans each): moving-average
-baseline 0.270 ppm MAE.
-
-T6 OOD instrument detection (in-distribution vs. held-out instrument): PCA +
-Mahalanobis-distance baseline 0.672 AUROC.
-
-Reproduce with [`baselines/README.md`](baselines/README.md). Note the T3
-lesson already visible in the baselines: the deep model overfits instrument
-signatures harder than the linear one. Submissions: run
-`python -m spektran.benchmark.evaluate` on your predictions and open a PR
-adding your row with a link to reproducible code.
+Full results on the [leaderboard](https://spektran.github.io/spektran/leaderboard/).
+Reproduce with [`baselines/README.md`](baselines/README.md). Submissions: run
+`python -m spektran.benchmark.evaluate` on your predictions and open a PR.
 
 ## CLI
 

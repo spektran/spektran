@@ -2,9 +2,9 @@
 
 This roadmap is public and technical. It describes what the project intends to build, not what has been promised. Timelines are estimates. Contributions that accelerate any milestone are welcome.
 
-## Current state: v0.3.0 (2026-08)
+## Current state: v0.3.1 (2026-08)
 
-The TDLAS domain has deep physics coverage:
+The TDLAS domain has deep physics coverage and ML baselines:
 - Direct absorption (DA) and wavelength modulation (WMS) forward physics
 - 10 target molecules: CH4, H2O, CO2, CO, NH3, NO, NO2, SO2, HCl, HF
 - TIPS partition-function polynomial for all 10 molecules
@@ -13,7 +13,8 @@ The TDLAS domain has deep physics coverage:
 - Temperature-dependent detector noise (Johnson-Nyquist + dark current)
 - 12 virtual instruments spanning easy → hard + held-out + specialized tiers
 - 6 benchmark tasks (T1-T6) with 22 dataset configs
-- 7 baseline models
+- 10 baseline models (classical + deep learning: Transformer, U-Net, TCN)
+- Static leaderboard on GitHub Pages
 - Dual-implementation physics cross-validation (G3)
 - Noise realism envelope checks against 18-paper survey (G4)
 - HDF5 persistence + Hugging Face Hub integration
@@ -119,15 +120,15 @@ reference baseline. This closes out Phase 3.1 and the v0.2.x line.
 
 ---
 
-## Phase 3.3: ML Baselines & Leaderboard (v0.3.1)
+## Phase 3.3: ML Baselines & Leaderboard (v0.3.1) — shipped 2026-08
 
 ### 3.3.1 Modern ML baselines
-- [ ] Transformer baseline for T1/T4 concentration regression
-- [ ] U-Net baseline for T2 spectral denoising
-- [ ] TCN (Temporal Convolutional Network) baseline for T5 drift compensation
+- [x] Patchified Transformer baseline for T1/T4 concentration regression
+- [x] 1D U-Net baseline for T2 spectral denoising
+- [x] TCN (Temporal Convolutional Network) baseline for T5 drift compensation
 
 ### 3.3.2 Community
-- [ ] Static leaderboard page (GitHub Pages)
+- [x] Static leaderboard page (GitHub Pages)
 
 ---
 
