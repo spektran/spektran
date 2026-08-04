@@ -7,7 +7,7 @@ SPEKTRAN builds one platform pattern — parameterized forward physics + literat
 - **Code**: Apache-2.0 ([LICENSE](LICENSE))
 - **Data & schema**: CC BY 4.0 ([LICENSE-DATA](LICENSE-DATA))
 
-> ⚠️ **Status: alpha (v0.2.1).** Gates G1–G5 all pass with archived adversarial reviews. Multi-species support (CH4, H2O, CO2, CO), higher-harmonic WMS (3f/4f), and 6 benchmark tasks — all with complete pipelines and reference baselines — now available. APIs and schema may still change until v1.0.
+> ⚠️ **Status: alpha (v0.3.0).** Gates G1–G5 all pass with archived adversarial reviews. 10 target molecules (CH4, H2O, CO2, CO, NH3, NO, NO2, SO2, HCl, HF), physically-motivated laser tuning model, window/beam path effects, temperature-dependent detector noise, and 6 benchmark tasks with complete pipelines and reference baselines. APIs and schema may still change until v1.0.
 
 ## Why SPEKTRAN?
 

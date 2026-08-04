@@ -2,28 +2,23 @@
 
 This roadmap is public and technical. It describes what the project intends to build, not what has been promised. Timelines are estimates. Contributions that accelerate any milestone are welcome.
 
-## Current state: v0.2.1 (2026-08)
+## Current state: v0.3.0 (2026-08)
 
-The TDLAS domain is fully functional:
+The TDLAS domain has deep physics coverage:
 - Direct absorption (DA) and wavelength modulation (WMS) forward physics
-- 8 literature-anchored virtual instruments spanning easy → hard + held-out tiers
-- 5 official benchmark splits (train/val/test/T3-heldout + demo)
-- 7 baseline models (ridge regression, 1D CNN, wing-anchored polynomial, WMS ridge,
-  WMS CNN, moving-average drift, PCA+Mahalanobis OOD)
+- 10 target molecules: CH4, H2O, CO2, CO, NH3, NO, NO2, SO2, HCl, HF
+- TIPS partition-function polynomial for all 10 molecules
+- Nonlinear laser current-tuning model (DFB/VCSEL thermal chirp)
+- Window contamination (wavelength-dependent scattering) and beam wander
+- Temperature-dependent detector noise (Johnson-Nyquist + dark current)
+- 12 virtual instruments spanning easy → hard + held-out + specialized tiers
+- 6 benchmark tasks (T1-T6) with 22 dataset configs
+- 7 baseline models
 - Dual-implementation physics cross-validation (G3)
 - Noise realism envelope checks against 18-paper survey (G4)
 - HDF5 persistence + Hugging Face Hub integration
 - MkDocs documentation on GitHub Pages
-- TIPS partition-function polynomial for temperature scaling (CH4, H2O, CO2, CO)
-- Multi-species forward model with Beer-Lambert superposition
 - Schema v0.2 (higher harmonics, measurement block, backward compatible with v0.1)
-- 3f/4f WMS demodulation in generator
-- 9 virtual instruments (added 4-harmonic WMS config)
-- 6 benchmark tasks (T1-T6) with 22 dataset configs (12 base + 7 HITRAN-production
-  variants + 3 large-scale)
-- HITRAN production line-data fetching for T1/T3/T4 official splits (opt-in
-  `-hitran` configs)
-- Large-scale dataset configs for scaling experiments (50K train / 5K val / 10K test)
 - Expanded CLI: `spektran generate`, `spektran benchmark`, `spektran download`
 
 ---
@@ -94,50 +89,73 @@ reference baseline. This closes out Phase 3.1 and the v0.2.x line.
 
 ---
 
-## Phase 4: Deeper TDLAS Physics (v0.3.0)
+## Phase 3.2: Deeper TDLAS Physics (v0.3.0) — shipped 2026-08
 
-### 4.1 New target molecules
-- N2O, NH3, C2H2 line lists (demo + HITRAN production fetch) — already anchored
-  in the 18-paper noise-realism survey (`literature_anchors.yaml`) and
-  pre-registered in `hitran.py`'s molecule table
-- Virtual instruments and official dataset configs for the new species
-- Multi-species interferent combinations beyond CH4/H2O/CO2/CO
+### 3.2.1 New target molecules
+- [x] 6 new industrial gases: NH3, NO, NO2, SO2, HCl, HF (demo line lists +
+  TIPS polynomials + reference implementation cross-validation)
+- [x] All 10 molecules available as target or interferent in CLI
+- [ ] N2O, C2H2 line lists *(deferred to Phase 5)*
+- [ ] Virtual instruments and dataset configs for new species *(deferred to Phase 5)*
 
-### 4.2 Enhanced forward physics
-- Nonlinear intensity modulation (laser diode current-tuning model)
-- HITRAN production fetch extended to T5/T6 official splits
-- Isotopologue filtering for multi-species HITRAN fetches
-- CI-pinned HITRAN data snapshots for reproducibility
+### 3.2.2 Enhanced forward physics
+- [x] Nonlinear laser current-tuning model (DFB/VCSEL thermal chirp with
+  analytic first-order lag solution)
+- [x] Window contamination (broadband + wavelength-dependent Rayleigh-like
+  scattering from fouled cell windows)
+- [x] Beam wander (low-frequency intensity modulation from mechanical vibration)
+- [x] Temperature-dependent detector noise (Johnson-Nyquist thermal scaling +
+  Arrhenius dark-current shot noise)
+- [x] 3 new specialized instrument configs (vi-da-thermal-10, vi-da-contaminated-11,
+  vi-da-thermal-noise-12)
+- [ ] HITRAN production fetch extended to T5/T6 official splits *(deferred)*
+- [ ] Isotopologue filtering for multi-species HITRAN fetches *(deferred)*
 
-### 4.3 Developer experience
-- Parquet and CSV output formats in `spektran generate`
-- tqdm progress bar for generation
-- Docker image for reproducible environments
-- Versioned schema migration tool
+### 3.2.3 Developer experience *(deferred to Phase 5)*
+- [ ] Parquet and CSV output formats in `spektran generate`
+- [ ] tqdm progress bar for generation
+- [ ] Docker image for reproducible environments
+- [ ] Versioned schema migration tool
 
 ---
 
-## Phase 5: Multi-modality (v0.4.0+)
+## Phase 3.3: ML Baselines & Leaderboard (v0.3.1)
 
-### 5.1 NDIR (Non-Dispersive Infrared)
+### 3.3.1 Modern ML baselines
+- [ ] Transformer baseline for T1/T4 concentration regression
+- [ ] U-Net baseline for T2 spectral denoising
+- [ ] TCN (Temporal Convolutional Network) baseline for T5 drift compensation
+
+### 3.3.2 Community
+- [ ] Static leaderboard page (GitHub Pages)
+
+---
+
+## Phase 4: Multi-modality (v0.4.0)
+
+### 4.1 NDIR (Non-Dispersive Infrared)
 - Broadband source + bandpass filter forward model
 - Detector noise model (thermopile, pyroelectric)
 - 4–6 virtual instruments, benchmark splits
 
-### 5.2 PAS (Photoacoustic Spectroscopy)
+### 4.2 Cross-modality benchmark track
+- Train on one modality, test on another (shared gas/concentration, different physics)
+- Task IDs to be assigned when multi-modality data is available
+- Requires the `technique` field already present in the schema
+
+---
+
+## Phase 5: Additional modalities (v0.5.0+)
+
+### 5.1 PAS (Photoacoustic Spectroscopy)
 - Acoustic resonator model
 - Microphone noise chain
 - Concentration regression benchmark
 
-### 5.3 CRDS (Cavity Ring-Down Spectroscopy)
+### 5.2 CRDS (Cavity Ring-Down Spectroscopy)
 - Ring-down time fitting forward model
 - Mirror reflectivity degradation noise
 - Benchmark: ring-down time → concentration
-
-### 5.4 Cross-modality benchmark track
-- Train on one modality, test on another (shared gas/concentration, different physics)
-- Task IDs to be assigned when multi-modality data is available
-- Requires the `technique` field already present in the schema
 
 ---
 
