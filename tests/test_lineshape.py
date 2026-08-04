@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 
-from opengasspec.physics import (
+from opensensorsim.physics import (
     doppler_hwhm_cm1,
     gaussian_profile,
     lorentz_profile,

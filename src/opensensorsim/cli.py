@@ -1,4 +1,4 @@
-"""Command-line entry point: ``opengasspec <subcommand>``."""
+"""Command-line entry point: ``opensensorsim <subcommand>``."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ def main(argv: list[str] | None = None) -> int:
     args = argv if argv is not None else sys.argv[1:]
     if not args or args[0] in {"-h", "--help"}:
         print(
-            "OpenGasSpec CLI\n\nsubcommands:\n"
+            "OpenSensorSim CLI\n\nsubcommands:\n"
             "  validate FILES...   validate records against the schema\n"
             "  --version           print version"
         )

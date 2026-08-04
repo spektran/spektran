@@ -20,7 +20,7 @@ doi:10.1063/1.1714333; see also J. Reid & D. Labrie, "Second-harmonic
 detection with tunable diode lasers — comparison of experiment and theory",
 Appl. Phys. B 26 (1981) 203, doi:10.1007/BF00692448).
 
-MUST NOT import from or share code with ``opengasspec``.
+MUST NOT import from or share code with ``opensensorsim``.
 """
 
 from __future__ import annotations

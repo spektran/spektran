@@ -5,12 +5,12 @@ bound). Everything else is automated. Ordered; none blocks local development.
 
 ## 1. Platform registration (do soon — G1 name availability is perishable)
 
-- [ ] GitHub: create org `opengasspec`, repo `opengasspec/opengasspec`, then
+- [ ] GitHub: create org `opensensorsim`, repo `opensensorsim/opensensorsim`, then
       `git remote add origin ... && git push -u origin main` from this repo.
       Enable GitHub Pages (Actions build) for the docs site.
-- [ ] PyPI: register the `opengasspec` package name (first `twine upload` of
+- [ ] PyPI: register the `opensensorsim` package name (first `twine upload` of
       an sdist/wheel built with `python -m build`, or PEP 694 reservation).
-- [ ] Hugging Face: create org `opengasspec`; create a write token.
+- [ ] Hugging Face: create org `opensensorsim`; create a write token.
 - [ ] Zenodo: link the GitHub repo (Zenodo-GitHub integration) so v1.0
       release auto-mints a DOI; `.zenodo.json` metadata is already in place.
 

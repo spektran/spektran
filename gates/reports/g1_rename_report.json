@@ -1,0 +1,23 @@
+{
+  "gate": "G1",
+  "title": "Name availability re-check after scope broadening (rename)",
+  "date": "2026-08-04",
+  "context": "Project owner broadened the scope from TDLAS-only to all sensing modalities where physically rigorous synthetic ML training data can be generated. The original name OpenGasSpec no longer fits; G1 re-run for replacement candidates.",
+  "previous_name": "OpenGasSpec (G1 pass archived in g1_report.json; superseded)",
+  "candidates_checked": {
+    "opensensesim":  {"github_user": 404, "github_repo_hits": 0,  "pypi": 404, "hf_org": 404, "hf_user": 404, "note": "available but confusable with OpenSense (SimTK IMU-sensing tool in the OpenSim ecosystem)"},
+    "opensensorsim": {"github_user": 404, "github_repo_hits": 0,  "pypi": 404, "hf_org": 404, "hf_user": 404, "note": "fully available"},
+    "sensorsynth":   {"github_user": 404, "github_repo_hits": 5,  "pypi": 404, "hf_org": 404, "hf_user": 404},
+    "synthsense":    {"github_user": 200, "github_repo_hits": 15, "pypi": 404, "hf_org": 404, "hf_user": 307, "note": "github user taken; SynSense neuromorphic company adjacent"},
+    "sensebench":    {"github_user": 404, "github_repo_hits": 4,  "pypi": 200, "hf_org": 404, "hf_user": 404, "note": "PyPI taken"},
+    "physense":      {"github_user": 200, "github_repo_hits": 20, "pypi": 404, "hf_org": 404, "hf_user": 404, "note": "github user taken"}
+  },
+  "general_search_confusion": {
+    "method": "Web search for \"OpenSensorSim\"/\"opensensorsim\" (top results reviewed)",
+    "result": "No project of this name exists. Nearby names reviewed: OpenSense (SimTK, IMU biomechanics — distinct full name and domain), OpenSensors.io (IoT data platform — distinct suffix and domain), OpenSim (biomechanics). No active same-name software project.",
+    "pass": true
+  },
+  "decision": "PASS — 'OpenSensorSim' (package 'opensensorsim') selected. All repository text renamed; historical gate reports under gates/reports/ retained verbatim under the old name as archival evidence.",
+  "human_action_required": "Register GitHub org/repo, PyPI package, HF org under 'opensensorsim'. GitHub account 'spectramaster' is authenticated on this machine (gh CLI, repo+workflow scopes); Hugging Face has no token configured yet.",
+  "pass": true
+}

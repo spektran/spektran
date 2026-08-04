@@ -53,6 +53,7 @@ def _settled_mean(x: np.ndarray, frac: float = 0.3) -> float:
 
 def check_chain() -> dict:
     from opengasspec.physics.wms import WMSConfig, simulate_wms
+
     from tests.reference_impl.ref_wms import wms_harmonic_ref
 
     rng = np.random.default_rng(SEED)
@@ -108,6 +109,7 @@ def check_chain() -> dict:
 
 def check_arndt() -> dict:
     from opengasspec.physics.wms import WMSConfig, simulate_wms
+
     from tests.reference_impl.ref_wms import arndt_lorentzian_h2_peak
 
     worst = 0.0

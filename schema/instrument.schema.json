@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://opengasspec.github.io/opengasspec/schema/instrument.schema.json",
-  "title": "OpenGasSpec virtual instrument configuration",
+  "$id": "https://opensensorsim.github.io/opensensorsim/schema/instrument.schema.json",
+  "title": "OpenSensorSim virtual instrument configuration",
   "description": "Schema (v0.1 draft) for a virtual-instrument YAML/JSON config. A virtual instrument defines DISTRIBUTIONS for every noise/instrument parameter; the generator samples one concrete value per record and writes it to the record's provenance.noise_config.",
   "type": "object",
   "required": ["instrument_config_id", "schema_version", "technique", "laser", "detector"],

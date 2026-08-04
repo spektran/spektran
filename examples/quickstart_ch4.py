@@ -2,8 +2,8 @@
 
 import uuid
 
-from opengasspec.physics import simulate_absorbance
-from opengasspec.validate import validate_record
+from opensensorsim.physics import simulate_absorbance
+from opensensorsim.validate import validate_record
 
 nu, absorbance = simulate_absorbance(
     molecule="CH4", concentration_ppm=100.0, temperature_K=296.0,

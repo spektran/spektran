@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Generate an OpenGasSpec dataset from a dataset-config YAML.
+"""Generate an OpenSensorSim dataset from a dataset-config YAML.
 
 Usage:
     python scripts/generate_dataset.py configs/datasets/<name>.yaml [--out DIR]
@@ -33,13 +33,13 @@ import yaml
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 
-from opengasspec.generator import GenerationSpec, generate_dataset  # noqa: E402
-from opengasspec.instrument.sampling import load_instrument_config  # noqa: E402
-from opengasspec.io import write_records  # noqa: E402
+from opensensorsim.generator import GenerationSpec, generate_dataset  # noqa: E402
+from opensensorsim.instrument.sampling import load_instrument_config  # noqa: E402
+from opensensorsim.io import write_records  # noqa: E402
 
 
 def load_spec(cfg: dict) -> GenerationSpec:
-    from opengasspec.physics import demo_ch4_2nu3, fetch_lines
+    from opensensorsim.physics import demo_ch4_2nu3, fetch_lines
 
     gas = cfg.get("gas", {})
     conc = gas.get("concentration_ppm", {})

@@ -198,7 +198,6 @@ def _random_record(rng) -> dict:
 
 def _round_trip() -> dict:
     import numpy as np
-
     from opengasspec.validate import validate_record
 
     rng = np.random.default_rng(SEED)

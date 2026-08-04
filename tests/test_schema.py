@@ -2,7 +2,7 @@
 
 import uuid
 
-from opengasspec.validate import instrument_validator, record_validator, validate_record
+from opensensorsim.validate import instrument_validator, record_validator, validate_record
 
 
 def make_valid_da_record() -> dict:

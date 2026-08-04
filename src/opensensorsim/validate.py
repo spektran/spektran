@@ -1,6 +1,6 @@
-"""Record/config validation against the OpenGasSpec JSON Schemas.
+"""Record/config validation against the OpenSensorSim JSON Schemas.
 
-Used by the CLI (``opengasspec validate``), by CI, and by external data
+Used by the CLI (``opensensorsim validate``), by CI, and by external data
 contributors. Unit-consistency linting beyond structural validation lands
 with Gate G2.
 """
@@ -15,14 +15,14 @@ from pathlib import Path
 
 from jsonschema import Draft202012Validator
 
-# Repo layout: <root>/src/opengasspec/validate.py -> <root>/schema/
+# Repo layout: <root>/src/opensensorsim/validate.py -> <root>/schema/
 _SCHEMA_DIR = Path(__file__).resolve().parents[2] / "schema"
 
 
 def _load_schema(name: str) -> dict:
     # Installed-package location first, repo layout as fallback for editable installs
     try:
-        ref = resources.files("opengasspec").joinpath(f"schema/{name}")
+        ref = resources.files("opensensorsim").joinpath(f"schema/{name}")
         if ref.is_file():
             return json.loads(ref.read_text())
     except (ModuleNotFoundError, FileNotFoundError):
@@ -59,7 +59,7 @@ def validate_record(record: dict) -> list[str]:
 def main(argv: list[str] | None = None) -> int:
     args = argv if argv is not None else sys.argv[1:]
     if not args:
-        print("usage: python -m opengasspec.validate RECORD.json [...]", file=sys.stderr)
+        print("usage: python -m opensensorsim.validate RECORD.json [...]", file=sys.stderr)
         return 2
     n_bad = 0
     for arg in args:

@@ -1,6 +1,6 @@
 """One-command evaluation: predictions file + truth HDF5 -> metric scores.
 
-Usage (also exposed as ``python -m opengasspec.benchmark.evaluate``):
+Usage (also exposed as ``python -m opensensorsim.benchmark.evaluate``):
 
     evaluate.py --task T1-concentration --truth data/test.h5 \
                 --predictions preds.csv [--json-out scores.json]

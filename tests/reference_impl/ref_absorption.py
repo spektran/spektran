@@ -5,7 +5,7 @@ its own code path: scalar math, quadrature-based Voigt (ref_lineshape), and an
 independently written transcription of the HITRAN equations (Rothman et al.,
 JQSRT 110 (2009) 533, Appendix A).
 
-MUST NOT import from or share code with ``opengasspec``.
+MUST NOT import from or share code with ``opensensorsim``.
 """
 
 from __future__ import annotations

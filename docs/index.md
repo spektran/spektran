@@ -1,4 +1,4 @@
-# OpenGasSpec
+# OpenSensorSim
 
 Open-source **simulation engine**, **data standard**, and **ML benchmark
 suite** for tunable diode laser absorption spectroscopy (TDLAS).

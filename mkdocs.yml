@@ -1,6 +1,6 @@
-site_name: OpenGasSpec
+site_name: OpenSensorSim
 site_description: Open simulation engine, data standard, and ML benchmark for TDLAS
-repo_url: https://github.com/opengasspec/opengasspec
+repo_url: https://github.com/opensensorsim/opensensorsim
 theme:
   name: material
   palette:

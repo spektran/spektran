@@ -27,7 +27,7 @@ identical bytes for everyone at the same generator version.
    splits with a different verification seed where feasible.
 2. No use of `provenance.noise_config` or `absorbance_clean` at inference
    time for T1/T3 (they are labels/oracle signals, not inputs).
-3. Report all metrics from `python -m opengasspec.benchmark.evaluate`
+3. Report all metrics from `python -m opensensorsim.benchmark.evaluate`
    unmodified, and the exact command used.
 4. T3 submissions must use the SAME model/weights as T1 (no held-out-specific
    tuning): the track measures transfer, not adaptation.

@@ -1,10 +1,10 @@
 """HDF5 persistence for generated datasets, with schema validation on write.
 
-Layout of an OpenGasSpec HDF5 file:
+Layout of an OpenSensorSim HDF5 file:
 
     /records/<record_id>/<signal_name>   float64 arrays
     /records/<record_id>.attrs["meta"]   JSON record metadata (schema v0.1)
-    /.attrs["opengasspec_version"], ["created_utc"], ["n_records"]
+    /.attrs["opensensorsim_version"], ["created_utc"], ["n_records"]
 
 Parquet export for ML-friendly flat access ships with the benchmark layer.
 """
@@ -28,7 +28,7 @@ def write_records(path: str | Path, records: list[dict], validate: bool = True) 
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     with h5py.File(path, "w") as f:
-        f.attrs["opengasspec_version"] = __version__
+        f.attrs["opensensorsim_version"] = __version__
         f.attrs["created_utc"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
         f.attrs["n_records"] = len(records)
         grp = f.create_group("records")

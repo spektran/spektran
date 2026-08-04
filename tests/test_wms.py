@@ -4,8 +4,8 @@
 import numpy as np
 import pytest
 
-from opengasspec.physics.lineshape import lorentz_profile
-from opengasspec.physics.wms import WMSConfig, simulate_wms
+from opensensorsim.physics.lineshape import lorentz_profile
+from opensensorsim.physics.wms import WMSConfig, simulate_wms
 from tests.reference_impl.ref_wms import arndt_lorentzian_h2_peak, wms_harmonic_ref
 
 RNG_SEED = 20260807
@@ -37,7 +37,7 @@ class TestLockinBasics:
         fs, fm, dur = 2e6, 1e4, 0.02
         t = np.arange(int(fs * dur)) / fs
         sig = 0.7 * np.cos(2 * np.pi * 2 * fm * t)  # pure 2f tone
-        from opengasspec.physics.wms import lockin_demodulate
+        from opensensorsim.physics.wms import lockin_demodulate
 
         x, y = lockin_demodulate(sig, t, fm, harmonic=2, sampling_rate_Hz=fs)
         assert settled_mean(x) == pytest.approx(0.7, rel=1e-6)
@@ -47,7 +47,7 @@ class TestLockinBasics:
         fs, fm, dur = 2e6, 1e4, 0.02
         t = np.arange(int(fs * dur)) / fs
         sig = 0.5 * np.cos(2 * np.pi * 2 * fm * t + 0.4)
-        from opengasspec.physics.wms import lockin_demodulate
+        from opensensorsim.physics.wms import lockin_demodulate
 
         x, y = lockin_demodulate(sig, t, fm, harmonic=2, sampling_rate_Hz=fs)
         # X = A cos(phase_sig), Y = A sin(phase_sig) with this convention

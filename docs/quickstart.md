@@ -3,8 +3,8 @@
 ## Install
 
 ```bash
-git clone https://github.com/opengasspec/opengasspec
-cd opengasspec
+git clone https://github.com/opensensorsim/opensensorsim
+cd opensensorsim
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 ```
@@ -12,7 +12,7 @@ pip install -e ".[dev]"
 ## One clean spectrum (offline, ~10 lines)
 
 ```python
-from opengasspec.physics import simulate_absorbance
+from opensensorsim.physics import simulate_absorbance
 
 nu, absorbance = simulate_absorbance(
     molecule="CH4", concentration_ppm=100.0,
@@ -45,11 +45,11 @@ for s in t1-train t1-val t1-test t3-test-heldout; do
   python scripts/generate_dataset.py configs/datasets/ch4-$s-v0.yaml --out data
 done
 python baselines/ridge_regression/train.py   # ~20 s
-python -m opengasspec.benchmark.evaluate --task T1-concentration \
+python -m opensensorsim.benchmark.evaluate --task T1-concentration \
   --truth data/ch4-t1-test-v0.h5 \
   --predictions baselines/ridge_regression/predictions_t1-test.csv
 ```
 
 The CNN baseline (`baselines/cnn1d/train.py`) takes ~7 minutes on CPU; full
 scoring commands for both models, including the T3 `--t1-mae` convention,
-are in [baselines/README.md](https://github.com/opengasspec/opengasspec/blob/main/baselines/README.md).
+are in [baselines/README.md](https://github.com/opensensorsim/opensensorsim/blob/main/baselines/README.md).
