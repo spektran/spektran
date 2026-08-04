@@ -110,7 +110,23 @@
         },
         "intensity_ramp_curvature_rel": { "$ref": "#/$defs/dist_or_number" },
         "intensity_fluctuation_rel": { "$ref": "#/$defs/dist_or_number" },
-        "transmittance_drift_rel_per_s": { "$ref": "#/$defs/dist_or_number" }
+        "transmittance_drift_rel_per_s": { "$ref": "#/$defs/dist_or_number" },
+        "window_contamination_rel": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Broadband fractional transmission loss from window fouling (0 = clean)."
+        },
+        "window_spectral_slope": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Spectral exponent of wavelength-dependent scattering (0 = flat, 4 = Rayleigh)."
+        },
+        "beam_wander_sigma_rel": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Standard deviation of beam-wander intensity modulation (relative)."
+        },
+        "beam_wander_cutoff_norm": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Beam wander low-pass cutoff as fraction of Nyquist rate."
+        }
       }
     },
     "detector": {

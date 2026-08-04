@@ -10,11 +10,18 @@ from .laser import (
     linewidth_convolve,
     scan_frequency_axis,
 )
-from .optics import baseline_polynomial, intensity_fluctuation, transmittance_decay
+from .optics import (
+    baseline_polynomial,
+    beam_wander,
+    intensity_fluctuation,
+    transmittance_decay,
+    window_contamination,
+)
 
 __all__ = [
     "adc_quantize",
     "baseline_polynomial",
+    "beam_wander",
     "center_drift_cm1",
     "current_tuning_model",
     "etalon_transmission",
@@ -28,4 +35,5 @@ __all__ = [
     "scan_frequency_axis",
     "transmittance_decay",
     "white_noise",
+    "window_contamination",
 ]

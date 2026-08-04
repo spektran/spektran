@@ -35,7 +35,7 @@ from .instrument.detector import (
 from .instrument.environment import jittered_conditions
 from .instrument.etalon import multi_etalon_transmission
 from .instrument.laser import intensity_ramp, linewidth_convolve, scan_frequency_axis
-from .instrument.optics import baseline_polynomial
+from .instrument.optics import baseline_polynomial, beam_wander, window_contamination
 from .instrument.sampling import sample_instrument
 from .physics.absorption import absorption_coefficient
 from .physics.hitran import MOLECULE_IDS, LineList
@@ -170,8 +170,26 @@ def generate_record(
     etalons = inst.get("etalons", []) or []
     fringes = multi_etalon_transmission(nu, etalons, t_s=scan_time_s) if etalons else 1.0
     decay = 1.0 - optics.get("transmittance_drift_rel_per_s", 0.0) * scan_time_s
-    transmitted = intensity0 * baseline * fringes * max(decay, 0.0) * np.exp(
-        -absorbance_measured
+    contam_rel = optics.get("window_contamination_rel", 0.0)
+    window_trans = (
+        window_contamination(nu, contam_rel, optics.get("window_spectral_slope", 0.0))
+        if contam_rel
+        else 1.0
+    )
+    bw_sigma = optics.get("beam_wander_sigma_rel", 0.0)
+    wander = (
+        beam_wander(rng, n, bw_sigma, optics.get("beam_wander_cutoff_norm", 0.05))
+        if bw_sigma
+        else 1.0
+    )
+    transmitted = (
+        intensity0
+        * baseline
+        * fringes
+        * window_trans
+        * wander
+        * max(decay, 0.0)
+        * np.exp(-absorbance_measured)
     )
 
     # --- detector chain ---
