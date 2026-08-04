@@ -23,6 +23,15 @@ All shipped data is simulation-born and labeled `data_origin: simulated`. The si
 
 ## Quick start
 
+Zero-install data access (Hugging Face):
+
+```python
+from datasets import load_dataset
+ds = load_dataset("Deepnight/spektran-ch4-v0")  # train/validation/test/test_heldout_instrument
+```
+
+Full engine + benchmark tooling:
+
 ```bash
 git clone https://github.com/spektran/spektran
 cd spektran
