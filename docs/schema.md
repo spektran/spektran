@@ -11,6 +11,7 @@ Backward compatible with v0.1. New features:
 - **`harmonic_scheme`** enum extended with `"3f"` and `"4f"` (full set: `"1f"`, `"2f"`, `"2f/1f"`, `"3f"`, `"4f"`, `"other"`)
 - **`measurement` block**: optional block for experimental-record metadata (`operator`, `date_utc`, `facility`, `instrument_serial`, `notes`), primarily for `data_origin: experimental/augmented`
 - **`harmonics` array** in the instrument config's `modulation` block: specifies which harmonics the instrument demodulates (default `[1, 2]`, extendable to `[1, 2, 3, 4]`)
+- **`labels.ood_label`** optional field (`0` or `1`): out-of-distribution flag for the T6 instrument-detection task, stamped onto records generated from an `ood_task: true` dataset config
 
 All v0.1 records validate against the v0.2 schema without modification.
 

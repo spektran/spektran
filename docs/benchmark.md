@@ -25,6 +25,8 @@ identical bytes for everyone at the same generator version.
   instruments. Uses the same generation pipeline as T1 but with WMS configs.
 - T5: train 20 / test 10 time series of 200 consecutive 1 s scans each, one
   frozen `vi-da-medium-02` realization per series (`mode: time_series`).
+- T6: train 3000 (in-distribution only: easy+medium+hard DA) / test 1000
+  (500 in-distribution + 500 held-out `vi-da-heldout-07`, `ood_task: true`).
 
 ## Rules
 
@@ -68,4 +70,18 @@ average).
 Input: raw scan. Output: binary classification (in-distribution vs
 out-of-distribution instrument). Primary metric: AUROC. Tests whether models
 can identify spectra from instruments outside their training distribution.
-Evaluation stub pending OOD label format.
+
+Training data (`ch4-t6-train-v0`) is drawn only from the three in-distribution
+DA instruments -- it carries no `ood_label` at all. The test split
+(`ch4-t6-test-v0`) is generated from an `ood_task: true` dataset config:
+`spektran generate` loads two disjoint instrument pools
+(`instrument_config_in_dist`, `instrument_config_ood`), generates each
+independently via the normal `generate_dataset` path, then stamps
+`labels.ood_label` (0 or 1) onto every record's metadata afterward -- the
+label is a property of which instrument pool produced a scan, not something
+the physics model itself predicts. Prediction format is a CSV of
+`record_id,ood_score` (higher = more confidently OOD; need not be a
+probability -- `evaluate_ood`/`ood_auroc` are rank-based). Reference
+baseline: `baselines/mahalanobis_t6` (PCA-whitened Gaussian fit to
+in-distribution training scans; OOD score = Mahalanobis distance from that
+fit).

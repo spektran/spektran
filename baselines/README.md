@@ -108,6 +108,44 @@ Observations (honest, not tuned away):
   shipped implementation renormalizes by the true per-position overlap count
   instead (see `moving_avg_t5/train.py:moving_average`).
 
+## T6 Results (v0 OOD split, CH4 DA, 2026-08-05)
+
+| Model | Test AUROC | n in-dist | n OOD |
+|---|---|---|---|
+| PCA + Mahalanobis distance | **0.672** | 500 | 500 |
+
+The official v0 split trains on 3000 in-distribution records (easy+medium+
+hard DA instruments; no `ood_label` at all) and tests on 1000 records: 500
+more from those same three instruments plus 500 from the held-out
+`vi-da-heldout-07` instrument (`ood_task: true` dataset config -- `spektran
+generate` stamps `labels.ood_label` after generation; see
+`docs/benchmark.md`). Reproduce:
+
+```bash
+for s in t6-train t6-test; do
+  spektran generate configs/datasets/ch4-$s-v0.yaml --out data
+done
+python baselines/mahalanobis_t6/train.py    # ~5 s
+python -m spektran.benchmark.evaluate --task T6-ood-instrument \
+  --truth data/ch4-t6-test-v0.h5 \
+  --predictions baselines/mahalanobis_t6/predictions_t6-test.csv
+```
+
+Observations (honest, not tuned away):
+
+- 0.672 AUROC is well above chance (0.5) but far from perfect separation:
+  `vi-da-heldout-07`'s parameter ranges were deliberately placed between the
+  medium and hard training tiers (distinct etalon FSR bands and
+  scan-nonlinearity signatures, but not an obviously different noise
+  regime -- see the instrument config comment), so a fair share of its scans
+  land inside the in-distribution Mahalanobis-distance range.
+- The baseline is fully unsupervised: it never reads a single `ood_label`,
+  at training or scoring time. It fits a 50-component PCA-whitened Gaussian
+  to the in-distribution training scans alone and scores test scans by
+  distance from that fit. A method that gets to see even a few
+  held-out-instrument examples during model selection should beat this
+  comfortably.
+
 ## Reproduce
 
 ```bash
@@ -154,7 +192,7 @@ Added in schema v0.2:
 |---|---|---|---|---|
 | T4 WMS concentration | 2f demod signal | ppm | MAE | Dataset configs shipped; baselines shipped |
 | T5 Drift compensation | Time-series scans | Drift-corrected ppm | Allan variance improvement | Full pipeline shipped |
-| T6 OOD instrument | Raw scan | In/out-of-distribution | AUROC | Evaluation stub; baselines pending |
+| T6 OOD instrument | Raw scan | In/out-of-distribution | AUROC | Full pipeline shipped |
 
 T4 dataset generation:
 
@@ -189,4 +227,28 @@ and computes Allan deviation of the prediction error within each series:
 ```bash
 python -m spektran.benchmark.evaluate --task T5-drift-compensation \
   --truth data/ch4-t5-test-v0.h5 --predictions preds_t5.csv
+```
+
+### T6: OOD instrument detection
+
+T6 dataset generation: the train split is a normal `generate_dataset` run
+(in-distribution instruments only, no OOD label). The test split needs
+`ood_task: true` in the config -- `spektran generate` detects it, calls
+`generate_dataset` once per instrument pool (`instrument_config_in_dist`,
+`instrument_config_ood`), and stamps `labels.ood_label` onto each record
+afterward (0 for the in-distribution pool, 1 for the OOD pool):
+
+```bash
+for s in t6-train t6-test; do
+  spektran generate configs/datasets/ch4-$s-v0.yaml --out data
+done
+```
+
+T6 evaluation reads `labels.ood_label` from the truth file and computes
+AUROC (`spektran.benchmark.metrics.ood_auroc`) against a predictions CSV of
+`record_id,ood_score` (higher = more confidently OOD):
+
+```bash
+python -m spektran.benchmark.evaluate --task T6-ood-instrument \
+  --truth data/ch4-t6-test-v0.h5 --predictions preds_t6.csv
 ```

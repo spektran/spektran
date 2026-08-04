@@ -1,0 +1,19 @@
+# T6 OOD detection test: 50% in-distribution + 50% held-out (OOD)
+dataset_id: ch4-t6-test-v0
+ood_task: true
+instrument_config_in_dist:
+  - configs/instruments/vi-da-easy-01.yaml
+  - configs/instruments/vi-da-medium-02.yaml
+  - configs/instruments/vi-da-hard-03.yaml
+instrument_config_ood:
+  - configs/instruments/vi-da-heldout-07.yaml
+n_records_in_dist: 500
+n_records_ood: 500
+master_seed: 106002
+gas:
+  molecule: CH4
+  concentration_ppm: {low: 1.0, high: 1000.0, log_uniform: true}
+  path_length_m: 10.0
+  matrix_gas: N2
+n_points: 2000
+line_source: demo

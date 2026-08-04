@@ -80,6 +80,46 @@ line_source: demo
     assert conc[0] != conc[5]
 
 
+def test_cli_generate_ood_smoke(tmp_path):
+    """Generate a tiny OOD dataset via CLI (T6 mode: ood_task: true)."""
+    cfg = tmp_path / "tiny_ood.yaml"
+    cfg.write_text(
+        """
+dataset_id: test-cli-ood
+ood_task: true
+instrument_config_in_dist:
+  - configs/instruments/vi-da-easy-01.yaml
+  - configs/instruments/vi-da-medium-02.yaml
+instrument_config_ood:
+  - configs/instruments/vi-da-heldout-07.yaml
+n_records_in_dist: 6
+n_records_ood: 4
+master_seed: 997
+gas:
+  molecule: CH4
+  concentration_ppm: {low: 50.0, high: 150.0, log_uniform: false}
+  path_length_m: 5.0
+  matrix_gas: N2
+n_points: 200
+line_source: demo
+"""
+    )
+    result = subprocess.run(
+        [sys.executable, "-m", "spektran.cli", "generate", str(cfg),
+         "--out", str(tmp_path / "out")],
+        capture_output=True, text=True, cwd=str(REPO),
+    )
+    assert result.returncode == 0, f"stderr: {result.stderr}"
+
+    from spektran.io import read_records
+
+    records = read_records(tmp_path / "out" / "test-cli-ood.h5")
+    assert len(records) == 10
+    labels = [r["meta"]["labels"]["ood_label"] for r in records]
+    assert labels.count(0) == 6
+    assert labels.count(1) == 4
+
+
 def test_cli_benchmark_run_help():
     result = subprocess.run(
         [sys.executable, "-m", "spektran.cli", "benchmark", "--help"],

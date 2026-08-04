@@ -93,3 +93,71 @@ def test_evaluate_drift_separates_series_boundaries(tmp_path):
     assert scores["n_series"] == 2
     assert scores["mae_ppm"] == pytest.approx(0.5, abs=1e-6)
     assert len(scores["adev_curve"]) == len(scores["adev_taus_s"])
+
+
+def test_evaluate_ood_scores_and_counts(tmp_path):
+    """evaluate_ood reads labels.ood_label from truth and scores AUROC against
+    a record_id,ood_score predictions CSV -- perfect separation gives 1.0."""
+    from spektran.benchmark.evaluate import evaluate_ood
+    from spektran.generator import GenerationSpec, generate_dataset
+    from spektran.instrument.sampling import load_instrument_config
+    from spektran.io import write_records
+    from spektran.physics import demo_ch4_2nu3
+
+    cfg_dir = Path(__file__).resolve().parents[1] / "configs" / "instruments"
+    in_dist_inst = load_instrument_config(cfg_dir / "vi-da-easy-01.yaml")
+    ood_inst = load_instrument_config(cfg_dir / "vi-da-heldout-07.yaml")
+    spec = GenerationSpec(lines=demo_ch4_2nu3(), n_points=100)
+
+    in_dist_records = generate_dataset(spec, in_dist_inst, n_records=5, master_seed=700)
+    for r in in_dist_records:
+        r["meta"]["labels"]["ood_label"] = 0
+    ood_records = generate_dataset(spec, ood_inst, n_records=5, master_seed=800)
+    for r in ood_records:
+        r["meta"]["labels"]["ood_label"] = 1
+    all_records = in_dist_records + ood_records
+
+    truth_path = tmp_path / "truth.h5"
+    write_records(truth_path, all_records)
+
+    preds_path = tmp_path / "preds.csv"
+    with open(preds_path, "w") as f:
+        f.write("record_id,ood_score\n")
+        for r in in_dist_records:
+            f.write(f"{r['meta']['record_id']},0.1\n")
+        for r in ood_records:
+            f.write(f"{r['meta']['record_id']},0.9\n")
+
+    scores = evaluate_ood(truth_path, preds_path)
+    assert scores["n_records"] == 10
+    assert scores["n_in_dist"] == 5
+    assert scores["n_ood"] == 5
+    assert scores["auroc"] == pytest.approx(1.0)
+
+
+def test_evaluate_ood_missing_label_defaults_to_in_dist(tmp_path):
+    """Records without an ood_label (e.g. a T6 training split, generated
+    outside the ood_task CLI branch) must default to in-distribution (0)."""
+    from spektran.benchmark.evaluate import evaluate_ood
+    from spektran.generator import GenerationSpec, generate_dataset
+    from spektran.instrument.sampling import load_instrument_config
+    from spektran.io import write_records
+    from spektran.physics import demo_ch4_2nu3
+
+    cfg_dir = Path(__file__).resolve().parents[1] / "configs" / "instruments"
+    inst = load_instrument_config(cfg_dir / "vi-da-easy-01.yaml")
+    spec = GenerationSpec(lines=demo_ch4_2nu3(), n_points=100)
+    records = generate_dataset(spec, inst, n_records=4, master_seed=701)
+
+    truth_path = tmp_path / "truth.h5"
+    write_records(truth_path, records)
+
+    preds_path = tmp_path / "preds.csv"
+    with open(preds_path, "w") as f:
+        f.write("record_id,ood_score\n")
+        for r in records:
+            f.write(f"{r['meta']['record_id']},0.3\n")
+
+    scores = evaluate_ood(truth_path, preds_path)
+    assert scores["n_in_dist"] == 4
+    assert scores["n_ood"] == 0

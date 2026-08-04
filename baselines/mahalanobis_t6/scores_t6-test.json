@@ -1,0 +1,9 @@
+{
+  "task": "T6-ood-instrument",
+  "scores": {
+    "n_records": 1000,
+    "n_in_dist": 500,
+    "n_ood": 500,
+    "auroc": 0.671592
+  }
+}

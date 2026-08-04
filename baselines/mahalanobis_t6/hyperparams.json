@@ -1,0 +1,7 @@
+{
+  "method": "PCA + Mahalanobis distance",
+  "n_components": 50,
+  "cov_regularization_eps": 1e-06,
+  "n_train": 3000,
+  "n_features": 2000
+}

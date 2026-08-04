@@ -168,6 +168,19 @@ class TestSchemaV02:
         errors = validate_record(rec)
         assert errors == [], f"3f/4f signals should validate: {errors}"
 
+    def test_v02_ood_label_accepted(self):
+        """T6 records can carry an ood_label (0 or 1) in the labels block."""
+        rec = make_valid_da_record()
+        rec["schema_version"] = "0.2"
+        rec["labels"]["ood_label"] = 1
+        errors = validate_record(rec)
+        assert errors == [], f"ood_label should validate: {errors}"
+
+    def test_ood_label_rejects_out_of_range(self):
+        rec = make_valid_da_record()
+        rec["labels"]["ood_label"] = 2
+        assert validate_record(rec)
+
     def test_v02_measurement_block_accepted(self):
         """Experimental records can include a measurement metadata block."""
         rec = make_valid_da_record()

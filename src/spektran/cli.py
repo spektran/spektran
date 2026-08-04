@@ -39,10 +39,26 @@ def cmd_generate(args: argparse.Namespace) -> int:
         repo = Path.cwd()
 
     cfg = yaml.safe_load(Path(args.config).read_text())
-    inst_paths = cfg["instrument_config"]
-    if isinstance(inst_paths, str):
-        inst_paths = [inst_paths]
-    instruments = [load_instrument_config(repo / p) for p in inst_paths]
+
+    def _load_instruments(key: str) -> list[dict]:
+        paths = cfg[key]
+        if isinstance(paths, str):
+            paths = [paths]
+        return [load_instrument_config(repo / p) for p in paths]
+
+    def _split_counts(n_total: int, n_instruments: int) -> list[int]:
+        per = n_total // n_instruments
+        return [per + (1 if i < n_total - per * n_instruments else 0)
+                for i in range(n_instruments)]
+
+    # T6 (ood_task) configs give two disjoint instrument pools instead of one
+    # `instrument_config` list, so the standard load below is skipped for them.
+    ood_task = bool(cfg.get("ood_task"))
+    if ood_task:
+        in_dist_instruments = _load_instruments("instrument_config_in_dist")
+        ood_instruments = _load_instruments("instrument_config_ood")
+    else:
+        instruments = _load_instruments("instrument_config")
 
     from .physics import demo_ch4_2nu3, demo_co, demo_co2, demo_h2o, fetch_lines
 
@@ -128,13 +144,44 @@ def cmd_generate(args: argparse.Namespace) -> int:
               f"(gen {t1 - t0:.1f}s, write {t2 - t1:.1f}s) -> {out_path}")
         return 0
 
+    if ood_task:
+        # generate_record/generate_dataset are OOD-agnostic -- T6's label is a
+        # property of which instrument pool produced a scan, not of the
+        # physics, so it is stamped onto each record's metadata afterward.
+        n_in_dist = int(cfg["n_records_in_dist"])
+        n_ood = int(cfg["n_records_ood"])
+
+        t0 = time.time()
+        records = []
+        seed_i = 0
+        counts_in = _split_counts(n_in_dist, len(in_dist_instruments))
+        for inst, n_i in zip(in_dist_instruments, counts_in):
+            recs = generate_dataset(spec, inst, n_i, seed + seed_i)
+            for r in recs:
+                r["meta"]["labels"]["ood_label"] = 0
+            records.extend(recs)
+            seed_i += 1
+        counts_ood = _split_counts(n_ood, len(ood_instruments))
+        for inst, n_i in zip(ood_instruments, counts_ood):
+            recs = generate_dataset(spec, inst, n_i, seed + seed_i)
+            for r in recs:
+                r["meta"]["labels"]["ood_label"] = 1
+            records.extend(recs)
+            seed_i += 1
+        t1 = time.time()
+
+        write_records(out_path, records, validate=True)
+        t2 = time.time()
+        print(f"{cfg['dataset_id']}: {len(records)} records "
+              f"({n_in_dist} in-dist + {n_ood} ood) "
+              f"(gen {t1 - t0:.1f}s, write {t2 - t1:.1f}s) -> {out_path}")
+        return 0
+
     n = args.n if args.n else int(cfg["n_records"])
 
     t0 = time.time()
     records = []
-    per = n // len(instruments)
-    counts = [per + (1 if i < n - per * len(instruments) else 0)
-              for i in range(len(instruments))]
+    counts = _split_counts(n, len(instruments))
     for i, (inst, n_i) in enumerate(zip(instruments, counts)):
         records.extend(generate_dataset(spec, inst, n_i, seed + i))
     t1 = time.time()

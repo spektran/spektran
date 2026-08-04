@@ -130,6 +130,10 @@
               }
             }
           }
+        },
+        "ood_label": {
+          "enum": [0, 1],
+          "description": "Out-of-distribution flag for the T6 instrument-detection task: 0 = in-distribution instrument, 1 = held-out/out-of-distribution instrument. Present only on T6 dataset records."
         }
       }
     },

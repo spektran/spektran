@@ -8,7 +8,7 @@ Usage (also exposed as ``python -m spektran.benchmark.evaluate``):
 Prediction formats:
 - T1/T3/T4/T5: CSV with header ``record_id,concentration_ppm``
 - T2: HDF5 with /predictions/<record_id> arrays (denoised absorbance)
-- T6: not yet implemented (raises NotImplementedError; see docs/benchmark.md)
+- T6: CSV with header ``record_id,ood_score`` (higher = more confidently OOD)
 """
 
 from __future__ import annotations
@@ -141,6 +141,44 @@ def evaluate_drift(truth_h5: Path, predictions_csv: Path) -> dict:
     }
 
 
+def evaluate_ood(truth_h5: Path, predictions_csv: Path) -> dict:
+    """T6: OOD instrument detection (AUROC).
+
+    Ground truth is ``labels.ood_label`` in each record's metadata (0 = in-
+    distribution instrument, 1 = held-out/OOD instrument). Missing defaults to
+    0 -- records generated outside the ``ood_task`` CLI branch (e.g. the T6
+    training split) never carry the field at all, and are in-distribution by
+    construction. Predictions are a CSV of ``record_id,ood_score``; higher
+    means more confidently OOD. The score need not be a probability --
+    ``ood_auroc`` is rank-based.
+    """
+    records = read_records(truth_h5)
+    truth_labels = {
+        r["meta"]["record_id"]: r["meta"]["labels"].get("ood_label", 0) for r in records
+    }
+
+    preds: dict[str, float] = {}
+    with open(predictions_csv) as f:
+        for row in csv.DictReader(f):
+            preds[row["record_id"]] = float(row["ood_score"])
+    missing = sorted(set(truth_labels) - set(preds))
+    if missing:
+        raise SystemExit(
+            f"predictions missing {len(missing)} record_ids (first: {missing[:3]})"
+        )
+
+    ids = sorted(truth_labels)
+    y_true = np.array([truth_labels[i] for i in ids])
+    y_scores = np.array([preds[i] for i in ids])
+
+    return {
+        "n_records": len(ids),
+        "n_in_dist": int(np.sum(y_true == 0)),
+        "n_ood": int(np.sum(y_true == 1)),
+        "auroc": M.ood_auroc(y_true, y_scores),
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--task", required=True,
@@ -165,9 +203,7 @@ def main(argv: list[str] | None = None) -> int:
     elif args.task == "T5-drift-compensation":
         scores = evaluate_drift(Path(args.truth), Path(args.predictions))
     elif args.task == "T6-ood-instrument":
-        raise NotImplementedError(
-            "T6 evaluation requires OOD label format; see docs/benchmark.md"
-        )
+        scores = evaluate_ood(Path(args.truth), Path(args.predictions))
 
     out = {"task": args.task, "scores": scores}
     print(json.dumps(out, indent=2))

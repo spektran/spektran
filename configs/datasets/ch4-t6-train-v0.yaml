@@ -1,0 +1,15 @@
+# T6 OOD detection training: in-distribution instruments only (label=0 implicit)
+dataset_id: ch4-t6-train-v0
+instrument_config:
+  - configs/instruments/vi-da-easy-01.yaml
+  - configs/instruments/vi-da-medium-02.yaml
+  - configs/instruments/vi-da-hard-03.yaml
+n_records: 3000
+master_seed: 106001
+gas:
+  molecule: CH4
+  concentration_ppm: {low: 1.0, high: 1000.0, log_uniform: true}
+  path_length_m: 10.0
+  matrix_gas: N2
+n_points: 2000
+line_source: demo

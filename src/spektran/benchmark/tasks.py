@@ -27,8 +27,11 @@ Tasks (v0.2 additions):
   HDF5 layout via ``io.write_time_series``/``read_time_series``); evaluation
   computes Allan deviation per series (see ``evaluate.evaluate_drift``).
 - **T6 OOD instrument detection**: input = raw_scan; output = ood_label
-  (in-/out-of-distribution). Metrics: AUROC. Evaluation pending an OOD
-  label format.
+  (in-/out-of-distribution). Metrics: AUROC. Dataset configs shipped
+  (``ch4-t6-*-v0.yaml``; the test split mixes in-distribution and held-out
+  instruments via the ``ood_task`` CLI branch, which stamps
+  ``labels.ood_label`` onto each record after generation). Full evaluation
+  pipeline (``evaluate.evaluate_ood``) and a PCA+Mahalanobis baseline shipped.
 
 Split seeds are disjoint by construction (different master seeds per split;
 per-record streams spawn from them independently).
@@ -123,7 +126,7 @@ TASK_SPECS.update({
     "T6-ood-instrument": TaskSpec(
         task_id="T6-ood-instrument",
         input_signal="raw_scan",
-        target="ood_label",
+        target="labels.ood_label",
         primary_metric="auroc",
         secondary_metrics=[],
     ),

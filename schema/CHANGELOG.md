@@ -8,6 +8,10 @@
 - New optional top-level `measurement` block for experimental records
   (`operator`, `date_utc`, `facility`, `instrument_serial`, `notes`).
 - Generator now emits `schema_version: "0.2"`.
+- New optional `labels.ood_label` (0/1): out-of-distribution flag for the T6
+  instrument-detection task, stamped by `spektran generate` on records built
+  from an `ood_task: true` dataset config. Additive; absent on all other
+  records.
 
 ## v0.1 (2026-08-04 — generator integration)
 
