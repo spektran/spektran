@@ -99,7 +99,11 @@ def cmd_generate(args: argparse.Namespace) -> int:
     for interf_cfg in cfg.get("interferents", []):
         mol = interf_cfg["molecule"]
         if source == "demo":
-            demo_fns_i = {"H2O": demo_h2o, "CO2": demo_co2, "CO": demo_co}
+            demo_fns_i = {
+                "H2O": demo_h2o, "CO2": demo_co2, "CO": demo_co,
+                "CH4": demo_ch4_2nu3, "NH3": demo_nh3, "NO": demo_no,
+                "NO2": demo_no2, "SO2": demo_so2, "HCl": demo_hcl, "HF": demo_hf,
+            }
             if mol not in demo_fns_i:
                 print(f"No demo lines for interferent {mol}", file=sys.stderr)
                 return 1
