@@ -1,0 +1,21 @@
+site_name: OpenGasSpec
+site_description: Open simulation engine, data standard, and ML benchmark for TDLAS
+repo_url: https://github.com/opengasspec/opengasspec
+theme:
+  name: material
+  palette:
+    - scheme: default
+      toggle: { icon: material/brightness-7, name: Dark mode }
+    - scheme: slate
+      toggle: { icon: material/brightness-4, name: Light mode }
+nav:
+  - Home: index.md
+  - Quickstart: quickstart.md
+  - Data schema: schema.md
+  - Benchmark rules: benchmark.md
+  - Reproducibility: reproduce.md
+  - Quality gates: gates.md
+markdown_extensions:
+  - admonition
+  - pymdownx.superfences
+  - tables
