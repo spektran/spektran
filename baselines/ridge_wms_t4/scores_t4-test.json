@@ -1,0 +1,9 @@
+{
+  "task": "T4-wms-concentration",
+  "scores": {
+    "n_records": 1000,
+    "mae_ppm": 15.152224361591525,
+    "mape_pct": 61.38282001542914,
+    "rmse_ppm": 30.810284336043416
+  }
+}

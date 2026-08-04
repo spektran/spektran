@@ -35,6 +35,31 @@ Observations (honest, not tuned away):
   (1.82x) than ridge (1.31x) — models can overfit *instrument signatures*,
   which is exactly what the cross-instrument track measures.
 
+## T4 Results (v0 WMS splits, CH4 2f, 2026-08-05)
+
+| Model | T4 test MAE (ppm) | T4 MAPE (%) |
+|---|---|---|
+| Ridge (2f) | 15.15 | 61.4 |
+| 1D CNN (2f) | 20.35 | 23.2 |
+
+Ridge wins on absolute MAE; the CNN wins on MAPE — its log1p target transform
+(see `cnn1d_wms_t4/train.py`) trades absolute error at high concentrations for
+better relative accuracy across the log-uniform range. Reproduce:
+
+```bash
+python baselines/ridge_wms_t4/train.py    # ~1 min
+python baselines/cnn1d_wms_t4/train.py    # ~7 min on CPU (60 epochs)
+```
+
+```bash
+python -m spektran.benchmark.evaluate --task T4-wms-concentration \
+  --truth data/ch4-t4-test-v0.h5 \
+  --predictions baselines/ridge_wms_t4/predictions_t4-test.csv
+python -m spektran.benchmark.evaluate --task T4-wms-concentration \
+  --truth data/ch4-t4-test-v0.h5 \
+  --predictions baselines/cnn1d_wms_t4/predictions_t4-test.csv
+```
+
 ## Reproduce
 
 ```bash
@@ -79,7 +104,7 @@ Added in schema v0.2:
 
 | Task | Input | Output | Primary metric | Status |
 |---|---|---|---|---|
-| T4 WMS concentration | 2f demod signal | ppm | MAE | Dataset configs shipped; baselines pending |
+| T4 WMS concentration | 2f demod signal | ppm | MAE | Dataset configs shipped; baselines shipped |
 | T5 Drift compensation | Time-series scans | Drift-corrected ppm | Allan variance improvement | Evaluation stub; baselines pending |
 | T6 OOD instrument | Raw scan | In/out-of-distribution | AUROC | Evaluation stub; baselines pending |
 
