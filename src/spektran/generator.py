@@ -253,7 +253,7 @@ def generate_record(
 
     meta = {
         "record_id": record_id,
-        "schema_version": "0.1",
+        "schema_version": "0.2",
         "data_origin": "simulated",
         "technique": technique,
         "provenance": {

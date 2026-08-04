@@ -49,6 +49,18 @@ def make_valid_da_record() -> dict:
     }
 
 
+def make_valid_wms_record() -> dict:
+    rec = make_valid_da_record()
+    rec["technique"] = "TDLAS-WMS"
+    rec["instrument"]["modulation"] = {"frequency_Hz": 10000.0, "depth_cm1": 0.05}
+    rec["signals"]["demod_2f"] = {
+        "array_ref": "/records/r0/demod_2f",
+        "n_samples": 2000,
+        "lowpass_cutoff_Hz": 100.0,
+    }
+    return rec
+
+
 class TestMetaValidation:
     def test_record_schema_is_valid(self):
         record_validator()  # check_schema inside
@@ -124,3 +136,50 @@ class TestInstrumentConfigValidation:
         }
         v = instrument_validator()
         assert list(v.iter_errors(cfg))
+
+
+class TestSchemaV02:
+    def test_v02_schema_version_accepted(self):
+        """v0.2 records must pass validation."""
+        rec = make_valid_da_record()
+        rec["schema_version"] = "0.2"
+        errors = validate_record(rec)
+        assert errors == [], f"v0.2 record should validate: {errors}"
+
+    def test_v01_schema_still_accepted(self):
+        """Backward compat: v0.1 records still validate."""
+        rec = make_valid_da_record()
+        rec["schema_version"] = "0.1"
+        errors = validate_record(rec)
+        assert errors == [], f"v0.1 record should still validate: {errors}"
+
+    def test_v02_demod_3f_4f_accepted(self):
+        """WMS records can include demod_3f and demod_4f signals."""
+        rec = make_valid_wms_record()
+        rec["schema_version"] = "0.2"
+        rec["signals"]["demod_3f"] = {
+            "array_ref": "/records/r0/demod_3f",
+            "n_samples": 2000,
+        }
+        rec["signals"]["demod_4f"] = {
+            "array_ref": "/records/r0/demod_4f",
+            "n_samples": 2000,
+        }
+        errors = validate_record(rec)
+        assert errors == [], f"3f/4f signals should validate: {errors}"
+
+    def test_v02_measurement_block_accepted(self):
+        """Experimental records can include a measurement metadata block."""
+        rec = make_valid_da_record()
+        rec["schema_version"] = "0.2"
+        rec["data_origin"] = "experimental"
+        rec.pop("provenance", None)  # provenance only required for simulated
+        rec["measurement"] = {
+            "operator": "Lab A",
+            "date_utc": "2026-08-01T10:00:00Z",
+            "facility": "Test facility",
+            "instrument_serial": "SN-001",
+            "notes": "Test measurement",
+        }
+        errors = validate_record(rec)
+        assert errors == [], f"measurement block should validate: {errors}"
