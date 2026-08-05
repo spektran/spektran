@@ -1,0 +1,16 @@
+# T8: Multi-species regression — CH4 + H2O, test split
+dataset_id: ch4-h2o-t8-test-v0
+instrument_config:
+  - configs/instruments/vi-da-multispecies-13.yaml
+n_records: 1000
+master_seed: 108002
+gas:
+  molecule: CH4
+  concentration_ppm: {low: 1.0, high: 1000.0, log_uniform: true}
+  path_length_m: 10.0
+  matrix_gas: N2
+  interferents:
+    - molecule: H2O
+      concentration_ppm: {low: 100.0, high: 20000.0, log_uniform: true}
+n_points: 2000
+line_source: demo

@@ -59,9 +59,57 @@ def load_time_series_split(name: str) -> tuple[np.ndarray, np.ndarray, list[str]
     return X, y, ids
 
 
+def load_multispecies_split(
+    name: str,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, list[str]]:
+    """Load T8 multi-species split: X, y_ch4, y_h2o, ids."""
+    records = read_records(DATA / f"{name}.h5")
+    records.sort(key=lambda r: r["meta"]["record_id"])
+    X = np.stack([r["arrays"]["raw_scan"] for r in records])
+    y_ch4 = np.array(
+        [r["meta"]["labels"]["species"][0]["concentration_ppm"] for r in records]
+    )
+    y_h2o = np.array([
+        r["meta"]["conditions"].get("interferents", [{}])[0].get("concentration_ppm", 0.0)
+        for r in records
+    ])
+    ids = [r["meta"]["record_id"] for r in records]
+    return X, y_ch4, y_h2o, ids
+
+
+def load_temperature_split(name: str) -> tuple[np.ndarray, np.ndarray, list[str]]:
+    """Load T9 temperature regression split: X, y_temperature_K, ids."""
+    records = read_records(DATA / f"{name}.h5")
+    records.sort(key=lambda r: r["meta"]["record_id"])
+    X = np.stack([r["arrays"]["raw_scan"] for r in records])
+    y = np.array(
+        [r["meta"]["conditions"]["temperature_K"] for r in records]
+    )
+    ids = [r["meta"]["record_id"] for r in records]
+    return X, y, ids
+
+
 def write_predictions_csv(path: Path, ids: list[str], y_pred: np.ndarray) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w") as f:
         f.write("record_id,concentration_ppm\n")
         for i, v in zip(ids, y_pred):
             f.write(f"{i},{float(v):.6f}\n")
+
+
+def write_multispecies_csv(
+    path: Path, ids: list[str], ch4_pred: np.ndarray, h2o_pred: np.ndarray
+) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w") as f:
+        f.write("record_id,ch4_ppm,h2o_ppm\n")
+        for i, c, h in zip(ids, ch4_pred, h2o_pred):
+            f.write(f"{i},{float(c):.6f},{float(h):.6f}\n")
+
+
+def write_temperature_csv(path: Path, ids: list[str], y_pred: np.ndarray) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w") as f:
+        f.write("record_id,temperature_K\n")
+        for i, v in zip(ids, y_pred):
+            f.write(f"{i},{float(v):.4f}\n")

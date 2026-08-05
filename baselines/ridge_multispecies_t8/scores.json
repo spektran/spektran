@@ -1,0 +1,11 @@
+{
+  "task": "T8-multispecies",
+  "scores": {
+    "n_records": 1000,
+    "mae_ch4_ppm": 0.8880373760361595,
+    "mae_h2o_ppm": 3937.0802763059137,
+    "mae_aggregate_ppm": 1968.984156840975,
+    "mape_ch4_pct": 9.325227969187756,
+    "mape_h2o_pct": 658.233942501141
+  }
+}

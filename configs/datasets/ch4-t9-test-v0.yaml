@@ -1,0 +1,13 @@
+# T9: Temperature regression — fixed CH4 concentration, wide T range
+dataset_id: ch4-t9-test-v0
+instrument_config:
+  - configs/instruments/vi-da-temp-regression-14.yaml
+n_records: 1000
+master_seed: 109002
+gas:
+  molecule: CH4
+  concentration_ppm: {low: 100.0, high: 100.0, log_uniform: false}
+  path_length_m: 10.0
+  matrix_gas: N2
+n_points: 2000
+line_source: demo

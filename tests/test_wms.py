@@ -189,3 +189,106 @@ def test_3f_4f_with_absorbing_gas():
         r_peak = settled_peak(result[f"r_{h}f"])
         assert r_peak > 0, f"{h}f peak should be nonzero"
         assert r_peak < r2f_peak, f"{h}f peak should be smaller than 2f"
+
+
+class TestWMS2f1fRatio:
+    """Tests for the calibration-free WMS 2f/1f ratio (Rieker et al. 2009)."""
+
+    def test_ratio_present_in_simulate_wms(self):
+        cfg = WMSConfig(
+            modulation_frequency_Hz=1e4,
+            modulation_depth_cm1=0.05,
+            sampling_rate_Hz=1e6,
+            duration_s=0.01,
+            center_wavenumber_cm1=NU0,
+        )
+        out = simulate_wms(cfg, make_absorbance(1e-2), harmonics=(1, 2))
+        assert "ratio_2f1f" in out
+        assert out["ratio_2f1f"].shape == out["r_2f"].shape
+
+    def test_ratio_not_present_without_both_harmonics(self):
+        cfg = WMSConfig(
+            modulation_frequency_Hz=1e4,
+            modulation_depth_cm1=0.05,
+            sampling_rate_Hz=1e6,
+            duration_s=0.01,
+            center_wavenumber_cm1=NU0,
+        )
+        out = simulate_wms(cfg, make_absorbance(1e-2), harmonics=(2,))
+        assert "ratio_2f1f" not in out
+
+    def test_ratio_nonnegative(self):
+        cfg = WMSConfig(
+            modulation_frequency_Hz=1e4,
+            modulation_depth_cm1=0.05,
+            sampling_rate_Hz=1e6,
+            duration_s=0.01,
+            center_wavenumber_cm1=NU0,
+        )
+        out = simulate_wms(cfg, make_absorbance(5e-2), harmonics=(1, 2))
+        assert np.all(out["ratio_2f1f"] >= 0.0)
+
+    def test_ratio_invariant_to_intensity(self):
+        """2f/1f should be approximately invariant to mean laser intensity."""
+        cfg = WMSConfig(
+            modulation_frequency_Hz=1e4,
+            modulation_depth_cm1=0.05,
+            sampling_rate_Hz=2e6,
+            duration_s=0.02,
+            center_wavenumber_cm1=NU0,
+        )
+        abs_fn = make_absorbance(1e-2)
+        out1 = simulate_wms(cfg, abs_fn, mean_intensity=1.0, harmonics=(1, 2))
+        out2 = simulate_wms(cfg, abs_fn, mean_intensity=0.5, harmonics=(1, 2))
+        r1 = settled_mean(out1["ratio_2f1f"])
+        r2 = settled_mean(out2["ratio_2f1f"])
+        assert r1 == pytest.approx(r2, rel=0.01)
+
+    def test_wms_2f_1f_ratio_function(self):
+        from spektran.physics.wms import wms_2f_1f_ratio
+        r2 = np.array([0.5, 0.3, 0.1, 0.0])
+        r1 = np.array([1.0, 0.6, 0.5, 0.0])
+        ratio = wms_2f_1f_ratio(r2, r1)
+        assert ratio[0] == pytest.approx(0.5)
+        assert ratio[1] == pytest.approx(0.5)
+        assert ratio[2] == pytest.approx(0.2)
+        assert ratio[3] == pytest.approx(0.0, abs=1e-8)
+
+
+class TestEtalonInWMS:
+    """Tests for etalon fringe interaction in the WMS chain."""
+
+    def test_etalon_modifies_wms_output(self):
+        """Etalon fringes should alter the demodulated WMS signal."""
+        cfg = WMSConfig(
+            modulation_frequency_Hz=1e4,
+            modulation_depth_cm1=0.05,
+            sampling_rate_Hz=2e6,
+            duration_s=0.02,
+            center_wavenumber_cm1=NU0,
+        )
+        abs_fn = make_absorbance(1e-2)
+        out_no_et = simulate_wms(cfg, abs_fn, harmonics=(1, 2))
+
+        def etalon_fn(nu):
+            return 1.0 + 0.01 * np.cos(2.0 * np.pi * nu / 0.5)
+
+        out_et = simulate_wms(cfg, abs_fn, harmonics=(1, 2),
+                              etalon_transmission_of_nu=etalon_fn)
+        diff = np.max(np.abs(out_et["x_2f"] - out_no_et["x_2f"]))
+        assert diff > 0, "etalon should change the 2f signal"
+
+    def test_no_etalon_matches_default(self):
+        """No etalon transmission function should give same result as None."""
+        cfg = WMSConfig(
+            modulation_frequency_Hz=1e4,
+            modulation_depth_cm1=0.05,
+            sampling_rate_Hz=1e6,
+            duration_s=0.01,
+            center_wavenumber_cm1=NU0,
+        )
+        abs_fn = make_absorbance(1e-2)
+        out1 = simulate_wms(cfg, abs_fn, harmonics=(1, 2),
+                            etalon_transmission_of_nu=None)
+        out2 = simulate_wms(cfg, abs_fn, harmonics=(1, 2))
+        np.testing.assert_array_equal(out1["x_2f"], out2["x_2f"])

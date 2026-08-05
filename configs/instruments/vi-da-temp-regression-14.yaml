@@ -1,0 +1,35 @@
+# Temperature regression instrument: wide T range for TDLAS thermometry
+# Uses CH4 2nu3 lines whose relative strengths are T-sensitive
+instrument_config_id: vi-da-temp-regression-14
+schema_version: "0.1"
+technique: TDLAS-DA
+held_out: false
+description: "Temperature-regression DA instrument: fixed concentration, wide T range, low noise for thermometry."
+laser:
+  center_wavenumber_cm1: 6047.0
+  scan_range_cm1: {dist: uniform, low: 1.8, high: 2.2}
+  scan_rate_Hz: 100.0
+  scan_nonlinearity_poly_cm1:
+    - {dist: normal, mean: 0.0, sigma: 0.02}
+  linewidth_MHz: {dist: uniform, low: 2.0, high: 6.0}
+etalons:
+  - free_spectral_range_cm1: {dist: uniform, low: 0.5, high: 1.0}
+    amplitude_rel: {dist: loguniform, low: 3.0e-5, high: 1.5e-4}
+    phase_rad: {dist: uniform, low: 0.0, high: 6.283185307}
+    phase_drift_rad_per_s: 0.0
+optics:
+  transmittance_drift_rel_per_s: 0.0
+  intensity_ramp_slope_rel: {dist: uniform, low: 0.1, high: 0.25}
+  intensity_ramp_curvature_rel: {dist: normal, mean: 0.0, sigma: 0.02}
+  baseline_poly_rel:
+    - {dist: normal, mean: 0.0, sigma: 0.005}
+detector:
+  white_noise_rel: {dist: loguniform, low: 3.0e-5, high: 1.0e-4}
+  one_over_f_sigma_rel: {dist: loguniform, low: 1.0e-5, high: 5.0e-5}
+  one_over_f_slope: 1.0
+  adc_bits: 16
+environment:
+  temperature_K: {dist: uniform, low: 250.0, high: 800.0}
+  pressure_atm: 1.0
+  temperature_jitter_K: 0.0
+  pressure_jitter_atm: {dist: uniform, low: 0.001, high: 0.003}
