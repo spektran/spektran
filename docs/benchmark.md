@@ -10,6 +10,9 @@
 | T4 WMS concentration | noisy 2f signal (WMS) | CH4 concentration (ppm) | MAE |
 | T5 drift compensation | time-series raw scans | drift-corrected concentrations | Allan variance improvement |
 | T6 OOD instrument detection | raw scan | in-dist vs OOD binary | AUROC |
+| T7 cross-modality transfer | TDLAS train, NDIR test | concentration (ppm) | MAE + degradation |
+| T8 multi-species regression | raw scan (CH4+H2O) | CH4 + H2O concentrations (ppm) | aggregate MAE |
+| T9 temperature regression | raw scan (fixed conc) | gas temperature (K) | MAE |
 
 ## Official splits (v0)
 
@@ -110,3 +113,32 @@ probability -- `evaluate_ood`/`ood_auroc` are rank-based). Reference
 baseline: `baselines/mahalanobis_t6` (PCA-whitened Gaussian fit to
 in-distribution training scans; OOD score = Mahalanobis distance from that
 fit).
+
+### T8: Multi-species regression (CH4 + H2O)
+
+Input: raw DA scan containing overlapping absorption from CH4 (target) and
+H2O (interferent at random concentrations). Output: both CH4 and H2O
+concentrations. Primary metric: aggregate MAE (average of per-species MAE).
+Tests whether models can disentangle overlapping absorption features from
+two species in the same spectral window.
+
+Dataset configs: `ch4-h2o-t8-{train,test}-v0.yaml`. CH4 range 1-1000 ppm
+(log-uniform), H2O range 100-20000 ppm (log-uniform). Instrument:
+`vi-da-multispecies-13`. Prediction format: CSV with
+`record_id,ch4_ppm,h2o_ppm`. Reference baseline:
+`baselines/ridge_multispecies_t8` (two independent ridge regressors; CH4
+MAE 0.89 ppm, H2O MAE 3937 ppm — H2O is poorly resolved because the
+instrument is tuned to CH4's 2nu3 band).
+
+### T9: Temperature regression
+
+Input: raw DA scan at fixed CH4 concentration (100 ppm). Output: gas
+temperature (K). Primary metric: MAE (K). Tests whether models can infer
+temperature from temperature-dependent line-shape changes (Doppler width
+scales as sqrt(T), Boltzmann population redistributes across rotational
+states).
+
+Dataset configs: `ch4-t9-{train,test}-v0.yaml`. Temperature range 250-800 K
+(uniform). Instrument: `vi-da-temp-regression-14` (low noise, wide T range).
+Prediction format: CSV with `record_id,temperature_K`. Reference baseline:
+`baselines/ridge_temp_t9` (ridge regression; MAE 9.4 K, MAPE 2.0%).

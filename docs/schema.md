@@ -2,7 +2,7 @@
 
 ## Schema versions
 
-### v0.2 (current)
+### v0.2 (current, updated in v0.5.0)
 
 Backward compatible with v0.1. New features:
 
@@ -12,6 +12,8 @@ Backward compatible with v0.1. New features:
 - **`measurement` block**: optional block for experimental-record metadata (`operator`, `date_utc`, `facility`, `instrument_serial`, `notes`), primarily for `data_origin: experimental/augmented`
 - **`harmonics` array** in the instrument config's `modulation` block: specifies which harmonics the instrument demodulates (default `[1, 2]`, extendable to `[1, 2, 3, 4]`)
 - **`labels.ood_label`** optional field (`0` or `1`): out-of-distribution flag for the T6 instrument-detection task, stamped onto records generated from an `ood_task: true` dataset config
+- **`ratio_2f1f`** signal array: calibration-free WMS 2f/1f ratio (Rieker et al. 2009), auto-computed when both harmonics 1 and 2 are demodulated
+- **Instrument electronics fields** (v0.5.0): `rin_dBc_Hz`, `rin_bandwidth_Hz`, `tia_bandwidth_Hz`, `responsivity_cutoff_cm1`, `peak_responsivity`, `responsivity_rolloff_cm1`
 
 All v0.1 records validate against the v0.2 schema without modification.
 

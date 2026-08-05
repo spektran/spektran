@@ -7,7 +7,7 @@ SPEKTRAN builds one platform pattern — parameterized forward physics + literat
 - **Code**: Apache-2.0 ([LICENSE](LICENSE))
 - **Data & schema**: CC BY 4.0 ([LICENSE-DATA](LICENSE-DATA))
 
-> ⚠️ **Status: alpha (v0.4.0).** Two modalities: TDLAS (10 molecules, 12 instruments, 6 tasks, 10 baselines) and NDIR (4 instruments, concentration regression). 7 benchmark tasks including T7 cross-modality transfer (train TDLAS, test NDIR). Public leaderboard. APIs and schema may still change until v1.0.
+> ⚠️ **Status: alpha (v0.5.0).** Two modalities: TDLAS (10 molecules, 14+ instruments, 9 tasks, 12+ baselines) and NDIR (4 instruments, concentration regression). 9 benchmark tasks (T1-T9) including multi-species regression, temperature regression, and cross-modality transfer. Hartmann-Tran Profile (HTP), WMS 2f/1f ratio, laser RIN, isotopologue handling. Public leaderboard. APIs and schema may still change until v1.0.
 
 ## Why SPEKTRAN?
 
@@ -74,6 +74,8 @@ alpha_h2o = absorption_coefficient(nu, demo_h2o(), 0.01, 296.0, 1.0)  # 1% H2O
 | **T5 Drift compensation** | Time-series raw scans | Drift-corrected concentrations | Allan variance improvement |
 | **T6 OOD instrument detection** | Raw scan | In-dist vs OOD binary | AUROC |
 | **T7 Cross-modality transfer** | TDLAS train, NDIR test | Concentration (ppm) | MAE, degradation vs T1 |
+| **T8 Multi-species regression** | Raw scan (DA), CH4+H2O | CH4 + H2O concentrations (ppm) | Aggregate MAE |
+| **T9 Temperature regression** | Raw scan (DA), fixed conc | Gas temperature (K) | MAE |
 
 ### Leaderboard (v0 splits, CH4 DA)
 
@@ -88,7 +90,8 @@ Deep learning baselines also available: Patchified Transformer (T1/T4),
 T2 denoising: wing-anchored cubic-polynomial baseline — spectral RMSE 6.31e-3,
 peak-weighted RMSE 8.60e-3. T4 WMS: ridge 15.15 ppm MAE, 1D CNN 20.35 ppm MAE.
 T5 drift: moving-average baseline 0.270 ppm MAE. T6 OOD: PCA + Mahalanobis
-0.672 AUROC.
+0.672 AUROC. T8 multi-species: ridge CH4 MAE 0.89 ppm, H2O MAE 3937 ppm.
+T9 temperature: ridge MAE 9.4 K (MAPE 2.0%).
 
 Full results on the [leaderboard](https://spektran.github.io/spektran/leaderboard/).
 Reproduce with [`baselines/README.md`](baselines/README.md). Submissions: run

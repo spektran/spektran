@@ -91,6 +91,41 @@ instrument's parameters were deliberately placed between existing tiers.
 
 ---
 
+## T7 — Cross-Modality Transfer
+
+| Model | Type | MAE (ppm) | Degradation vs T1 | Code |
+|---|---|---|---|---|
+| Ridge (TDLAS→NDIR) | Linear | — | — | `baselines/ridge_regression/` |
+
+Train on TDLAS (T1 training split), test on NDIR (scalar active/reference ratio).
+Same gas and concentration range, entirely different measurement physics.
+
+---
+
+## T8 — Multi-Species Regression (CH4 + H2O)
+
+| Model | Type | CH4 MAE (ppm) | H2O MAE (ppm) | Aggregate MAE | Code |
+|---|---|---|---|---|---|
+| Ridge (dual) | Linear | **0.89** | **3937** | **1969** | `baselines/ridge_multispecies_t8/` |
+
+Two independent ridge regressors, one per target species. CH4 is well-recovered
+(instrument tuned to 2nu3 band) but H2O is poorly resolved from the same spectral
+window — the main challenge for DL models on this track.
+
+---
+
+## T9 — Temperature Regression
+
+| Model | Type | MAE (K) | MAPE (%) | RMSE (K) | Code |
+|---|---|---|---|---|---|
+| Ridge | Linear | **9.4** | **2.0** | **11.8** | `baselines/ridge_temp_t9/` |
+
+Fixed CH4 concentration (100 ppm), temperature range 250–800 K. The regression
+target is gas temperature, inferred from temperature-dependent line-shape changes
+(Doppler broadening, Boltzmann population redistribution).
+
+---
+
 ## Submitting Results
 
 1. Generate predictions on the official test split using `spektran generate`.

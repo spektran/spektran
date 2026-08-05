@@ -146,6 +146,44 @@ Observations (honest, not tuned away):
   held-out-instrument examples during model selection should beat this
   comfortably.
 
+## T8 Results (v0 multi-species split, CH4+H2O DA, 2026-08-05)
+
+| Model | CH4 MAE (ppm) | H2O MAE (ppm) | Aggregate MAE (ppm) |
+|---|---|---|---|
+| Ridge (dual) | **0.89** | **3937** | **1969** |
+
+Two independent ridge regressors, one per target species. CH4 is well-recovered
+(instrument tuned to 2nu3 band) but H2O is poorly resolved from the same spectral
+window. Reproduce:
+
+```bash
+for s in h2o-t8-train h2o-t8-test; do
+  spektran generate configs/datasets/ch4-$s-v0.yaml --out data
+done
+python baselines/ridge_multispecies_t8/train.py    # ~5 s
+python -m spektran.benchmark.evaluate --task T8-multispecies \
+  --truth data/ch4-h2o-t8-test-v0.h5 \
+  --predictions baselines/ridge_multispecies_t8/predictions_t8-test.csv
+```
+
+## T9 Results (v0 temperature regression split, CH4 DA, 2026-08-05)
+
+| Model | MAE (K) | MAPE (%) | RMSE (K) |
+|---|---|---|---|
+| Ridge | **9.4** | **2.0** | **11.8** |
+
+Fixed CH4 concentration (100 ppm), temperature range 250-800 K. Reproduce:
+
+```bash
+for s in t9-train t9-test; do
+  spektran generate configs/datasets/ch4-$s-v0.yaml --out data
+done
+python baselines/ridge_temp_t9/train.py    # ~5 s
+python -m spektran.benchmark.evaluate --task T9-temperature \
+  --truth data/ch4-t9-test-v0.h5 \
+  --predictions baselines/ridge_temp_t9/predictions_t9-test.csv
+```
+
 ## Reproduce
 
 ```bash

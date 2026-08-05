@@ -2,17 +2,26 @@
 
 This roadmap is public and technical. It describes what the project intends to build, not what has been promised. Timelines are estimates. Contributions that accelerate any milestone are welcome.
 
-## Current state: v0.4.0 (2026-08)
+## Current state: v0.5.0 (2026-08)
 
 Two modalities shipped — TDLAS and NDIR:
-- **TDLAS**: DA + WMS forward physics, 10 molecules, 12 virtual instruments,
+- **TDLAS**: DA + WMS forward physics, 10 molecules, 14+ virtual instruments,
   TIPS polynomials, thermal chirp tuning, window/beam path effects,
   temperature-dependent detector noise
 - **NDIR**: Planck source + bandpass filter forward model, 4 virtual
   instruments (easy/medium/hard/heldout), thermopile/pyroelectric noise
-- 7 benchmark tasks (T1-T7) with 25+ dataset configs
-- T7: cross-modality transfer (train TDLAS, test NDIR)
-- 10 baseline models (classical + Transformer, U-Net, TCN)
+- 9 benchmark tasks (T1-T9) with 30+ dataset configs
+- T7: cross-modality transfer; T8: multi-species regression; T9: temperature regression
+- 12+ baseline models (classical + Transformer, U-Net, TCN)
+- **v0.5.0 additions**:
+  - Hartmann-Tran Profile (HTP): beyond-Voigt line shape with speed-dependent
+    broadening/shifting, Dicke narrowing, correlation (HITRAN2016+)
+  - WMS 2f/1f calibration-free ratio (Rieker et al. 2009)
+  - Etalon fringes wired into WMS time-domain chain
+  - Laser RIN (relative intensity noise), TIA bandwidth, detector responsivity
+  - Isotopologue handling + configurable line-wing cutoff
+  - Vectorized absorption coefficient (NumPy broadcasting)
+  - Sim-to-real validation against literature (G5)
 - Static leaderboard on GitHub Pages
 - Dual-implementation physics cross-validation (G3)
 - Noise realism envelope checks against 18-paper survey (G4)
@@ -149,7 +158,46 @@ reference baseline. This closes out Phase 3.1 and the v0.2.x line.
 
 ---
 
-## Phase 5: Additional modalities (v0.5.0+)
+## Phase 4.1: TDLAS Deep Dive (v0.5.0) — shipped 2026-08
+
+### 4.1.1 Advanced line-shape physics
+- [x] Hartmann-Tran Profile (HTP) implementation with speed-dependent
+  broadening/shifting, Dicke narrowing, correlation parameter
+- [x] Independent HTP reference implementation (quadrature-based) + G3 cross-validation
+- [x] Isotopologue handling: per-line isotopologue ID, natural abundance lookup,
+  filtering by isotopologue
+- [x] Configurable line-wing cutoff (per-molecule defaults, e.g. 500 cm-1 for CO2)
+- [x] Vectorized absorption coefficient (NumPy broadcasting, ~2.5x speedup)
+
+### 4.1.2 Enhanced WMS chain
+- [x] WMS 2f/1f calibration-free ratio (Rieker et al. 2009)
+- [x] Etalon transmission wired into WMS time-domain chain (parasitic fringes
+  demodulated alongside gas absorption)
+- [x] `ratio_2f1f` signal type in record schema
+
+### 4.1.3 Instrument electronics
+- [x] Laser RIN (relative intensity noise): multiplicative noise from spontaneous
+  emission coupling, specified in dBc/Hz
+- [x] TIA bandwidth filter: transimpedance amplifier low-pass before ADC
+- [x] Detector responsivity: wavelength-dependent InGaAs response with sigmoid cutoff
+- [x] 6 new instrument schema fields (rin_dBc_Hz, rin_bandwidth_Hz,
+  tia_bandwidth_Hz, responsivity_cutoff_cm1, peak_responsivity,
+  responsivity_rolloff_cm1)
+
+### 4.1.4 New benchmark tasks
+- [x] T8: multi-species regression (CH4 + H2O overlapping absorption, both
+  concentrations as targets). Ridge baseline: CH4 MAE 0.89 ppm, H2O MAE 3937 ppm
+- [x] T9: temperature regression (fixed concentration, regress gas temperature
+  from line-shape changes, 250-800 K). Ridge baseline: MAE 9.4 K
+
+### 4.1.5 Validation
+- [x] Sim-to-real validation against literature: HITRAN line strengths, Voigt
+  line width vs pressure, temperature dependence, WMS 2f analytical prediction
+- [x] G5 report documenting known sim-to-real gap sources
+
+---
+
+## Phase 5: Additional modalities (v0.6.0+)
 
 ### 5.1 PAS (Photoacoustic Spectroscopy)
 - Acoustic resonator model
