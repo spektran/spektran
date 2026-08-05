@@ -31,7 +31,11 @@ _SQRT_PI = np.sqrt(np.pi)
 _SQRT_2PI = np.sqrt(2.0 * np.pi)
 
 
-def doppler_hwhm_cm1(nu0_cm1: float, temperature_K: float, molar_mass_amu: float) -> float:
+def doppler_hwhm_cm1(
+    nu0_cm1: float | np.ndarray,
+    temperature_K: float,
+    molar_mass_amu: float,
+) -> float | np.ndarray:
     """Doppler (Gaussian) half-width at half-maximum [cm-1].
 
     alpha_D = (nu0/c) * sqrt(2 ln2 kT / m)
@@ -50,12 +54,12 @@ def doppler_hwhm_cm1(nu0_cm1: float, temperature_K: float, molar_mass_amu: float
 def lorentz_hwhm_cm1(
     pressure_atm: float,
     temperature_K: float,
-    gamma_air_cm1_per_atm: float,
-    gamma_self_cm1_per_atm: float,
+    gamma_air_cm1_per_atm: float | np.ndarray,
+    gamma_self_cm1_per_atm: float | np.ndarray,
     mole_fraction: float,
-    n_air: float,
+    n_air: float | np.ndarray,
     T_ref_K: float = 296.0,
-) -> float:
+) -> float | np.ndarray:
     """Pressure-broadened Lorentzian HWHM [cm-1] per the HITRAN convention.
 
     gamma(P, T) = (T_ref/T)^n_air * (gamma_air * P_partial_foreign

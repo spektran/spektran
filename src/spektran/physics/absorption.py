@@ -23,11 +23,15 @@ from __future__ import annotations
 from typing import Callable
 
 import numpy as np
+from scipy.special import wofz
 
 from .constants import C2_CM_K, T_REF_K, number_density_cm3
 from .hitran import LineList, demo_ch4_2nu3
-from .lineshape import doppler_hwhm_cm1, lorentz_hwhm_cm1, voigt_profile
+from .lineshape import doppler_hwhm_cm1, lorentz_hwhm_cm1
 from .tips import tips_q_ratio
+
+_SQRT_2LN2 = np.sqrt(2.0 * np.log(2.0))
+_SQRT_2PI = np.sqrt(2.0 * np.pi)
 
 # Default partition-function ratio approximation Q(T_ref)/Q(T) ~ (T_ref/T)^m.
 # m = 3/2 for nonlinear polyatomics (rotational partition function; classical
@@ -86,34 +90,52 @@ def absorption_coefficient(
     temperature_K: float,
     pressure_atm: float,
     q_ratio: Callable[[str, float], float] | None = None,
+    wing_cutoff_cm1: float = 0.0,
 ) -> np.ndarray:
     """Absorption coefficient alpha(nu) [cm-1] for one absorber.
 
     alpha(nu) = n_total * x * sum_j S_j(T) * phi_V(nu; nu0_j', alpha_D_j, gamma_L_j)
 
     with pressure-shifted line centers nu0' = nu0 + delta_air * P.
+
+    Parameters
+    ----------
+    wing_cutoff_cm1 : float
+        When > 0, zero out Voigt contributions where |nu - nu0'| exceeds this
+        value.  Accelerates computation for large line lists by masking
+        negligible far-wing contributions.  Default 0.0 (no cutoff).
     """
     if not 0.0 <= mole_fraction <= 1.0:
         raise ValueError(f"mole_fraction must be in [0, 1], got {mole_fraction}")
+    if len(lines) == 0:
+        return np.zeros_like(nu_cm1, dtype=np.float64)
+
     q = (q_ratio or tips_q_ratio)(lines.molecule, temperature_K)
     strengths = line_strength_at_T(
         lines.sw_cm_per_molec, lines.nu0_cm1, lines.elower_cm1, temperature_K, q
     )
     n_absorber = number_density_cm3(pressure_atm, temperature_K) * mole_fraction
 
-    alpha = np.zeros_like(nu_cm1, dtype=np.float64)
-    for j in range(len(lines)):
-        nu0_shifted = lines.nu0_cm1[j] + lines.delta_air[j] * pressure_atm
-        a_d = doppler_hwhm_cm1(nu0_shifted, temperature_K, lines.molar_mass_amu)
-        g_l = lorentz_hwhm_cm1(
-            pressure_atm,
-            temperature_K,
-            lines.gamma_air[j],
-            lines.gamma_self[j],
-            mole_fraction,
-            lines.n_air[j],
-        )
-        alpha += strengths[j] * voigt_profile(nu_cm1, nu0_shifted, a_d, g_l)
+    nu0_shifted = lines.nu0_cm1 + lines.delta_air * pressure_atm
+    a_d = doppler_hwhm_cm1(nu0_shifted, temperature_K, lines.molar_mass_amu)
+    g_l = lorentz_hwhm_cm1(
+        pressure_atm,
+        temperature_K,
+        lines.gamma_air,
+        lines.gamma_self,
+        mole_fraction,
+        lines.n_air,
+    )
+
+    sigma = a_d / _SQRT_2LN2
+    delta_nu = nu_cm1[np.newaxis, :] - nu0_shifted[:, np.newaxis]
+    z = (delta_nu + 1j * g_l[:, np.newaxis]) / (sigma[:, np.newaxis] * np.sqrt(2.0))
+    phi = np.real(wofz(z)) / (sigma[:, np.newaxis] * _SQRT_2PI)
+
+    if wing_cutoff_cm1 > 0.0:
+        phi[np.abs(delta_nu) > wing_cutoff_cm1] = 0.0
+
+    alpha = np.sum(strengths[:, np.newaxis] * phi, axis=0)
     return n_absorber * alpha
 
 
