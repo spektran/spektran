@@ -4,7 +4,6 @@ Validates that our wrapper correctly delegates to hapi and returns
 physically sensible partition-sum ratios.
 """
 
-import numpy as np
 import pytest
 
 _MOLECULES = ("CH4", "H2O", "CO2", "CO", "NH3", "NO", "NO2", "SO2", "HCl", "HF")

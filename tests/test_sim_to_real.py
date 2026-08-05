@@ -116,9 +116,9 @@ class TestWMS2fAnalytical:
 
     def test_2f_peak_arndt_formula(self):
         """Arndt's analytical 2f peak for Lorentzian in optically thin limit."""
-        from tests.reference_impl.ref_wms import arndt_lorentzian_h2_peak
-        from spektran.physics.wms import WMSConfig, simulate_wms
         from spektran.physics.lineshape import lorentz_profile
+        from spektran.physics.wms import WMSConfig, simulate_wms
+        from tests.reference_impl.ref_wms import arndt_lorentzian_h2_peak
 
         nu0 = 6047.0
         gamma_l = 0.05
