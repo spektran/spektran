@@ -7,7 +7,7 @@ SPEKTRAN builds one platform pattern — parameterized forward physics + literat
 - **Code**: Apache-2.0 ([LICENSE](LICENSE))
 - **Data & schema**: CC BY 4.0 ([LICENSE-DATA](LICENSE-DATA))
 
-> ⚠️ **Status: alpha (v0.3.1).** Gates G1–G5 all pass with archived adversarial reviews. 10 target molecules (CH4, H2O, CO2, CO, NH3, NO, NO2, SO2, HCl, HF), physically-motivated laser tuning model, window/beam path effects, temperature-dependent detector noise, 6 benchmark tasks with 10 baselines (including Transformer, U-Net, TCN deep learning models), and a public leaderboard. APIs and schema may still change until v1.0.
+> ⚠️ **Status: alpha (v0.4.0).** Two modalities: TDLAS (10 molecules, 12 instruments, 6 tasks, 10 baselines) and NDIR (4 instruments, concentration regression). 7 benchmark tasks including T7 cross-modality transfer (train TDLAS, test NDIR). Public leaderboard. APIs and schema may still change until v1.0.
 
 ## Why SPEKTRAN?
 

@@ -2,25 +2,24 @@
 
 This roadmap is public and technical. It describes what the project intends to build, not what has been promised. Timelines are estimates. Contributions that accelerate any milestone are welcome.
 
-## Current state: v0.3.1 (2026-08)
+## Current state: v0.4.0 (2026-08)
 
-The TDLAS domain has deep physics coverage and ML baselines:
-- Direct absorption (DA) and wavelength modulation (WMS) forward physics
-- 10 target molecules: CH4, H2O, CO2, CO, NH3, NO, NO2, SO2, HCl, HF
-- TIPS partition-function polynomial for all 10 molecules
-- Nonlinear laser current-tuning model (DFB/VCSEL thermal chirp)
-- Window contamination (wavelength-dependent scattering) and beam wander
-- Temperature-dependent detector noise (Johnson-Nyquist + dark current)
-- 12 virtual instruments spanning easy → hard + held-out + specialized tiers
-- 6 benchmark tasks (T1-T6) with 22 dataset configs
-- 10 baseline models (classical + deep learning: Transformer, U-Net, TCN)
+Two modalities shipped — TDLAS and NDIR:
+- **TDLAS**: DA + WMS forward physics, 10 molecules, 12 virtual instruments,
+  TIPS polynomials, thermal chirp tuning, window/beam path effects,
+  temperature-dependent detector noise
+- **NDIR**: Planck source + bandpass filter forward model, 4 virtual
+  instruments (easy/medium/hard/heldout), thermopile/pyroelectric noise
+- 7 benchmark tasks (T1-T7) with 25+ dataset configs
+- T7: cross-modality transfer (train TDLAS, test NDIR)
+- 10 baseline models (classical + Transformer, U-Net, TCN)
 - Static leaderboard on GitHub Pages
 - Dual-implementation physics cross-validation (G3)
 - Noise realism envelope checks against 18-paper survey (G4)
 - HDF5 persistence + Hugging Face Hub integration
 - MkDocs documentation on GitHub Pages
-- Schema v0.2 (higher harmonics, measurement block, backward compatible with v0.1)
-- Expanded CLI: `spektran generate`, `spektran benchmark`, `spektran download`
+- Schema extended for NDIR technique (record + instrument schemas)
+- CLI supports both TDLAS and NDIR generation
 
 ---
 
@@ -132,17 +131,21 @@ reference baseline. This closes out Phase 3.1 and the v0.2.x line.
 
 ---
 
-## Phase 4: Multi-modality (v0.4.0)
+## Phase 4: Multi-modality (v0.4.0) — shipped 2026-08
 
 ### 4.1 NDIR (Non-Dispersive Infrared)
-- Broadband source + bandpass filter forward model
-- Detector noise model (thermopile, pyroelectric)
-- 4–6 virtual instruments, benchmark splits
+- [x] Planck source + bandpass filter forward model (Gaussian + tophat filters)
+- [x] NDIR noise chain: source drift, intensity fluctuation, detector noise
+- [x] NDIR generator with SeedSequence reproducibility
+- [x] 4 virtual instruments (easy/medium/hard/heldout tiers)
+- [x] 3 NDIR dataset configs (train/test/test-heldout)
+- [x] Record + instrument schema extended for NDIR technique
+- [x] CLI NDIR generation support
 
 ### 4.2 Cross-modality benchmark track
-- Train on one modality, test on another (shared gas/concentration, different physics)
-- Task IDs to be assigned when multi-modality data is available
-- Requires the `technique` field already present in the schema
+- [x] T7: train on TDLAS, test on NDIR (shared gas/concentration, different physics)
+- [x] Cross-modality degradation metric (vs T1 baseline)
+- [x] Dataset config and evaluation pipeline
 
 ---
 
