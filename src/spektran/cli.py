@@ -117,6 +117,44 @@ def cmd_generate(args: argparse.Namespace) -> int:
             "concentration_ppm": float(interf_cfg["concentration_ppm"]),
         })
 
+    technique = cfg.get("technique")
+    if technique is None:
+        if ood_task:
+            technique = in_dist_instruments[0].get("technique", "TDLAS-DA")
+        else:
+            technique = instruments[0].get("technique", "TDLAS-DA")
+
+    seed = int(cfg["master_seed"])
+    out_dir = Path(args.out)
+    out_path = out_dir / f"{cfg['dataset_id']}.h5"
+
+    if technique == "NDIR":
+        from .ndir_generator import NDIRGenerationSpec, generate_ndir_dataset
+
+        ndir_spec = NDIRGenerationSpec(
+            lines=lines, molecule=molecule,
+            concentration_ppm_low=float(conc.get("low", 1.0)),
+            concentration_ppm_high=float(conc.get("high", 1000.0)),
+            log_uniform_concentration=bool(conc.get("log_uniform", True)),
+            path_length_m=float(gas.get("path_length_m", 10.0)),
+            matrix_gas=gas.get("matrix_gas", "N2"),
+            interferents=interferent_specs,
+        )
+        n = args.n if args.n else int(cfg["n_records"])
+        t0 = time.time()
+        records = []
+        counts = _split_counts(n, len(instruments))
+        for i, (inst, n_i) in enumerate(zip(instruments, counts)):
+            records.extend(
+                generate_ndir_dataset(ndir_spec, inst, n_i, seed + i)
+            )
+        t1 = time.time()
+        write_records(out_path, records, validate=True)
+        t2 = time.time()
+        print(f"{cfg['dataset_id']}: {n} records "
+              f"(gen {t1 - t0:.1f}s, write {t2 - t1:.1f}s) -> {out_path}")
+        return 0
+
     spec = GenerationSpec(
         lines=lines, molecule=molecule,
         concentration_ppm_low=float(conc.get("low", 1.0)),
@@ -127,9 +165,6 @@ def cmd_generate(args: argparse.Namespace) -> int:
         n_points=int(cfg.get("n_points", 2000)),
         interferents=interferent_specs,
     )
-    seed = int(cfg["master_seed"])
-    out_dir = Path(args.out)
-    out_path = out_dir / f"{cfg['dataset_id']}.h5"
 
     if cfg.get("mode") == "time_series":
         # Time-series mode (T5 drift compensation): one frozen instrument per

@@ -30,8 +30,8 @@
       "description": "Provenance class. All official SPEKTRAN releases are 'simulated'. 'experimental' and 'augmented' are reserved for future external contributions."
     },
     "technique": {
-      "enum": ["TDLAS-DA", "TDLAS-WMS"],
-      "description": "Measurement technique. Enum will extend to NDIR / PAS / CRDS in schema v0.2+."
+      "enum": ["TDLAS-DA", "TDLAS-WMS", "NDIR"],
+      "description": "Measurement technique."
     },
     "provenance": {
       "type": "object",
@@ -93,7 +93,37 @@
         "demod_1f": { "$ref": "#/$defs/demod_signal" },
         "demod_2f": { "$ref": "#/$defs/demod_signal" },
         "demod_3f": { "$ref": "#/$defs/demod_signal" },
-        "demod_4f": { "$ref": "#/$defs/demod_signal" }
+        "demod_4f": { "$ref": "#/$defs/demod_signal" },
+        "active_channel": {
+          "type": "object",
+          "description": "NDIR active channel detector signal (scalar).",
+          "required": ["array_ref", "n_samples"],
+          "additionalProperties": false,
+          "properties": {
+            "array_ref": { "$ref": "#/$defs/array_ref" },
+            "n_samples": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "reference_channel": {
+          "type": "object",
+          "description": "NDIR reference channel detector signal (scalar).",
+          "required": ["array_ref", "n_samples"],
+          "additionalProperties": false,
+          "properties": {
+            "array_ref": { "$ref": "#/$defs/array_ref" },
+            "n_samples": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "ratio": {
+          "type": "object",
+          "description": "NDIR active/reference ratio (scalar).",
+          "required": ["array_ref", "n_samples"],
+          "additionalProperties": false,
+          "properties": {
+            "array_ref": { "$ref": "#/$defs/array_ref" },
+            "n_samples": { "type": "integer", "minimum": 1 }
+          }
+        }
       }
     },
     "labels": {
@@ -241,9 +271,29 @@
     },
     "instrument": {
       "type": "object",
-      "required": ["laser", "detector", "target_lines"],
+      "required": ["detector", "target_lines"],
       "additionalProperties": false,
       "properties": {
+        "source": {
+          "type": "object",
+          "description": "Broadband IR source (NDIR).",
+          "additionalProperties": false,
+          "properties": {
+            "temperature_K": { "type": "number", "exclusiveMinimum": 0 }
+          }
+        },
+        "filters": {
+          "type": "object",
+          "description": "NDIR bandpass filter configuration.",
+          "additionalProperties": false,
+          "properties": {
+            "active_center_cm1": { "type": "number", "exclusiveMinimum": 0 },
+            "active_fwhm_cm1": { "type": "number", "exclusiveMinimum": 0 },
+            "reference_center_cm1": { "type": "number", "exclusiveMinimum": 0 },
+            "reference_fwhm_cm1": { "type": "number", "exclusiveMinimum": 0 },
+            "shape": { "enum": ["gaussian", "tophat"] }
+          }
+        },
         "laser": {
           "type": "object",
           "required": ["center_wavenumber_cm1", "scan_range_cm1"],
@@ -428,11 +478,24 @@
       },
       "then": {
         "properties": {
+          "instrument": { "required": ["laser", "detector", "target_lines"] },
           "signals": {
             "anyOf": [
               { "required": ["absorbance"] },
               { "required": ["raw_scan"] }
             ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "technique": { "const": "NDIR" } }
+      },
+      "then": {
+        "properties": {
+          "signals": {
+            "required": ["ratio"]
           }
         }
       }

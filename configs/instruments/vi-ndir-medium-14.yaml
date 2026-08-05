@@ -1,0 +1,23 @@
+instrument_config_id: vi-ndir-medium-14
+schema_version: "0.1"
+technique: NDIR
+held_out: false
+description: "Industrial NDIR: moderate noise, broader filters, more source drift."
+source:
+  temperature_K: {dist: uniform, low: 750.0, high: 850.0}
+  temperature_drift_K_per_s: {dist: loguniform, low: 5.0e-4, high: 5.0e-3}
+  intensity_fluctuation_rel: {dist: loguniform, low: 5.0e-5, high: 5.0e-4}
+filters:
+  active_center_cm1: {dist: uniform, low: 6046.5, high: 6047.5}
+  active_fwhm_cm1: {dist: uniform, low: 2.0, high: 4.0}
+  reference_center_cm1: {dist: uniform, low: 6038.0, high: 6042.0}
+  reference_fwhm_cm1: {dist: uniform, low: 2.0, high: 4.0}
+  shape: gaussian
+detector:
+  white_noise_rel: {dist: loguniform, low: 5.0e-5, high: 5.0e-4}
+  type: "pyroelectric (simulated)"
+environment:
+  temperature_K: 296.0
+  pressure_atm: 1.0
+  temperature_jitter_K: {dist: uniform, low: 0.0, high: 0.5}
+  pressure_jitter_atm: {dist: uniform, low: 0.0, high: 0.005}

@@ -1,0 +1,23 @@
+instrument_config_id: vi-ndir-hard-15
+schema_version: "0.1"
+technique: NDIR
+held_out: false
+description: "Field NDIR: high noise, large source drift, wide temperature variation."
+source:
+  temperature_K: {dist: uniform, low: 700.0, high: 900.0}
+  temperature_drift_K_per_s: {dist: loguniform, low: 1.0e-3, high: 1.0e-2}
+  intensity_fluctuation_rel: {dist: loguniform, low: 1.0e-4, high: 2.0e-3}
+filters:
+  active_center_cm1: {dist: uniform, low: 6046.0, high: 6048.0}
+  active_fwhm_cm1: {dist: uniform, low: 3.0, high: 6.0}
+  reference_center_cm1: {dist: uniform, low: 6035.0, high: 6042.0}
+  reference_fwhm_cm1: {dist: uniform, low: 3.0, high: 6.0}
+  shape: gaussian
+detector:
+  white_noise_rel: {dist: loguniform, low: 5.0e-4, high: 5.0e-3}
+  type: "thermopile (simulated)"
+environment:
+  temperature_K: {dist: uniform, low: 273.0, high: 323.0}
+  pressure_atm: 1.0
+  temperature_jitter_K: {dist: uniform, low: 0.0, high: 2.0}
+  pressure_jitter_atm: {dist: uniform, low: 0.0, high: 0.01}

@@ -1,0 +1,14 @@
+dataset_id: ch4-ndir-test-v0
+technique: NDIR
+instrument_config:
+  - configs/instruments/vi-ndir-easy-13.yaml
+  - configs/instruments/vi-ndir-medium-14.yaml
+  - configs/instruments/vi-ndir-hard-15.yaml
+n_records: 1000
+master_seed: 401002
+gas:
+  molecule: CH4
+  concentration_ppm: {low: 1.0, high: 1000.0, log_uniform: true}
+  path_length_m: 10.0
+  matrix_gas: N2
+line_source: demo
