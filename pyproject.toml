@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "spektran"
-version = "0.4.0"
+version = "0.5.0"
 description = "Open-source simulation engine, data standard, and ML benchmark suite for optical gas sensing (TDLAS + NDIR) — multi-species, multi-modality"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -35,16 +35,16 @@ dependencies = [
     "scipy>=1.10",
     "jsonschema>=4.18",
     "pyyaml>=6.0",
+    "hitran-api>=1.2",
 ]
 
 [project.optional-dependencies]
 io = ["h5py>=3.8", "pyarrow>=14.0"]
-hitran = ["hitran-api>=1.2"]  # 'hapi' on import; official HITRAN API client
 dev = [
     "pytest>=7.4",
     "pytest-cov>=4.1",
     "ruff>=0.4",
-    "spektran[io,hitran]",
+    "spektran[io]",
 ]
 
 [project.scripts]
