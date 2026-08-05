@@ -252,3 +252,36 @@ AUROC (`spektran.benchmark.metrics.ood_auroc`) against a predictions CSV of
 python -m spektran.benchmark.evaluate --task T6-ood-instrument \
   --truth data/ch4-t6-test-v0.h5 --predictions preds_t6.csv
 ```
+
+## Cross-Modality Track (T7)
+
+Train on TDLAS (direct absorption scans), test on NDIR (broadband ratio).
+Same gas (CH4), same concentration range, different measurement physics.
+
+The challenge: a model that learns spectral features from TDLAS 2000-point
+scans must generalize to predicting concentration from a single NDIR ratio
+value. This tests whether the model learns the underlying gas physics or
+merely overfits to modality-specific signal characteristics.
+
+Dataset generation:
+
+```bash
+# Training data: use existing TDLAS split
+spektran generate configs/datasets/ch4-t1-train-v0.yaml --out data
+# Cross-modality test data: NDIR
+spektran generate configs/datasets/ch4-cross-modality-test-v0.yaml --out data
+```
+
+Evaluation:
+
+```bash
+python -m spektran.benchmark.evaluate --task T7-cross-modality \
+  --truth data/ch4-cross-modality-test-v0.h5 \
+  --predictions preds_t7.csv \
+  --t1-mae <your_t1_mae>
+```
+
+No baseline is shipped for T7 -- it is an open research challenge. The
+dimensionality mismatch (2000 -> 1) makes naive transfer non-trivial;
+approaches might include feature extraction, physics-informed embeddings,
+or multi-task learning.

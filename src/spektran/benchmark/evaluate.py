@@ -6,7 +6,7 @@ Usage (also exposed as ``python -m spektran.benchmark.evaluate``):
                 --predictions preds.csv [--json-out scores.json]
 
 Prediction formats:
-- T1/T3/T4/T5: CSV with header ``record_id,concentration_ppm``
+- T1/T3/T4/T5/T7: CSV with header ``record_id,concentration_ppm``
 - T2: HDF5 with /predictions/<record_id> arrays (denoised absorbance)
 - T6: CSV with header ``record_id,ood_score`` (higher = more confidently OOD)
 """
@@ -184,18 +184,23 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--task", required=True,
                     choices=["T1-concentration", "T2-denoising", "T3-generalization",
                              "T4-wms-concentration", "T5-drift-compensation",
-                             "T6-ood-instrument"])
+                             "T6-ood-instrument", "T7-cross-modality"])
     ap.add_argument("--truth", required=True, help="truth HDF5 file")
     ap.add_argument("--predictions", required=True)
     ap.add_argument("--t1-mae", type=float, default=None,
-                    help="T3 only: in-distribution T1 test MAE for the degradation ratio")
+                    help="T3/T7: in-distribution T1 test MAE for the degradation ratio")
     ap.add_argument("--json-out", default=None)
     args = ap.parse_args(argv)
 
-    if args.task in ("T1-concentration", "T3-generalization", "T4-wms-concentration"):
+    if args.task in ("T1-concentration", "T3-generalization",
+                      "T4-wms-concentration", "T7-cross-modality"):
         scores = evaluate_concentration(Path(args.truth), Path(args.predictions))
         if args.task == "T3-generalization" and args.t1_mae:
             scores["degradation_ratio_vs_T1"] = M.degradation_ratio(
+                scores["mae_ppm"], args.t1_mae
+            )
+        if args.task == "T7-cross-modality" and args.t1_mae:
+            scores["cross_modality_degradation"] = M.degradation_ratio(
                 scores["mae_ppm"], args.t1_mae
             )
     elif args.task == "T2-denoising":

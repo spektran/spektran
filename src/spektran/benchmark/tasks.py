@@ -32,6 +32,9 @@ Tasks (v0.2 additions):
   instruments via the ``ood_task`` CLI branch, which stamps
   ``labels.ood_label`` onto each record after generation). Full evaluation
   pipeline (``evaluate.evaluate_ood``) and a PCA+Mahalanobis baseline shipped.
+- **T7 cross-modality transfer**: train on TDLAS (T1 training split), test on
+  NDIR (scalar ratio). Same gas and concentration range, different measurement
+  physics. Metrics: MAE (primary), MAPE, cross-modality degradation vs T1.
 
 Split seeds are disjoint by construction (different master seeds per split;
 per-record streams spawn from them independently).
@@ -44,6 +47,7 @@ from dataclasses import dataclass, field
 TASKS = (
     "T1-concentration", "T2-denoising", "T3-generalization",
     "T4-wms-concentration", "T5-drift-compensation", "T6-ood-instrument",
+    "T7-cross-modality",
 )
 
 # Difficulty tiers -> instrument configs used in the train/val/test mixtures
@@ -73,6 +77,7 @@ SPLIT_SEEDS.update({
     ("T5", "test"): 105_002,
     ("T6", "train"): 106_001,
     ("T6", "test"): 106_002,
+    ("T7", "test"): 501_001,
 })
 
 
@@ -129,5 +134,12 @@ TASK_SPECS.update({
         target="labels.ood_label",
         primary_metric="auroc",
         secondary_metrics=[],
+    ),
+    "T7-cross-modality": TaskSpec(
+        task_id="T7-cross-modality",
+        input_signal="ndir_ratio",
+        target="labels.species[0].concentration_ppm",
+        primary_metric="mae",
+        secondary_metrics=["mape", "cross_modality_degradation"],
     ),
 })

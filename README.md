@@ -73,6 +73,7 @@ alpha_h2o = absorption_coefficient(nu, demo_h2o(), 0.01, 296.0, 1.0)  # 1% H2O
 | **T4 WMS concentration** | Noisy 2f signal (WMS) | CH₄ concentration (ppm) | MAE |
 | **T5 Drift compensation** | Time-series raw scans | Drift-corrected concentrations | Allan variance improvement |
 | **T6 OOD instrument detection** | Raw scan | In-dist vs OOD binary | AUROC |
+| **T7 Cross-modality transfer** | TDLAS train, NDIR test | Concentration (ppm) | MAE, degradation vs T1 |
 
 ### Leaderboard (v0 splits, CH4 DA)
 
