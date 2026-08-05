@@ -183,6 +183,30 @@
         "dark_current_activation_eV": {
           "$ref": "#/$defs/dist_or_number",
           "description": "Activation energy for dark current Arrhenius scaling [eV]. InGaAs ~0.37."
+        },
+        "rin_dBc_Hz": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Laser relative intensity noise spectral density [dBc/Hz]. Typical: -130 to -160."
+        },
+        "rin_bandwidth_Hz": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Detection bandwidth for RIN integration [Hz]."
+        },
+        "tia_bandwidth_Hz": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Transimpedance amplifier bandwidth [Hz]. Low-pass filter before ADC."
+        },
+        "responsivity_cutoff_cm1": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Detector responsivity long-wavelength cutoff [cm-1]. InGaAs standard: 5882."
+        },
+        "peak_responsivity": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Peak detector responsivity (relative). Default 1.0."
+        },
+        "responsivity_rolloff_cm1": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Width of the responsivity sigmoid roll-off [cm-1]. Default 200."
         }
       }
     },

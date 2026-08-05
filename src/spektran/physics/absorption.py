@@ -28,6 +28,7 @@ from scipy.special import wofz
 from .constants import C2_CM_K, T_REF_K, number_density_cm3
 from .hitran import LineList, demo_ch4_2nu3
 from .lineshape import doppler_hwhm_cm1, lorentz_hwhm_cm1
+from .lineshape_htp import htp_profile
 from .tips import tips_q_ratio
 
 _SQRT_2LN2 = np.sqrt(2.0 * np.log(2.0))
@@ -91,22 +92,30 @@ def absorption_coefficient(
     pressure_atm: float,
     q_ratio: Callable[[str, float], float] | None = None,
     wing_cutoff_cm1: float = 0.0,
+    line_profile: str = "voigt",
 ) -> np.ndarray:
     """Absorption coefficient alpha(nu) [cm-1] for one absorber.
 
-    alpha(nu) = n_total * x * sum_j S_j(T) * phi_V(nu; nu0_j', alpha_D_j, gamma_L_j)
+    alpha(nu) = n_total * x * sum_j S_j(T) * phi_j(nu; ...)
 
     with pressure-shifted line centers nu0' = nu0 + delta_air * P.
 
     Parameters
     ----------
     wing_cutoff_cm1 : float
-        When > 0, zero out Voigt contributions where |nu - nu0'| exceeds this
+        When > 0, zero out contributions where |nu - nu0'| exceeds this
         value.  Accelerates computation for large line lists by masking
         negligible far-wing contributions.  Default 0.0 (no cutoff).
+    line_profile : str
+        Line-shape model: ``"voigt"`` (default) or ``"htp"`` (Hartmann-Tran
+        Profile, HITRAN2016+ recommendation).  ``"htp"`` requires that
+        ``lines.has_htp_params`` is True.  Ngo et al., JQSRT 129 (2013) 89,
+        doi:10.1016/j.jqsrt.2013.05.034
     """
     if not 0.0 <= mole_fraction <= 1.0:
         raise ValueError(f"mole_fraction must be in [0, 1], got {mole_fraction}")
+    if line_profile not in ("voigt", "htp"):
+        raise ValueError(f"line_profile must be 'voigt' or 'htp', got {line_profile!r}")
     if len(lines) == 0:
         return np.zeros_like(nu_cm1, dtype=np.float64)
 
@@ -127,15 +136,34 @@ def absorption_coefficient(
         lines.n_air,
     )
 
-    sigma = a_d / _SQRT_2LN2
-    delta_nu = nu_cm1[np.newaxis, :] - nu0_shifted[:, np.newaxis]
-    z = (delta_nu + 1j * g_l[:, np.newaxis]) / (sigma[:, np.newaxis] * np.sqrt(2.0))
-    phi = np.real(wofz(z)) / (sigma[:, np.newaxis] * _SQRT_2PI)
+    if line_profile == "htp" and lines.has_htp_params:
+        alpha = np.zeros_like(nu_cm1, dtype=np.float64)
+        for j in range(len(lines)):
+            gamma_2_j = lines.gamma_2[j] * pressure_atm
+            delta_2_j = lines.delta_2[j] * pressure_atm
+            nu_vc_j = lines.nu_vc[j] * pressure_atm
+            eta_j = lines.eta[j]
+            delta_0_j = lines.delta_air[j] * pressure_atm
 
-    if wing_cutoff_cm1 > 0.0:
-        phi[np.abs(delta_nu) > wing_cutoff_cm1] = 0.0
+            phi_j = htp_profile(
+                nu_cm1, nu0_shifted[j], a_d[j], g_l[j], delta_0_j,
+                gamma_2=gamma_2_j, delta_2=delta_2_j,
+                nu_vc=nu_vc_j, eta=eta_j,
+            )
+            if wing_cutoff_cm1 > 0.0:
+                phi_j[np.abs(nu_cm1 - nu0_shifted[j]) > wing_cutoff_cm1] = 0.0
+            alpha += strengths[j] * phi_j
+    else:
+        sigma = a_d / _SQRT_2LN2
+        delta_nu = nu_cm1[np.newaxis, :] - nu0_shifted[:, np.newaxis]
+        z = (delta_nu + 1j * g_l[:, np.newaxis]) / (sigma[:, np.newaxis] * np.sqrt(2.0))
+        phi = np.real(wofz(z)) / (sigma[:, np.newaxis] * _SQRT_2PI)
 
-    alpha = np.sum(strengths[:, np.newaxis] * phi, axis=0)
+        if wing_cutoff_cm1 > 0.0:
+            phi[np.abs(delta_nu) > wing_cutoff_cm1] = 0.0
+
+        alpha = np.sum(strengths[:, np.newaxis] * phi, axis=0)
+
     return n_absorber * alpha
 
 

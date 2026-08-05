@@ -96,7 +96,7 @@ def cmd_generate(args: argparse.Namespace) -> int:
         return 1
 
     interferent_specs = []
-    for interf_cfg in cfg.get("interferents", []):
+    for interf_cfg in gas.get("interferents", cfg.get("interferents", [])):
         mol = interf_cfg["molecule"]
         if source == "demo":
             demo_fns_i = {
@@ -112,10 +112,19 @@ def cmd_generate(args: argparse.Namespace) -> int:
             i_lo, i_hi = interf_cfg.get("wavenumber_range_cm1",
                                         cfg.get("wavenumber_range_cm1", [6045.0, 6049.0]))
             i_lines = fetch_lines(mol, i_lo, i_hi)
-        interferent_specs.append({
-            "molecule": mol, "lines": i_lines,
-            "concentration_ppm": float(interf_cfg["concentration_ppm"]),
-        })
+        conc_spec = interf_cfg["concentration_ppm"]
+        if isinstance(conc_spec, dict):
+            interferent_specs.append({
+                "molecule": mol, "lines": i_lines,
+                "concentration_ppm_low": float(conc_spec["low"]),
+                "concentration_ppm_high": float(conc_spec["high"]),
+                "log_uniform": bool(conc_spec.get("log_uniform", False)),
+            })
+        else:
+            interferent_specs.append({
+                "molecule": mol, "lines": i_lines,
+                "concentration_ppm": float(conc_spec),
+            })
 
     technique = cfg.get("technique")
     if technique is None:

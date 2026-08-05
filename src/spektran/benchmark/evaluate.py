@@ -179,12 +179,78 @@ def evaluate_ood(truth_h5: Path, predictions_csv: Path) -> dict:
     }
 
 
+def evaluate_temperature(truth_h5: Path, predictions_csv: Path) -> dict:
+    """T9: temperature regression from spectral line-shape changes."""
+    records = read_records(truth_h5)
+    truth = {
+        r["meta"]["record_id"]: r["meta"]["conditions"]["temperature_K"]
+        for r in records
+    }
+    preds: dict[str, float] = {}
+    with open(predictions_csv) as f:
+        for row in csv.DictReader(f):
+            preds[row["record_id"]] = float(row["temperature_K"])
+    missing = sorted(set(truth) - set(preds))
+    if missing:
+        raise SystemExit(
+            f"predictions missing {len(missing)} record_ids (first: {missing[:3]})"
+        )
+    ids = sorted(truth)
+    y_true = np.array([truth[i] for i in ids])
+    y_pred = np.array([preds[i] for i in ids])
+    return {
+        "n_records": len(ids),
+        "mae_K": M.mae(y_true, y_pred),
+        "mape_pct": M.mape(y_true, y_pred),
+        "rmse_K": M.rmse(y_true, y_pred),
+    }
+
+
+def evaluate_multispecies(truth_h5: Path, predictions_csv: Path) -> dict:
+    """T8: multi-species concentration regression (CH4 + H2O)."""
+    records = read_records(truth_h5)
+    truth_ch4 = {}
+    truth_h2o = {}
+    for r in records:
+        rid = r["meta"]["record_id"]
+        truth_ch4[rid] = r["meta"]["labels"]["species"][0]["concentration_ppm"]
+        interfs = r["meta"]["conditions"].get("interferents", [])
+        truth_h2o[rid] = interfs[0]["concentration_ppm"] if interfs else 0.0
+    preds_ch4: dict[str, float] = {}
+    preds_h2o: dict[str, float] = {}
+    with open(predictions_csv) as f:
+        for row in csv.DictReader(f):
+            preds_ch4[row["record_id"]] = float(row["ch4_ppm"])
+            preds_h2o[row["record_id"]] = float(row["h2o_ppm"])
+    missing = sorted(set(truth_ch4) - set(preds_ch4))
+    if missing:
+        raise SystemExit(
+            f"predictions missing {len(missing)} record_ids (first: {missing[:3]})"
+        )
+    ids = sorted(truth_ch4)
+    ch4_true = np.array([truth_ch4[i] for i in ids])
+    ch4_pred = np.array([preds_ch4[i] for i in ids])
+    h2o_true = np.array([truth_h2o[i] for i in ids])
+    h2o_pred = np.array([preds_h2o[i] for i in ids])
+    return {
+        "n_records": len(ids),
+        "mae_ch4_ppm": M.mae(ch4_true, ch4_pred),
+        "mae_h2o_ppm": M.mae(h2o_true, h2o_pred),
+        "mae_aggregate_ppm": float(
+            (M.mae(ch4_true, ch4_pred) + M.mae(h2o_true, h2o_pred)) / 2
+        ),
+        "mape_ch4_pct": M.mape(ch4_true, ch4_pred),
+        "mape_h2o_pct": M.mape(h2o_true, h2o_pred),
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--task", required=True,
                     choices=["T1-concentration", "T2-denoising", "T3-generalization",
                              "T4-wms-concentration", "T5-drift-compensation",
-                             "T6-ood-instrument", "T7-cross-modality"])
+                             "T6-ood-instrument", "T7-cross-modality",
+                             "T8-multispecies", "T9-temperature"])
     ap.add_argument("--truth", required=True, help="truth HDF5 file")
     ap.add_argument("--predictions", required=True)
     ap.add_argument("--t1-mae", type=float, default=None,
@@ -209,6 +275,10 @@ def main(argv: list[str] | None = None) -> int:
         scores = evaluate_drift(Path(args.truth), Path(args.predictions))
     elif args.task == "T6-ood-instrument":
         scores = evaluate_ood(Path(args.truth), Path(args.predictions))
+    elif args.task == "T8-multispecies":
+        scores = evaluate_multispecies(Path(args.truth), Path(args.predictions))
+    elif args.task == "T9-temperature":
+        scores = evaluate_temperature(Path(args.truth), Path(args.predictions))
 
     out = {"task": args.task, "scores": scores}
     print(json.dumps(out, indent=2))

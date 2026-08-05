@@ -22,6 +22,7 @@ from .lineshape import (
     lorentz_profile,
     voigt_profile,
 )
+from .lineshape_htp import htp_profile
 from .ndir import (
     bandpass_filter,
     ndir_detector_signal,
@@ -50,6 +51,7 @@ __all__ = [
     "doppler_hwhm_cm1",
     "fetch_lines",
     "gaussian_profile",
+    "htp_profile",
     "line_strength_at_T",
     "lockin_demodulate",
     "lorentz_hwhm_cm1",

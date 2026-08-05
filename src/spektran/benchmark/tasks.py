@@ -47,7 +47,7 @@ from dataclasses import dataclass, field
 TASKS = (
     "T1-concentration", "T2-denoising", "T3-generalization",
     "T4-wms-concentration", "T5-drift-compensation", "T6-ood-instrument",
-    "T7-cross-modality",
+    "T7-cross-modality", "T8-multispecies", "T9-temperature",
 )
 
 # Difficulty tiers -> instrument configs used in the train/val/test mixtures
@@ -78,6 +78,10 @@ SPLIT_SEEDS.update({
     ("T6", "train"): 106_001,
     ("T6", "test"): 106_002,
     ("T7", "test"): 501_001,
+    ("T8", "train"): 108_001,
+    ("T8", "test"): 108_002,
+    ("T9", "train"): 109_001,
+    ("T9", "test"): 109_002,
 })
 
 
@@ -141,5 +145,19 @@ TASK_SPECS.update({
         target="labels.species[0].concentration_ppm",
         primary_metric="mae",
         secondary_metrics=["mape", "cross_modality_degradation"],
+    ),
+    "T8-multispecies": TaskSpec(
+        task_id="T8-multispecies",
+        input_signal="raw_scan",
+        target="labels.species[*].concentration_ppm",
+        primary_metric="mae",
+        secondary_metrics=["mae_per_species", "mape"],
+    ),
+    "T9-temperature": TaskSpec(
+        task_id="T9-temperature",
+        input_signal="raw_scan",
+        target="conditions.temperature_K",
+        primary_metric="mae",
+        secondary_metrics=["mape"],
     ),
 })

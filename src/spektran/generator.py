@@ -34,6 +34,7 @@ from .instrument.detector import (
     thermal_noise_scale,
     white_noise,
 )
+from .instrument.electronics import detector_responsivity, rin_noise, tia_bandwidth_filter
 from .instrument.environment import jittered_conditions
 from .instrument.etalon import multi_etalon_transmission
 from .instrument.laser import intensity_ramp, linewidth_convolve, scan_frequency_axis
@@ -144,14 +145,26 @@ def generate_record(
         pressure_atm=pressure_atm,
     )
     absorbance = alpha * spec.path_length_m * 100.0
-    # Beer-Lambert linearity: total absorbance is the sum of each absorber's
-    # own absorbance. Interferents are background species, not the
-    # prediction target -- they are omitted from labels.species below.
+    sampled_interferents = []
     for interf in spec.interferents:
+        if "concentration_ppm" in interf:
+            i_conc = interf["concentration_ppm"]
+        else:
+            lo = interf["concentration_ppm_low"]
+            hi = interf["concentration_ppm_high"]
+            if interf.get("log_uniform", False):
+                i_conc = float(np.exp(rng.uniform(np.log(lo), np.log(hi))))
+            else:
+                i_conc = float(rng.uniform(lo, hi))
+        sampled_interferents.append({
+            "molecule": interf["molecule"],
+            "lines": interf["lines"],
+            "concentration_ppm": i_conc,
+        })
         alpha_interf = absorption_coefficient(
             nu,
             interf["lines"],
-            mole_fraction=interf["concentration_ppm"] * 1e-6,
+            mole_fraction=i_conc * 1e-6,
             temperature_K=temperature_K,
             pressure_atm=pressure_atm,
         )
@@ -194,6 +207,24 @@ def generate_record(
         * np.exp(-absorbance_measured)
     )
 
+    # --- laser RIN (multiplicative, before detection) ---
+    rin_dBc = det.get("rin_dBc_Hz")
+    if rin_dBc is not None:
+        scan_rate_Hz = laser.get("scan_rate_Hz", 100.0)
+        rin_bw = det.get("rin_bandwidth_Hz", scan_rate_Hz * n)
+        rin_fs = scan_rate_Hz * n
+        transmitted = transmitted * (1.0 + rin_noise(rng, n, rin_dBc, rin_bw, rin_fs))
+
+    # --- detector responsivity (wavelength-dependent) ---
+    resp_cutoff = det.get("responsivity_cutoff_cm1")
+    if resp_cutoff is not None:
+        resp = detector_responsivity(
+            nu, resp_cutoff,
+            det.get("peak_responsivity", 1.0),
+            det.get("responsivity_rolloff_cm1", 200.0),
+        )
+        transmitted = transmitted * resp
+
     # --- detector chain ---
     sigma_w = det.get("white_noise_rel", 0.0)
     if sigma_w:
@@ -221,6 +252,10 @@ def generate_record(
     gnl = det.get("gain_nonlinearity_rel", 0.0)
     if gnl:
         transmitted = gain_nonlinearity(transmitted, gnl)
+    tia_bw = det.get("tia_bandwidth_Hz")
+    if tia_bw is not None:
+        scan_rate_Hz = laser.get("scan_rate_Hz", 100.0)
+        transmitted = tia_bandwidth_filter(transmitted, tia_bw, scan_rate_Hz * n)
     bits = det.get("adc_bits", 0)
     if bits:
         transmitted = adc_quantize(transmitted, int(round(bits)), full_scale=1.5)
@@ -277,7 +312,7 @@ def generate_record(
                 pressure_atm=pressure_atm,
             )
             total = a * spec.path_length_m * 100.0
-            for interf in spec.interferents:
+            for interf in sampled_interferents:
                 a_i = absorption_coefficient(
                     np.asarray(nu_arr, dtype=float),
                     interf["lines"],
@@ -288,7 +323,12 @@ def generate_record(
                 total += a_i * spec.path_length_m * 100.0
             return total
 
-        out = simulate_wms(cfg, absorbance_fn, harmonics=harmonics)
+        etalon_fn = None
+        if etalons:
+            def etalon_fn(nu_arr, _et=etalons, _st=scan_time_s):
+                return multi_etalon_transmission(nu_arr, _et, t_s=_st)
+        out = simulate_wms(cfg, absorbance_fn, harmonics=harmonics,
+                           etalon_transmission_of_nu=etalon_fn)
         n_t = len(out["t_s"])
         noisy = out["intensity"]
         if sigma_w:
@@ -298,17 +338,26 @@ def generate_record(
         from .physics.wms import lockin_demodulate
 
         stride = max(1, n_t // n)
+        demod_r = {}
         for h in harmonics:
-            x, _ = lockin_demodulate(
+            x, y = lockin_demodulate(
                 noisy, out["t_s"], f_m, h, cfg.lockin_phase_rad,
                 cfg.lowpass_cutoff_Hz, fs,
             )
             key = f"demod_{h}f"
             arrays[key] = x[::stride][:n]
+            demod_r[h] = np.hypot(x, y)[::stride][:n]
             signals[key] = {
                 "array_ref": f"/records/{record_id}/{key}",
                 "n_samples": int(len(arrays[key])),
                 "lowpass_cutoff_Hz": float(cfg.lowpass_cutoff_Hz or f_m / 10.0),
+            }
+        if 1 in harmonics and 2 in harmonics:
+            from .physics.wms import wms_2f_1f_ratio
+            arrays["ratio_2f1f"] = wms_2f_1f_ratio(demod_r[2], demod_r[1])
+            signals["ratio_2f1f"] = {
+                "array_ref": f"/records/{record_id}/ratio_2f1f",
+                "n_samples": int(len(arrays["ratio_2f1f"])),
             }
 
     meta = {
@@ -364,10 +413,10 @@ def generate_record(
                             "hitran_molecule_id": MOLECULE_IDS[interf["molecule"]],
                             "concentration_ppm": interf["concentration_ppm"],
                         }
-                        for interf in spec.interferents
+                        for interf in sampled_interferents
                     ]
                 }
-                if spec.interferents
+                if sampled_interferents
                 else {}
             ),
         },

@@ -94,6 +94,16 @@
         "demod_2f": { "$ref": "#/$defs/demod_signal" },
         "demod_3f": { "$ref": "#/$defs/demod_signal" },
         "demod_4f": { "$ref": "#/$defs/demod_signal" },
+        "ratio_2f1f": {
+          "type": "object",
+          "description": "Calibration-free WMS 2f/1f ratio (R_2f / R_1f). Self-normalizing against laser intensity variations (Rieker et al. 2009, doi:10.1364/AO.48.005546).",
+          "required": ["array_ref", "n_samples"],
+          "additionalProperties": false,
+          "properties": {
+            "array_ref": { "$ref": "#/$defs/array_ref" },
+            "n_samples": { "type": "integer", "minimum": 2 }
+          }
+        },
         "active_channel": {
           "type": "object",
           "description": "NDIR active channel detector signal (scalar).",

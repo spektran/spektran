@@ -54,6 +54,25 @@ PRINCIPAL_ISO_MASS_AMU = {
     "HF": 20.006229,
 }
 
+NATURAL_ABUNDANCE = {
+    ("CH4", 1): 0.98827,
+    ("H2O", 1): 0.99732,
+    ("CO2", 1): 0.98420,
+    ("CO", 1): 0.98654,
+    ("NH3", 1): 0.99589,
+    ("NO", 1): 0.99395,
+    ("NO2", 1): 0.99162,
+    ("SO2", 1): 0.94568,
+    ("HCl", 1): 0.75776,
+    ("HCl", 2): 0.24224,
+    ("HF", 1): 0.99985,
+}
+
+WING_CUTOFF_CM1 = {
+    "default": 25.0,
+    "CO2": 500.0,
+}
+
 DEFAULT_CACHE_DIR = ".hitran_cache"
 
 
@@ -84,6 +103,11 @@ class LineList:
     source: str = "unspecified"
     hitran_data_version: str = "unspecified"
     extra: dict = field(default_factory=dict)
+    isotopologue_id: np.ndarray | None = None
+    gamma_2: np.ndarray | None = None
+    delta_2: np.ndarray | None = None
+    nu_vc: np.ndarray | None = None
+    eta: np.ndarray | None = None
 
     def __post_init__(self) -> None:
         arrays = [
@@ -98,6 +122,10 @@ class LineList:
         n = len(arrays[0])
         if any(len(a) != n for a in arrays):
             raise ValueError("All LineList arrays must have equal length")
+        for name in ("isotopologue_id", "gamma_2", "delta_2", "nu_vc", "eta"):
+            arr = getattr(self, name)
+            if arr is not None and len(arr) != n:
+                raise ValueError(f"{name} length {len(arr)} != {n}")
         if self.molar_mass_amu <= 0.0:
             mass = PRINCIPAL_ISO_MASS_AMU.get(self.molecule)
             if mass is None:
@@ -108,6 +136,40 @@ class LineList:
 
     def __len__(self) -> int:
         return len(self.nu0_cm1)
+
+    @property
+    def has_htp_params(self) -> bool:
+        """True if all four HTP beyond-Voigt parameters are present."""
+        return all(
+            getattr(self, f) is not None
+            for f in ("gamma_2", "delta_2", "nu_vc", "eta")
+        )
+
+    def filter_isotopologue(self, iso_id: int) -> "LineList":
+        """Return a new LineList containing only lines of the given isotopologue."""
+        if self.isotopologue_id is None:
+            raise ValueError("No isotopologue_id data; cannot filter")
+        mask = self.isotopologue_id == iso_id
+        kwargs: dict = {
+            "molecule": self.molecule,
+            "nu0_cm1": self.nu0_cm1[mask],
+            "sw_cm_per_molec": self.sw_cm_per_molec[mask],
+            "gamma_air": self.gamma_air[mask],
+            "gamma_self": self.gamma_self[mask],
+            "n_air": self.n_air[mask],
+            "delta_air": self.delta_air[mask],
+            "elower_cm1": self.elower_cm1[mask],
+            "molar_mass_amu": self.molar_mass_amu,
+            "source": self.source,
+            "hitran_data_version": self.hitran_data_version,
+            "extra": self.extra,
+            "isotopologue_id": self.isotopologue_id[mask],
+        }
+        for f in ("gamma_2", "delta_2", "nu_vc", "eta"):
+            arr = getattr(self, f)
+            if arr is not None:
+                kwargs[f] = arr[mask]
+        return LineList(**kwargs)
 
 
 def fetch_lines(

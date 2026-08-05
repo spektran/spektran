@@ -114,12 +114,21 @@ def simulate_wms(
     absorbance_of_nu,
     mean_intensity: float = 1.0,
     harmonics: tuple[int, ...] = (1, 2),
+    etalon_transmission_of_nu=None,
 ) -> dict:
     """Run the full WMS chain against an absorbance function alpha*L = A(nu).
 
     ``absorbance_of_nu``: callable mapping wavenumber array [cm-1] to napierian
-    absorbance (dimensionless). Returns a dict with time axis, nu(t),
-    transmitted intensity, and per-harmonic (X, Y, R) lock-in outputs.
+    absorbance (dimensionless).
+
+    ``etalon_transmission_of_nu``: optional callable returning a multiplicative
+    etalon ripple T(nu). Applied to the transmitted intensity *before*
+    demodulation, as in a real instrument where parasitic etalons sit in the
+    beam path. This injects fringe harmonics into the lock-in output.
+
+    Returns a dict with time axis, nu(t), transmitted intensity, and
+    per-harmonic (X, Y, R) lock-in outputs plus ``ratio_2f1f`` when both
+    1f and 2f harmonics are present.
 
     Deterministic: no randomness lives here; noise is injected by the
     instrument layer upstream of/around this chain.
@@ -129,6 +138,8 @@ def simulate_wms(
     nu = optical_frequency(cfg, t)
     i0 = laser_intensity(cfg, t, mean_intensity)
     transmitted = i0 * np.exp(-absorbance_of_nu(nu))
+    if etalon_transmission_of_nu is not None:
+        transmitted = transmitted * etalon_transmission_of_nu(nu)
     out = {"t_s": t, "nu_cm1": nu, "intensity": transmitted}
     for h in harmonics:
         x, y = lockin_demodulate(
@@ -143,4 +154,25 @@ def simulate_wms(
         out[f"x_{h}f"] = x
         out[f"y_{h}f"] = y
         out[f"r_{h}f"] = np.hypot(x, y)
+    if 1 in harmonics and 2 in harmonics:
+        out["ratio_2f1f"] = wms_2f_1f_ratio(out["r_2f"], out["r_1f"])
     return out
+
+
+def wms_2f_1f_ratio(
+    r_2f: np.ndarray,
+    r_1f: np.ndarray,
+    floor: float = 1e-10,
+) -> np.ndarray:
+    """Calibration-free WMS 2f/1f ratio (Rieker et al. 2009).
+
+    R_{2f/1f} = R_{2f} / R_{1f}, where R_{nf} = sqrt(X_{nf}^2 + Y_{nf}^2).
+    Dividing by 1f cancels laser intensity variations, making the measurement
+    self-normalizing (no calibration cell needed).
+
+    ``floor`` prevents division by zero in baseline regions where 1f is small.
+
+    Reference: G.B. Rieker, J.B. Jeffries, R.K. Hanson, Appl. Opt. 48 (2009)
+    5546, doi:10.1364/AO.48.005546
+    """
+    return r_2f / np.maximum(r_1f, floor)
