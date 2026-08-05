@@ -1,6 +1,6 @@
 {
   "title": "SPEKTRAN: an open simulation engine, data standard, and ML benchmark for TDLAS",
-  "description": "Open-source simulation engine, data standard, and benchmark suite for machine learning on tunable diode laser absorption spectroscopy (TDLAS). Generates physically rigorous, fully reproducible synthetic spectra with realistic instrument noise. v0.2: multi-species (CH4, H2O, CO2, CO), higher-harmonic WMS (3f/4f), expanded benchmarks (T4-T6), and standardized tasks for concentration regression, spectral denoising, cross-instrument generalization, WMS concentration, drift compensation, and OOD detection.",
+  "description": "Open-source simulation engine, data standard, and ML benchmark for optical gas sensing (TDLAS + NDIR). v0.5.0: Hartmann-Tran line profile via hapi, WMS 2f/1f ratio, laser RIN and electronic bandwidth, multi-species (T8) and temperature regression (T9) benchmarks, isotopologue handling, sim-to-real validation. 10 target molecules, 9 benchmark tasks (T1-T9), 10 ML baselines. Built on hapi (HITRAN API) for spectroscopic physics.",
   "license": "Apache-2.0",
   "upload_type": "software",
   "keywords": [
@@ -10,7 +10,9 @@
     "machine learning",
     "benchmark",
     "synthetic data",
-    "HITRAN"
+    "HITRAN",
+    "NDIR",
+    "Hartmann-Tran profile"
   ],
   "creators": [
     { "name": "SPEKTRAN contributors" }
