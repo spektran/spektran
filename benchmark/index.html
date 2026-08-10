@@ -1,0 +1,1039 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Open simulation engine, data standard, and ML benchmark for TDLAS">
+      
+      
+      
+      
+        <link rel="prev" href="../schema/">
+      
+      
+        <link rel="next" href="../leaderboard/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Benchmark rules - SPEKTRAN</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#benchmark-rules-v0" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="SPEKTRAN" class="md-header__button md-logo" aria-label="SPEKTRAN" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            SPEKTRAN
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Benchmark rules
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/spektran/spektran" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="SPEKTRAN" class="md-nav__button md-logo" aria-label="SPEKTRAN" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    SPEKTRAN
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/spektran/spektran" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../schema/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data schema
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benchmark rules
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benchmark rules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tasks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tasks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#official-splits-v0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Official splits (v0)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dataset-scale-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dataset scale options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rules
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#new-tasks-v02" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        New tasks (v0.2)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="New tasks (v0.2)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#t4-wms-2f-concentration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        T4: WMS 2f concentration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#t5-drift-compensation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        T5: Drift compensation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#t6-ood-instrument-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        T6: OOD instrument detection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#t8-multi-species-regression-ch4-h2o" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        T8: Multi-species regression (CH4 + H2O)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#t9-temperature-regression" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        T9: Temperature regression
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../leaderboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Leaderboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reproduce/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reproducibility
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gates/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quality gates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tasks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tasks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#official-splits-v0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Official splits (v0)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dataset-scale-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dataset scale options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rules
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#new-tasks-v02" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        New tasks (v0.2)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="New tasks (v0.2)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#t4-wms-2f-concentration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        T4: WMS 2f concentration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#t5-drift-compensation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        T5: Drift compensation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#t6-ood-instrument-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        T6: OOD instrument detection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#t8-multi-species-regression-ch4-h2o" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        T8: Multi-species regression (CH4 + H2O)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#t9-temperature-regression" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        T9: Temperature regression
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="benchmark-rules-v0">Benchmark rules (v0)</h1>
+<h2 id="tasks">Tasks</h2>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Input</th>
+<th>Output</th>
+<th>Primary metric</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T1 concentration regression</td>
+<td>noisy raw scan</td>
+<td>CH4 concentration (ppm)</td>
+<td>MAE</td>
+</tr>
+<tr>
+<td>T2 denoising</td>
+<td>noisy raw scan</td>
+<td>clean absorbance spectrum</td>
+<td>spectral RMSE</td>
+</tr>
+<tr>
+<td>T3 cross-instrument generalization</td>
+<td>same as T1</td>
+<td>concentration (ppm)</td>
+<td>MAE + degradation vs T1</td>
+</tr>
+<tr>
+<td>T4 WMS concentration</td>
+<td>noisy 2f signal (WMS)</td>
+<td>CH4 concentration (ppm)</td>
+<td>MAE</td>
+</tr>
+<tr>
+<td>T5 drift compensation</td>
+<td>time-series raw scans</td>
+<td>drift-corrected concentrations</td>
+<td>Allan variance improvement</td>
+</tr>
+<tr>
+<td>T6 OOD instrument detection</td>
+<td>raw scan</td>
+<td>in-dist vs OOD binary</td>
+<td>AUROC</td>
+</tr>
+<tr>
+<td>T7 cross-modality transfer</td>
+<td>TDLAS train, NDIR test</td>
+<td>concentration (ppm)</td>
+<td>MAE + degradation</td>
+</tr>
+<tr>
+<td>T8 multi-species regression</td>
+<td>raw scan (CH4+H2O)</td>
+<td>CH4 + H2O concentrations (ppm)</td>
+<td>aggregate MAE</td>
+</tr>
+<tr>
+<td>T9 temperature regression</td>
+<td>raw scan (fixed conc)</td>
+<td>gas temperature (K)</td>
+<td>MAE</td>
+</tr>
+</tbody>
+</table>
+<h2 id="official-splits-v0">Official splits (v0)</h2>
+<p>Defined entirely by configs under <code>configs/datasets/</code> (instrument mixtures +
+disjoint master seeds). Regenerate locally with <code>scripts/generate_dataset.py</code>;
+identical bytes for everyone at the same generator version.</p>
+<ul>
+<li>T1: train 5000 / val 500 / test 1000, mixture of easy+medium+hard DA
+  instruments.</li>
+<li>T3 test: 1000 records from the held-out instrument <code>vi-da-heldout-07</code>,
+  whose parameter ranges are excluded from the training distribution.</li>
+<li>T4: train 5000 / val 500 / test 1000, mixture of easy+medium+hard WMS
+  instruments. Uses the same generation pipeline as T1 but with WMS configs.</li>
+<li>T5: train 20 / test 10 time series of 200 consecutive 1 s scans each, one
+  frozen <code>vi-da-medium-02</code> realization per series (<code>mode: time_series</code>).</li>
+<li>T6: train 3000 (in-distribution only: easy+medium+hard DA) / test 1000
+  (500 in-distribution + 500 held-out <code>vi-da-heldout-07</code>, <code>ood_task: true</code>).</li>
+</ul>
+<h2 id="dataset-scale-options">Dataset scale options</h2>
+<p>The official splits above use moderate sizes for fast iteration. For training
+larger models or studying scaling behavior, large-scale configs are available:</p>
+<table>
+<thead>
+<tr>
+<th>Config</th>
+<th>Records</th>
+<th>Seed</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ch4-t1-train-v0</code></td>
+<td>5,000</td>
+<td>101001</td>
+<td>Standard training</td>
+</tr>
+<tr>
+<td><code>ch4-t1-train-v0-50k</code></td>
+<td>50,000</td>
+<td>201001</td>
+<td>Large-scale training</td>
+</tr>
+<tr>
+<td><code>ch4-t1-val-v0</code></td>
+<td>500</td>
+<td>101002</td>
+<td>Standard validation</td>
+</tr>
+<tr>
+<td><code>ch4-t1-val-v0-5k</code></td>
+<td>5,000</td>
+<td>201002</td>
+<td>Large-scale validation</td>
+</tr>
+<tr>
+<td><code>ch4-t1-test-v0</code></td>
+<td>1,000</td>
+<td>101003</td>
+<td>Standard test</td>
+</tr>
+<tr>
+<td><code>ch4-t1-test-v0-10k</code></td>
+<td>10,000</td>
+<td>201003</td>
+<td>Large-scale test</td>
+</tr>
+</tbody>
+</table>
+<p>Generate large-scale data:</p>
+<div class="highlight"><pre><span></span><code><span class="k">for</span><span class="w"> </span>s<span class="w"> </span><span class="k">in</span><span class="w"> </span>t1-train-v0-50k<span class="w"> </span>t1-val-v0-5k<span class="w"> </span>t1-test-v0-10k<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span>spektran<span class="w"> </span>generate<span class="w"> </span>configs/datasets/ch4-<span class="nv">$s</span>.yaml<span class="w"> </span>--out<span class="w"> </span>data
+<span class="k">done</span>
+</code></pre></div>
+<p>Large-scale seeds (201xxx) are disjoint from standard seeds (101xxx), so no
+records overlap between scale tiers.</p>
+<h2 id="rules">Rules</h2>
+<ol>
+<li>Train on the official train split; tune only on val. The test truths ship
+   with the data (simulation is open) — the leaderboard is honor-system plus
+   mandatory reproducible code links; CI re-runs submissions on regenerated
+   splits with a different verification seed where feasible.</li>
+<li>No use of <code>provenance.noise_config</code> or <code>absorbance_clean</code> at inference
+   time for T1/T3 (they are labels/oracle signals, not inputs).</li>
+<li>Report all metrics from <code>python -m spektran.benchmark.evaluate</code>
+   unmodified, and the exact command used.</li>
+<li>T3 submissions must use the SAME model/weights as T1 (no held-out-specific
+   tuning): the track measures transfer, not adaptation.</li>
+</ol>
+<h2 id="new-tasks-v02">New tasks (v0.2)</h2>
+<h3 id="t4-wms-2f-concentration">T4: WMS 2f concentration</h3>
+<p>Same evaluation pipeline as T1, but input is the 2f demodulated signal from
+WMS instruments. Tests whether models can extract concentration from the
+calibration-free 2f peak-height.</p>
+<h3 id="t5-drift-compensation">T5: Drift compensation</h3>
+<p>Input: a time series of repeated scans from a single instrument session
+(<code>spektran generate</code> with <code>mode: time_series</code> in the config, one frozen
+instrument realization per series; the true concentration is fixed per
+series -- only the <em>measured</em> value drifts). Output: drift-corrected
+concentration trajectory. Primary metric: Allan deviation of the prediction
+error (<code>n_scans</code>, <code>mae_ppm</code>, <code>adev_shortest_tau</code>/<code>adev_longest_tau</code>, and the
+full <code>adev_curve</code> over <code>adev_taus_s</code>). <code>evaluate_drift</code> recovers series
+boundaries from truth-concentration jumps (every scan in a series shares an
+exactly equal true concentration by construction) so Allan deviation is
+computed within each series and averaged, never across a series boundary.
+Prediction format is the same CSV as T1 (<code>record_id,concentration_ppm</code>).
+Reference baseline: <code>baselines/moving_avg_t5</code> (ridge + per-series moving
+average).</p>
+<h3 id="t6-ood-instrument-detection">T6: OOD instrument detection</h3>
+<p>Input: raw scan. Output: binary classification (in-distribution vs
+out-of-distribution instrument). Primary metric: AUROC. Tests whether models
+can identify spectra from instruments outside their training distribution.</p>
+<p>Training data (<code>ch4-t6-train-v0</code>) is drawn only from the three in-distribution
+DA instruments -- it carries no <code>ood_label</code> at all. The test split
+(<code>ch4-t6-test-v0</code>) is generated from an <code>ood_task: true</code> dataset config:
+<code>spektran generate</code> loads two disjoint instrument pools
+(<code>instrument_config_in_dist</code>, <code>instrument_config_ood</code>), generates each
+independently via the normal <code>generate_dataset</code> path, then stamps
+<code>labels.ood_label</code> (0 or 1) onto every record's metadata afterward -- the
+label is a property of which instrument pool produced a scan, not something
+the physics model itself predicts. Prediction format is a CSV of
+<code>record_id,ood_score</code> (higher = more confidently OOD; need not be a
+probability -- <code>evaluate_ood</code>/<code>ood_auroc</code> are rank-based). Reference
+baseline: <code>baselines/mahalanobis_t6</code> (PCA-whitened Gaussian fit to
+in-distribution training scans; OOD score = Mahalanobis distance from that
+fit).</p>
+<h3 id="t8-multi-species-regression-ch4-h2o">T8: Multi-species regression (CH4 + H2O)</h3>
+<p>Input: raw DA scan containing overlapping absorption from CH4 (target) and
+H2O (interferent at random concentrations). Output: both CH4 and H2O
+concentrations. Primary metric: aggregate MAE (average of per-species MAE).
+Tests whether models can disentangle overlapping absorption features from
+two species in the same spectral window.</p>
+<p>Dataset configs: <code>ch4-h2o-t8-{train,test}-v0.yaml</code>. CH4 range 1-1000 ppm
+(log-uniform), H2O range 100-20000 ppm (log-uniform). Instrument:
+<code>vi-da-multispecies-13</code>. Prediction format: CSV with
+<code>record_id,ch4_ppm,h2o_ppm</code>. Reference baseline:
+<code>baselines/ridge_multispecies_t8</code> (two independent ridge regressors; CH4
+MAE 0.89 ppm, H2O MAE 3937 ppm — H2O is poorly resolved because the
+instrument is tuned to CH4's 2nu3 band).</p>
+<h3 id="t9-temperature-regression">T9: Temperature regression</h3>
+<p>Input: raw DA scan at fixed CH4 concentration (100 ppm). Output: gas
+temperature (K). Primary metric: MAE (K). Tests whether models can infer
+temperature from temperature-dependent line-shape changes (Doppler width
+scales as sqrt(T), Boltzmann population redistributes across rotational
+states).</p>
+<p>Dataset configs: <code>ch4-t9-{train,test}-v0.yaml</code>. Temperature range 250-800 K
+(uniform). Instrument: <code>vi-da-temp-regression-14</code> (low noise, wide T range).
+Prediction format: CSV with <code>record_id,temperature_K</code>. Reference baseline:
+<code>baselines/ridge_temp_t9</code> (ridge regression; MAE 9.4 K, MAPE 2.0%).</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

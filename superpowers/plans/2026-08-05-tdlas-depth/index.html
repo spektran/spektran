@@ -1,0 +1,1320 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Open simulation engine, data standard, and ML benchmark for TDLAS">
+      
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>TDLAS Deep-Dive Implementation Plan - SPEKTRAN</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#tdlas-deep-dive-implementation-plan" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="SPEKTRAN" class="md-header__button md-logo" aria-label="SPEKTRAN" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            SPEKTRAN
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              TDLAS Deep-Dive Implementation Plan
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/spektran/spektran" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="SPEKTRAN" class="md-nav__button md-logo" aria-label="SPEKTRAN" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    SPEKTRAN
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/spektran/spektran" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../schema/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data schema
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../benchmark/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benchmark rules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../leaderboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Leaderboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reproduce/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reproducibility
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../gates/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quality gates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#file-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        File Map
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="File Map">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#new-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        New files
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modified-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modified files
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#task-1-vectorize-absorption-coefficient-p0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 1: Vectorize Absorption Coefficient (P0)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#task-2-run-dl-baselines-and-fill-leaderboard-p0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 2: Run DL Baselines and Fill Leaderboard (P0)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#task-3-hartmann-tran-profile-htp-line-shape-p1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 3: Hartmann-Tran Profile (HTP) Line Shape (P1)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#task-4-multi-species-benchmark-task-t8-p1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 4: Multi-Species Benchmark Task T8 (P1)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#task-5-wms-2f1f-normalization-etalon-in-wms-p2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 5: WMS 2f/1f Normalization + Etalon in WMS (P2)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#task-6-temperature-regression-benchmark-t9-p2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 6: Temperature Regression Benchmark T9 (P2)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#task-7-laser-rin-electronic-bandwidth-p2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 7: Laser RIN + Electronic Bandwidth (P2)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#task-8-isotopologue-handling-extended-physics-p3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 8: Isotopologue Handling + Extended Physics (P3)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#task-9-sim-to-real-validation-against-literature-p3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 9: Sim-to-Real Validation Against Literature (P3)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#task-10-documentation-sync-version-bump-final" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 10: Documentation Sync + Version Bump (Final)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="tdlas-deep-dive-implementation-plan">TDLAS Deep-Dive Implementation Plan</h1>
+<blockquote>
+<p><strong>For agentic workers:</strong> REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (<code>- [ ]</code>) syntax for tracking.</p>
+</blockquote>
+<p><strong>Goal:</strong> Deepen SPEKTRAN's TDLAS implementation across physics accuracy, computation performance, benchmark coverage, and sim-to-real validation — making it the most rigorous open-source TDLAS simulation engine available.</p>
+<p><strong>Architecture:</strong> Nine tasks organized by priority (P0→P3). P0 unblocks downstream work (vectorized absorption, DL baseline scores). P1 adds the most impactful physics (HTP line shape) and benchmark breadth (multi-species). P2 deepens WMS, adds temperature regression, and completes the noise chain. P3 adds advanced physics and literature-based sim-to-real validation.</p>
+<p><strong>Tech Stack:</strong> Python 3.10+, NumPy (broadcasting for vectorization), SciPy (wofz for HTP), PyTorch (DL baselines on CPU), pytest, existing SPEKTRAN infrastructure.</p>
+<hr />
+<h2 id="file-map">File Map</h2>
+<h3 id="new-files">New files</h3>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>src/spektran/physics/lineshape_htp.py</code></td>
+<td>Hartmann-Tran Profile implementation</td>
+</tr>
+<tr>
+<td><code>src/spektran/instrument/electronics.py</code></td>
+<td>RIN noise, TIA bandwidth filter, detector responsivity</td>
+</tr>
+<tr>
+<td><code>tests/reference_impl/ref_lineshape_htp.py</code></td>
+<td>Independent HTP reference (G3 gate)</td>
+</tr>
+<tr>
+<td><code>tests/test_lineshape_htp.py</code></td>
+<td>HTP unit tests</td>
+</tr>
+<tr>
+<td><code>tests/test_electronics.py</code></td>
+<td>Electronics noise tests</td>
+</tr>
+<tr>
+<td><code>tests/test_vectorized_absorption.py</code></td>
+<td>Vectorization correctness tests</td>
+</tr>
+<tr>
+<td><code>tests/test_sim_to_real.py</code></td>
+<td>Literature-based validation tests</td>
+</tr>
+<tr>
+<td><code>configs/datasets/ch4-h2o-t8-*-v0.yaml</code></td>
+<td>Multi-species benchmark configs</td>
+</tr>
+<tr>
+<td><code>configs/datasets/ch4-t9-*-v0.yaml</code></td>
+<td>Temperature regression configs</td>
+</tr>
+<tr>
+<td><code>configs/instruments/vi-da-multispecies-13.yaml</code></td>
+<td>Multi-species instrument</td>
+</tr>
+<tr>
+<td><code>configs/instruments/vi-da-temp-regression-14.yaml</code></td>
+<td>Temperature regression instrument</td>
+</tr>
+<tr>
+<td><code>scripts/validate_sim_to_real.py</code></td>
+<td>Sim-to-real validation script</td>
+</tr>
+<tr>
+<td><code>gates/reports/g5_sim_to_real.md</code></td>
+<td>Sim-to-real validation report</td>
+</tr>
+</tbody>
+</table>
+<h3 id="modified-files">Modified files</h3>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Changes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>src/spektran/physics/absorption.py</code></td>
+<td>Vectorize inner loop, add line-wing cutoff, isotopologue weighting</td>
+</tr>
+<tr>
+<td><code>src/spektran/physics/hitran.py</code></td>
+<td>Extend LineList with HTP params + isotopologue fields; extend fetch_lines</td>
+</tr>
+<tr>
+<td><code>src/spektran/physics/lineshape.py</code></td>
+<td>Add <code>voigt_profile_vectorized</code> export</td>
+</tr>
+<tr>
+<td><code>src/spektran/physics/wms.py</code></td>
+<td>Add <code>wms_2f_1f_ratio</code>, etalon in WMS chain</td>
+</tr>
+<tr>
+<td><code>src/spektran/physics/__init__.py</code></td>
+<td>Re-export HTP functions</td>
+</tr>
+<tr>
+<td><code>src/spektran/generator.py</code></td>
+<td>Integrate HTP, RIN, bandwidth, 2f/1f; remove dead code call</td>
+</tr>
+<tr>
+<td><code>src/spektran/instrument/optics.py</code></td>
+<td>Remove dead <code>intensity_fluctuation</code></td>
+</tr>
+<tr>
+<td><code>src/spektran/instrument/detector.py</code></td>
+<td>Add <code>rin_noise</code>, <code>responsivity_curve</code></td>
+</tr>
+<tr>
+<td><code>src/spektran/benchmark/tasks.py</code></td>
+<td>Add T8 (multi-species), T9 (temperature)</td>
+</tr>
+<tr>
+<td><code>src/spektran/benchmark/evaluate.py</code></td>
+<td>Add <code>evaluate_multispecies</code>, <code>evaluate_temperature</code></td>
+</tr>
+<tr>
+<td><code>docs/leaderboard.md</code></td>
+<td>Fill DL baseline scores (Transformer, U-Net, TCN)</td>
+</tr>
+<tr>
+<td><code>README.md</code></td>
+<td>Update benchmark table, feature list</td>
+</tr>
+<tr>
+<td><code>ROADMAP.md</code></td>
+<td>Add TDLAS depth phase</td>
+</tr>
+<tr>
+<td><code>pyproject.toml</code></td>
+<td>Version bump to 0.5.0</td>
+</tr>
+<tr>
+<td><code>CITATION.cff</code></td>
+<td>Version bump</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="task-1-vectorize-absorption-coefficient-p0">Task 1: Vectorize Absorption Coefficient (P0)</h3>
+<p><strong>Files:</strong>
+- Modify: <code>src/spektran/physics/absorption.py:82-117</code>
+- Create: <code>tests/test_vectorized_absorption.py</code></p>
+<p>The current <code>absorption_coefficient</code> has a Python <code>for j in range(len(lines))</code> loop that computes one Voigt profile per line. With HITRAN production data (100-300 lines × 2000 frequency points), this is the main bottleneck. Replace with NumPy broadcasting: compute all line parameters as 1D arrays, then use <code>(n_lines, n_points)</code> broadcasting to compute all profiles simultaneously.</p>
+<ul>
+<li>[ ] <strong>Step 1: Write regression test</strong></li>
+</ul>
+<p>Create <code>tests/test_vectorized_absorption.py</code> with a test that calls the CURRENT <code>absorption_coefficient</code> on <code>demo_ch4_2nu3()</code> at several (T, P, x) conditions and saves the results as reference values. After vectorization, the new code must produce bit-identical (or <code>np.allclose(rtol=1e-12)</code>) results.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spektran.physics.absorption</span><span class="w"> </span><span class="kn">import</span> <span class="n">absorption_coefficient</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spektran.physics.hitran</span><span class="w"> </span><span class="kn">import</span> <span class="n">demo_ch4_2nu3</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_vectorized_matches_loop</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Vectorized absorption must match the original loop implementation.&quot;&quot;&quot;</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">demo_ch4_2nu3</span><span class="p">()</span>
+    <span class="n">nu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">6046.0</span><span class="p">,</span> <span class="mf">6048.0</span><span class="p">,</span> <span class="mi">2000</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">T</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[(</span><span class="mf">296.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">100e-6</span><span class="p">),</span> <span class="p">(</span><span class="mf">500.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">),</span> <span class="p">(</span><span class="mf">200.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1000e-6</span><span class="p">)]:</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">absorption_coefficient</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">alpha</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">2000</span><span class="p">,)</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">alpha</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">alpha</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">)</span>
+</code></pre></div>
+<ul>
+<li>[ ] <strong>Step 2: Run test to verify it passes with current code</strong></li>
+</ul>
+<p>Run: <code>cd /Volumes/Colorful/TDLAS开源项目/spektran &amp;&amp; python -m pytest tests/test_vectorized_absorption.py -v</code></p>
+<ul>
+<li>[ ] <strong>Step 3: Save reference values from current loop implementation</strong></li>
+</ul>
+<p>Add a fixture that captures exact reference output before modifying the code, by running <code>absorption_coefficient</code> and saving to a .npz in the test directory.</p>
+<ul>
+<li>[ ] <strong>Step 4: Vectorize absorption_coefficient</strong></li>
+</ul>
+<p>Replace the loop in <code>absorption.py:104-117</code> with broadcasting:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">absorption_coefficient</span><span class="p">(</span><span class="n">nu_cm1</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">mole_fraction</span><span class="p">,</span> <span class="n">temperature_K</span><span class="p">,</span> <span class="n">pressure_atm</span><span class="p">,</span> <span class="n">q_ratio</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wing_cutoff_cm1</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">mole_fraction</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;mole_fraction must be in [0, 1], got </span><span class="si">{</span><span class="n">mole_fraction</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="p">(</span><span class="n">q_ratio</span> <span class="ow">or</span> <span class="n">tips_q_ratio</span><span class="p">)(</span><span class="n">lines</span><span class="o">.</span><span class="n">molecule</span><span class="p">,</span> <span class="n">temperature_K</span><span class="p">)</span>
+    <span class="n">strengths</span> <span class="o">=</span> <span class="n">line_strength_at_T</span><span class="p">(</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">sw_cm_per_molec</span><span class="p">,</span> <span class="n">lines</span><span class="o">.</span><span class="n">nu0_cm1</span><span class="p">,</span> <span class="n">lines</span><span class="o">.</span><span class="n">elower_cm1</span><span class="p">,</span> <span class="n">temperature_K</span><span class="p">,</span> <span class="n">q</span>
+    <span class="p">)</span>
+    <span class="n">n_absorber</span> <span class="o">=</span> <span class="n">number_density_cm3</span><span class="p">(</span><span class="n">pressure_atm</span><span class="p">,</span> <span class="n">temperature_K</span><span class="p">)</span> <span class="o">*</span> <span class="n">mole_fraction</span>
+
+    <span class="n">nu0_shifted</span> <span class="o">=</span> <span class="n">lines</span><span class="o">.</span><span class="n">nu0_cm1</span> <span class="o">+</span> <span class="n">lines</span><span class="o">.</span><span class="n">delta_air</span> <span class="o">*</span> <span class="n">pressure_atm</span>  <span class="c1"># (n_lines,)</span>
+    <span class="n">a_d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">doppler_hwhm_cm1</span><span class="p">(</span><span class="n">nu0</span><span class="p">,</span> <span class="n">temperature_K</span><span class="p">,</span> <span class="n">lines</span><span class="o">.</span><span class="n">molar_mass_amu</span><span class="p">)</span> <span class="k">for</span> <span class="n">nu0</span> <span class="ow">in</span> <span class="n">nu0_shifted</span><span class="p">])</span>
+    <span class="n">g_l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="n">lorentz_hwhm_cm1</span><span class="p">(</span><span class="n">pressure_atm</span><span class="p">,</span> <span class="n">temperature_K</span><span class="p">,</span> <span class="n">lines</span><span class="o">.</span><span class="n">gamma_air</span><span class="p">[</span><span class="n">j</span><span class="p">],</span>
+                         <span class="n">lines</span><span class="o">.</span><span class="n">gamma_self</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">mole_fraction</span><span class="p">,</span> <span class="n">lines</span><span class="o">.</span><span class="n">n_air</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">))</span>
+    <span class="p">])</span>
+
+    <span class="c1"># Vectorized Voigt: (n_lines, n_points) broadcasting</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="n">_voigt_sum_vectorized</span><span class="p">(</span><span class="n">nu_cm1</span><span class="p">,</span> <span class="n">nu0_shifted</span><span class="p">,</span> <span class="n">a_d</span><span class="p">,</span> <span class="n">g_l</span><span class="p">,</span> <span class="n">strengths</span><span class="p">,</span> <span class="n">wing_cutoff_cm1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">n_absorber</span> <span class="o">*</span> <span class="n">alpha</span>
+</code></pre></div>
+<p>Add <code>_voigt_sum_vectorized</code> that uses wofz with 2D complex arrays:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">_voigt_sum_vectorized</span><span class="p">(</span><span class="n">nu_cm1</span><span class="p">,</span> <span class="n">nu0</span><span class="p">,</span> <span class="n">a_d</span><span class="p">,</span> <span class="n">g_l</span><span class="p">,</span> <span class="n">strengths</span><span class="p">,</span> <span class="n">wing_cutoff_cm1</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+    <span class="n">sigma</span> <span class="o">=</span> <span class="n">a_d</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">2.0</span><span class="p">))</span>  <span class="c1"># (n_lines,)</span>
+    <span class="c1"># nu_cm1: (n_points,), nu0/sigma/g_l: (n_lines,) -&gt; broadcast to (n_lines, n_points)</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="n">nu_cm1</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">nu0</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>  <span class="c1"># (n_lines, n_points)</span>
+    <span class="k">if</span> <span class="n">wing_cutoff_cm1</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">wing_cutoff_cm1</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="p">(</span><span class="n">delta</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">g_l</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="n">sigma</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.0</span><span class="p">))</span>
+    <span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">wofz</span><span class="p">(</span><span class="n">z</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">sigma</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>  <span class="c1"># (n_lines, n_points)</span>
+    <span class="k">if</span> <span class="n">wing_cutoff_cm1</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">strengths</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">*</span> <span class="n">phi</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># (n_points,)</span>
+</code></pre></div>
+<ul>
+<li>[ ] <strong>Step 5: Run tests to verify vectorized matches original</strong></li>
+</ul>
+<p>Run: <code>python -m pytest tests/test_vectorized_absorption.py tests/test_absorption.py -v</code></p>
+<ul>
+<li>[ ] <strong>Step 6: Add line-wing cutoff parameter</strong></li>
+</ul>
+<p>Add <code>wing_cutoff_cm1</code> parameter (default 0.0 = no cutoff). When &gt; 0, zero out Voigt contributions beyond this distance from line center. Standard: 25 cm⁻¹ for most gases, configurable per instrument.</p>
+<ul>
+<li>[ ] <strong>Step 7: Add performance benchmark</strong></li>
+</ul>
+<p>Add a test that measures wall-clock time for 200 lines × 2000 points with and without vectorization (the vectorized version should be &gt;10x faster).</p>
+<ul>
+<li>[ ] <strong>Step 8: Run full test suite</strong></li>
+</ul>
+<p>Run: <code>python -m pytest tests/ -x -q</code></p>
+<ul>
+<li>[ ] <strong>Step 9: Commit</strong></li>
+</ul>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>add<span class="w"> </span>src/spektran/physics/absorption.py<span class="w"> </span>tests/test_vectorized_absorption.py
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;perf: vectorize absorption coefficient with numpy broadcasting</span>
+
+<span class="s2">Replace per-line Python loop with (n_lines, n_points) wofz broadcasting.</span>
+<span class="s2">Add optional wing_cutoff_cm1 parameter for large line lists.&quot;</span>
+</code></pre></div>
+<hr />
+<h3 id="task-2-run-dl-baselines-and-fill-leaderboard-p0">Task 2: Run DL Baselines and Fill Leaderboard (P0)</h3>
+<p><strong>Files:</strong>
+- Modify: <code>docs/leaderboard.md</code>
+- Run: <code>baselines/transformer_t1/train.py</code>, <code>baselines/transformer_t4/train.py</code>, <code>baselines/unet_t2/train.py</code>, <code>baselines/tcn_t5/train.py</code></p>
+<p>All four DL baseline training scripts exist but have never been executed. The leaderboard shows "—" for their scores. Data files exist for all tasks. Run each script on CPU (small datasets + models), capture the scores, and update the leaderboard.</p>
+<ul>
+<li>[ ] <strong>Step 1: Run Transformer T1 baseline</strong></li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>/Volumes/Colorful/TDLAS开源项目/spektran
+python<span class="w"> </span>baselines/transformer_t1/train.py
+</code></pre></div>
+<p>Capture the <code>best_val_mae_ppm</code> and the test predictions. Then evaluate:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>spektran.benchmark.evaluate<span class="w"> </span>--task<span class="w"> </span>T1-concentration<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--truth<span class="w"> </span>data/ch4-t1-test-v0.h5<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--predictions<span class="w"> </span>baselines/transformer_t1/predictions_t1-test.csv
+</code></pre></div>
+<ul>
+<li>[ ] <strong>Step 2: Run Transformer T4 baseline</strong></li>
+</ul>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>baselines/transformer_t4/train.py
+</code></pre></div>
+<ul>
+<li>[ ] <strong>Step 3: Run U-Net T2 baseline</strong></li>
+</ul>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>baselines/unet_t2/train.py
+</code></pre></div>
+<ul>
+<li>[ ] <strong>Step 4: Run TCN T5 baseline</strong></li>
+</ul>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>baselines/tcn_t5/train.py
+</code></pre></div>
+<ul>
+<li>[ ] <strong>Step 5: Collect all scores from hyperparams.json files</strong></li>
+</ul>
+<p>Read the <code>hyperparams.json</code> written by each script and collect the final metrics.</p>
+<ul>
+<li>[ ] <strong>Step 6: Update leaderboard.md with actual scores</strong></li>
+</ul>
+<p>Replace all "—" entries with the measured values:</p>
+<div class="highlight"><pre><span></span><code>| Patchified Transformer | Deep | X.XX | X.X | <span class="sb">`baselines/transformer_t1/`</span> |
+</code></pre></div>
+<ul>
+<li>[ ] <strong>Step 7: Commit</strong></li>
+</ul>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>add<span class="w"> </span>docs/leaderboard.md<span class="w"> </span>baselines/*/hyperparams.json<span class="w"> </span>baselines/*/predictions_*.csv
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;bench: fill DL baseline scores on leaderboard</span>
+
+<span class="s2">Ran Transformer (T1/T4), U-Net (T2), TCN (T5) baselines on CPU.</span>
+<span class="s2">All scores now reported on the static leaderboard.&quot;</span>
+</code></pre></div>
+<hr />
+<h3 id="task-3-hartmann-tran-profile-htp-line-shape-p1">Task 3: Hartmann-Tran Profile (HTP) Line Shape (P1)</h3>
+<p><strong>Files:</strong>
+- Create: <code>src/spektran/physics/lineshape_htp.py</code>
+- Create: <code>tests/reference_impl/ref_lineshape_htp.py</code>
+- Create: <code>tests/test_lineshape_htp.py</code>
+- Modify: <code>src/spektran/physics/hitran.py</code> (extend LineList)
+- Modify: <code>src/spektran/physics/absorption.py</code> (integrate HTP option)
+- Modify: <code>src/spektran/physics/__init__.py</code></p>
+<p>Implement the Hartmann-Tran Profile (HTP) — the HITRAN2016+ recommended line shape that accounts for speed-dependent broadening, speed-dependent shifting, Dicke narrowing, and their correlations. The implementation follows Ngo, Lisak, Tran &amp; Hartmann, JQSRT 129 (2013) 89-100, Algorithm 1.</p>
+<ul>
+<li>[ ] <strong>Step 1: Extend LineList with HTP parameters</strong></li>
+</ul>
+<p>Add optional HTP fields to <code>LineList</code> in <code>hitran.py</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LineList</span><span class="p">:</span>
+    <span class="c1"># ... existing fields ...</span>
+    <span class="c1"># HTP parameters (HITRAN2020 beyond-Voigt, optional)</span>
+    <span class="n">gamma_2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>    <span class="c1"># speed-dependent width [cm-1/atm]</span>
+    <span class="n">delta_2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>    <span class="c1"># speed-dependent shift [cm-1/atm]</span>
+    <span class="n">nu_vc</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>      <span class="c1"># velocity-changing frequency [cm-1/atm]</span>
+    <span class="n">eta</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>        <span class="c1"># correlation parameter [-]</span>
+</code></pre></div>
+<ul>
+<li>[ ] <strong>Step 2: Write HTP line-shape function</strong></li>
+</ul>
+<p>Create <code>lineshape_htp.py</code> implementing Algorithm 1 from Ngo et al. 2013:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">htp_profile</span><span class="p">(</span>
+    <span class="n">nu_cm1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">nu0_cm1</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">doppler_hwhm</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">gamma_0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>     <span class="c1"># Lorentzian HWHM (pressure-broadened)</span>
+    <span class="n">delta_0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>     <span class="c1"># pressure shift</span>
+    <span class="n">gamma_2</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>   <span class="c1"># speed-dependent width</span>
+    <span class="n">delta_2</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>   <span class="c1"># speed-dependent shift</span>
+    <span class="n">nu_vc</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>     <span class="c1"># velocity-changing collision freq</span>
+    <span class="n">eta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>       <span class="c1"># correlation parameter</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Hartmann-Tran Profile (area-normalized, units cm).</span>
+
+<span class="sd">    Reduces to Voigt when gamma_2 = delta_2 = nu_vc = eta = 0.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+<p>The core algorithm: compute the speed-averaged complex probability function
+using two evaluations of wofz, combined via the HTP formula.</p>
+<ul>
+<li>[ ] <strong>Step 3: Write independent reference implementation</strong></li>
+</ul>
+<p>Create <code>tests/reference_impl/ref_lineshape_htp.py</code> using a completely different
+algorithm (direct numerical quadrature over the Maxwell-Boltzmann speed
+distribution, integrating speed-dependent Lorentzians).</p>
+<ul>
+<li>
+<p>[ ] <strong>Step 4: Write tests</strong></p>
+</li>
+<li>
+<p>Degenerate limit: HTP with gamma_2=delta_2=nu_vc=eta=0 must match Voigt</p>
+</li>
+<li>Area normalization: integral of HTP must equal 1</li>
+<li>G3 cross-validation: main vs reference within 1e-6 relative</li>
+<li>
+<p>Known values from Table 1 of Ngo et al. 2013</p>
+</li>
+<li>
+<p>[ ] <strong>Step 5: Integrate HTP into absorption_coefficient</strong></p>
+</li>
+</ul>
+<p>Add <code>line_profile</code> parameter to <code>absorption_coefficient</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">absorption_coefficient</span><span class="p">(</span>
+    <span class="n">nu_cm1</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">mole_fraction</span><span class="p">,</span> <span class="n">temperature_K</span><span class="p">,</span> <span class="n">pressure_atm</span><span class="p">,</span>
+    <span class="n">q_ratio</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wing_cutoff_cm1</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">line_profile</span><span class="o">=</span><span class="s2">&quot;voigt&quot;</span><span class="p">,</span>  <span class="c1"># &quot;voigt&quot; or &quot;htp&quot;</span>
+<span class="p">):</span>
+</code></pre></div>
+<p>When <code>line_profile="htp"</code> and <code>lines</code> has HTP parameters, use <code>htp_profile</code>
+instead of <code>voigt_profile</code>.</p>
+<ul>
+<li>[ ] <strong>Step 6: Update fetch_lines to retrieve HTP parameters</strong></li>
+</ul>
+<p>Extend <code>fetch_lines</code> in <code>hitran.py</code> to fetch SD_gamma_air, SD_delta_air, nu_VC,
+eta from HITRAN when available (columns exist in HITRAN2020 for many lines).</p>
+<ul>
+<li>[ ] <strong>Step 7: Run full test suite</strong></li>
+</ul>
+<p>Run: <code>python -m pytest tests/ -x -q</code></p>
+<ul>
+<li>[ ] <strong>Step 8: Commit</strong></li>
+</ul>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>add<span class="w"> </span>src/spektran/physics/lineshape_htp.py<span class="w"> </span>tests/reference_impl/ref_lineshape_htp.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>tests/test_lineshape_htp.py<span class="w"> </span>src/spektran/physics/hitran.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>src/spektran/physics/absorption.py<span class="w"> </span>src/spektran/physics/__init__.py
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;feat: add Hartmann-Tran Profile (HTP) line shape</span>
+
+<span class="s2">Implement the HITRAN2016+ recommended beyond-Voigt profile with</span>
+<span class="s2">speed-dependent broadening/shifting, Dicke narrowing, and correlation.</span>
+<span class="s2">Algorithm from Ngo et al., JQSRT 129 (2013) 89-100.</span>
+<span class="s2">Extends LineList with gamma_2/delta_2/nu_vc/eta HTP parameters.</span>
+<span class="s2">Dual-implementation G3 cross-validation (analytical vs quadrature).&quot;</span>
+</code></pre></div>
+<hr />
+<h3 id="task-4-multi-species-benchmark-task-t8-p1">Task 4: Multi-Species Benchmark Task T8 (P1)</h3>
+<p><strong>Files:</strong>
+- Modify: <code>src/spektran/benchmark/tasks.py</code>
+- Modify: <code>src/spektran/benchmark/evaluate.py</code>
+- Create: <code>configs/instruments/vi-da-multispecies-13.yaml</code>
+- Create: <code>configs/datasets/ch4-h2o-t8-train-v0.yaml</code>
+- Create: <code>configs/datasets/ch4-h2o-t8-test-v0.yaml</code>
+- Create: <code>baselines/ridge_multispecies_t8/train.py</code></p>
+<p>T8: Given a noisy raw scan containing overlapping CH4 + H2O absorption, regress both concentrations simultaneously. This tests spectral deconvolution — a core challenge in real TDLAS. Uses the existing multi-species generator (interferents) but makes BOTH species prediction targets.</p>
+<ul>
+<li>[ ] <strong>Step 1: Define T8 task spec</strong></li>
+</ul>
+<p>Add to <code>tasks.py</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="n">TASKS</span> <span class="o">=</span> <span class="n">TASKS</span> <span class="o">+</span> <span class="p">(</span><span class="s2">&quot;T8-multispecies&quot;</span><span class="p">,)</span>
+<span class="n">TASK_SPECS</span><span class="p">[</span><span class="s2">&quot;T8-multispecies&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">TaskSpec</span><span class="p">(</span>
+    <span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;T8-multispecies&quot;</span><span class="p">,</span>
+    <span class="n">input_signal</span><span class="o">=</span><span class="s2">&quot;raw_scan&quot;</span><span class="p">,</span>
+    <span class="n">target</span><span class="o">=</span><span class="s2">&quot;labels.species[*].concentration_ppm&quot;</span><span class="p">,</span>
+    <span class="n">primary_metric</span><span class="o">=</span><span class="s2">&quot;mae&quot;</span><span class="p">,</span>
+    <span class="n">secondary_metrics</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mae_per_species&quot;</span><span class="p">,</span> <span class="s2">&quot;mape&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">SPLIT_SEEDS</span><span class="p">[(</span><span class="s2">&quot;T8&quot;</span><span class="p">,</span> <span class="s2">&quot;train&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">108_001</span>
+<span class="n">SPLIT_SEEDS</span><span class="p">[(</span><span class="s2">&quot;T8&quot;</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">108_002</span>
+</code></pre></div>
+<ul>
+<li>[ ] <strong>Step 2: Create multi-species instrument config</strong></li>
+</ul>
+<p><code>vi-da-multispecies-13.yaml</code>: same as vi-da-medium-02 but with both CH4 and H2O absorption regions. The wavenumber range covers a region where both species have lines (near 6046-6048 cm⁻¹ CH4 has strong 2ν3 lines and H2O has weaker lines in the same window).</p>
+<ul>
+<li>[ ] <strong>Step 3: Create dataset configs</strong></li>
+</ul>
+<p>Train and test configs that specify both CH4 and H2O as target species (both appear in <code>labels.species</code> with their own concentration distributions).</p>
+<ul>
+<li>[ ] <strong>Step 4: Add evaluate_multispecies</strong></li>
+</ul>
+<p>Extend <code>evaluate.py</code> with <code>evaluate_multispecies</code> that computes per-species MAE and aggregate MAE.</p>
+<ul>
+<li>[ ] <strong>Step 5: Write ridge baseline for T8</strong></li>
+</ul>
+<p>Ridge regression with multi-output: one ridge per species. Inputs = raw_scan features, outputs = [CH4_ppm, H2O_ppm].</p>
+<ul>
+<li>
+<p>[ ] <strong>Step 6: Run full test suite</strong></p>
+</li>
+<li>
+<p>[ ] <strong>Step 7: Commit</strong></p>
+</li>
+</ul>
+<hr />
+<h3 id="task-5-wms-2f1f-normalization-etalon-in-wms-p2">Task 5: WMS 2f/1f Normalization + Etalon in WMS (P2)</h3>
+<p><strong>Files:</strong>
+- Modify: <code>src/spektran/physics/wms.py</code>
+- Modify: <code>src/spektran/generator.py</code> (WMS branch)
+- Modify: <code>tests/test_wms.py</code></p>
+<ul>
+<li>[ ] <strong>Step 1: Add 2f/1f ratio signal output</strong></li>
+</ul>
+<p>Add <code>wms_2f_1f_ratio</code> function and include <code>demod_2f_1f_ratio</code> as a signal
+in the WMS generator branch. This is the standard calibration-free WMS
+observable (Rieker et al. 2009): R(t) = |X_2f + iY_2f| / |X_1f + iY_1f|.</p>
+<ul>
+<li>[ ] <strong>Step 2: Add etalon transmission in WMS time-domain chain</strong></li>
+</ul>
+<p>Currently etalons only affect the DA path. In the WMS branch, the
+transmitted intensity should also pass through etalon fringes before
+lock-in demodulation, since etalon fringes at frequencies near f_m
+produce spurious 2f signals.</p>
+<ul>
+<li>
+<p>[ ] <strong>Step 3: Write tests</strong></p>
+</li>
+<li>
+<p>2f/1f ratio for known absorbance → verify against analytical Rieker formula</p>
+</li>
+<li>
+<p>Etalon + WMS: verify that etalon fringes produce non-zero 2f even with zero gas</p>
+</li>
+<li>
+<p>[ ] <strong>Step 4: Commit</strong></p>
+</li>
+</ul>
+<hr />
+<h3 id="task-6-temperature-regression-benchmark-t9-p2">Task 6: Temperature Regression Benchmark T9 (P2)</h3>
+<p><strong>Files:</strong>
+- Modify: <code>src/spektran/benchmark/tasks.py</code>
+- Modify: <code>src/spektran/benchmark/evaluate.py</code>
+- Create: <code>configs/instruments/vi-da-temp-regression-14.yaml</code>
+- Create: <code>configs/datasets/ch4-t9-train-v0.yaml</code>
+- Create: <code>configs/datasets/ch4-t9-test-v0.yaml</code>
+- Create: <code>baselines/ridge_temp_t9/train.py</code></p>
+<p>T9: From a noisy raw scan with known fixed concentration, regress gas
+temperature [K]. This exercises the temperature dependence of line strengths
+and Doppler/Lorentz widths — a fundamental TDLAS thermometry application
+(dual-line thermometry). The instrument config fixes concentration but samples
+temperature from a wide range (250-800 K).</p>
+<ul>
+<li>
+<p>[ ] <strong>Step 1: Define T9 task spec</strong></p>
+</li>
+<li>
+<p>[ ] <strong>Step 2: Create instrument and dataset configs</strong></p>
+</li>
+<li>
+<p>[ ] <strong>Step 3: Add evaluate_temperature</strong></p>
+</li>
+<li>
+<p>[ ] <strong>Step 4: Write ridge baseline</strong></p>
+</li>
+<li>
+<p>[ ] <strong>Step 5: Commit</strong></p>
+</li>
+</ul>
+<hr />
+<h3 id="task-7-laser-rin-electronic-bandwidth-p2">Task 7: Laser RIN + Electronic Bandwidth (P2)</h3>
+<p><strong>Files:</strong>
+- Create: <code>src/spektran/instrument/electronics.py</code>
+- Create: <code>tests/test_electronics.py</code>
+- Modify: <code>src/spektran/generator.py</code>
+- Modify: <code>src/spektran/instrument/optics.py</code> (remove dead code)</p>
+<ul>
+<li>[ ] <strong>Step 1: Implement RIN noise</strong></li>
+</ul>
+<p>Relative Intensity Noise: flat spectral density below relaxation oscillation
+frequency, with a peak at f_RO. For a 2000-point scan sampled over ~10ms,
+RIN manifests as correlated multiplicative noise on the transmitted intensity.</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">rin_noise</span><span class="p">(</span><span class="n">rng</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">rin_dBc_Hz</span><span class="p">,</span> <span class="n">bandwidth_Hz</span><span class="p">,</span> <span class="n">sampling_rate_Hz</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Laser relative intensity noise (multiplicative).&quot;&quot;&quot;</span>
+</code></pre></div>
+<ul>
+<li>[ ] <strong>Step 2: Implement TIA bandwidth filter</strong></li>
+</ul>
+<p>Low-pass Butterworth filter modeling transimpedance amplifier bandwidth:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">tia_bandwidth_filter</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">bandwidth_Hz</span><span class="p">,</span> <span class="n">sampling_rate_Hz</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply TIA bandwidth limit (anti-aliasing before ADC).&quot;&quot;&quot;</span>
+</code></pre></div>
+<ul>
+<li>[ ] <strong>Step 3: Implement detector responsivity curve</strong></li>
+</ul>
+<p>Wavelength-dependent InGaAs responsivity (roll-off near 1.7 μm cutoff):</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">detector_responsivity</span><span class="p">(</span><span class="n">nu_cm1</span><span class="p">,</span> <span class="n">cutoff_cm1</span><span class="o">=</span><span class="mf">5882.0</span><span class="p">,</span> <span class="n">peak_responsivity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;InGaAs detector responsivity vs wavenumber.&quot;&quot;&quot;</span>
+</code></pre></div>
+<ul>
+<li>[ ] <strong>Step 4: Remove dead code from optics.py</strong></li>
+</ul>
+<p>Delete <code>intensity_fluctuation()</code> — exported but never called.</p>
+<ul>
+<li>[ ] <strong>Step 5: Integrate into generator</strong></li>
+</ul>
+<p>Wire RIN, TIA filter, and responsivity into the generator signal chain,
+gated by instrument config parameters.</p>
+<ul>
+<li>[ ] <strong>Step 6: Commit</strong></li>
+</ul>
+<hr />
+<h3 id="task-8-isotopologue-handling-extended-physics-p3">Task 8: Isotopologue Handling + Extended Physics (P3)</h3>
+<p><strong>Files:</strong>
+- Modify: <code>src/spektran/physics/hitran.py</code>
+- Modify: <code>src/spektran/physics/absorption.py</code>
+- Create: <code>tests/test_isotopologue.py</code></p>
+<ul>
+<li>[ ] <strong>Step 1: Add isotopologue abundance weighting</strong></li>
+</ul>
+<p>HITRAN line intensities are per-molecule (already weighted by natural
+abundance). But when users fetch lines, they may want to filter by
+isotopologue or handle multiple isotopologues explicitly. Add:
+- <code>isotopologue_id</code> field to LineList
+- Natural abundance lookup table for principal isotopologues
+- Filter function to select specific isotopologues from a fetched LineList</p>
+<ul>
+<li>[ ] <strong>Step 2: Add line-wing cutoff documentation and defaults</strong></li>
+</ul>
+<p>Document the <code>wing_cutoff_cm1</code> parameter added in Task 1. Set sensible
+defaults: 25 cm⁻¹ standard, 500 cm⁻¹ for CO2 (sub-Lorentzian far wings).</p>
+<ul>
+<li>[ ] <strong>Step 3: Commit</strong></li>
+</ul>
+<hr />
+<h3 id="task-9-sim-to-real-validation-against-literature-p3">Task 9: Sim-to-Real Validation Against Literature (P3)</h3>
+<p><strong>Files:</strong>
+- Create: <code>scripts/validate_sim_to_real.py</code>
+- Create: <code>tests/test_sim_to_real.py</code>
+- Create: <code>gates/reports/g5_sim_to_real.md</code></p>
+<p>Validate SPEKTRAN's TDLAS simulation against published experimental data
+from the literature. This does NOT require access to proprietary lab data —
+peer-reviewed papers publish measured spectra, noise characteristics, and
+WMS signal shapes that can be used as quantitative reference points.</p>
+<ul>
+<li>[ ] <strong>Step 1: Identify validation targets from literature</strong></li>
+</ul>
+<p>Use the literature research results to identify 3-5 quantitative validation
+targets. Candidates:
+- CH4 2ν3 band absorbance at 296 K, 1 atm: compare simulated line strengths
+  and widths against HITRAN-validated measurements
+- WMS 2f signal shape for CH4: compare peak-to-trough ratio against published
+  calibration-free WMS spectra
+- Noise characteristics: compare simulated Allan deviation against published
+  Allan deviation curves from real TDLAS instruments
+- Line width (Voigt FWHM) at known T/P: compare against published precision
+  spectroscopy measurements</p>
+<ul>
+<li>[ ] <strong>Step 2: Implement validation script</strong></li>
+</ul>
+<p><code>scripts/validate_sim_to_real.py</code> generates synthetic spectra matching the
+conditions of published experiments and computes quantitative comparison
+metrics (residual, relative error, correlation coefficient).</p>
+<ul>
+<li>[ ] <strong>Step 3: Write validation tests</strong></li>
+</ul>
+<p>Encode key literature values as test assertions:
+- Simulated HITRAN line strength at 296 K must match published values within
+  measurement uncertainty
+- Simulated Voigt FWHM at known T/P must match within 5%
+- Simulated WMS 2f/1f peak height ratio must be within 10% of analytical
+  prediction</p>
+<ul>
+<li>[ ] <strong>Step 4: Write gate report</strong></li>
+</ul>
+<p>Create <code>gates/reports/g5_sim_to_real.md</code> documenting:
+- Which literature data points were compared
+- Quantitative agreement metrics
+- Known limitations and sim-to-real gap sources
+- DOI references for all validation targets</p>
+<ul>
+<li>[ ] <strong>Step 5: Commit</strong></li>
+</ul>
+<hr />
+<h3 id="task-10-documentation-sync-version-bump-final">Task 10: Documentation Sync + Version Bump (Final)</h3>
+<p><strong>Files:</strong>
+- Modify: <code>pyproject.toml</code>, <code>CITATION.cff</code>, <code>src/spektran/__init__.py</code>
+- Modify: <code>README.md</code>, <code>ROADMAP.md</code>, <code>docs/leaderboard.md</code></p>
+<ul>
+<li>[ ] <strong>Step 1: Bump version to 0.5.0</strong></li>
+<li>[ ] <strong>Step 2: Update README feature list</strong></li>
+<li>[ ] <strong>Step 3: Update ROADMAP with TDLAS depth phase</strong></li>
+<li>[ ] <strong>Step 4: Final consistency check</strong></li>
+<li>[ ] <strong>Step 5: Commit and tag</strong></li>
+</ul>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>tag<span class="w"> </span>-a<span class="w"> </span>v0.5.0<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;v0.5.0: TDLAS deep-dive&quot;</span>
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
