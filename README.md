@@ -1,5 +1,7 @@
 <div align="center">
 
+[**English**](README.md) | [中文](README_zh.md)
+
 <img src="assets/logo.jpg" alt="SPEKTRAN" width="560">
 
 ### The MNIST of Gas Sensing
@@ -14,6 +16,7 @@
 [![Python](https://img.shields.io/badge/python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white)](https://pypi.org/project/spektran/)
 [![License](https://img.shields.io/badge/code-Apache%202.0-green?style=flat-square)](LICENSE)
 [![License](https://img.shields.io/badge/data-CC%20BY%204.0-green?style=flat-square)](LICENSE-DATA)
+[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.21790394-blue?style=flat-square)](https://doi.org/10.5281/zenodo.21790394)
 
 [**Documentation**](https://spektran.github.io/spektran/) &nbsp;&middot;&nbsp;
 [**Interactive Demo**](https://huggingface.co/spaces/spektran/spektran-demo) &nbsp;&middot;&nbsp;
@@ -167,6 +170,18 @@ spektran benchmark --task T1-concentration --truth data/test.h5 --predictions pr
 
 <br>
 
+## Real-World Impact
+
+SPEKTRAN's benchmarks mirror problems that matter in industry and environmental science:
+
+- **Methane leak detection** — oil & gas facilities, landfills, livestock operations (T1, T3)
+- **Industrial emissions monitoring** — continuous stack gas analysis for SO2, NO, CO (T4, T8)
+- **Medical breath analysis** — trace-gas biomarkers at ppb levels (T1, T9)
+- **Instrument-agnostic deployment** — models that transfer across hardware without recalibration (T3, T7)
+- **Drift-resilient field sensors** — long-term autonomous monitoring in harsh environments (T5)
+
+<br>
+
 ## How It Works
 
 ```
@@ -198,12 +213,13 @@ spektran benchmark --task T1-concentration --truth data/test.h5 --predictions pr
 @software{spektran,
   title     = {SPEKTRAN: Simulation Engine and ML Benchmark for Optical Gas Sensing},
   url       = {https://github.com/spektran/spektran},
+  doi       = {10.5281/zenodo.21790394},
   version   = {0.5.0},
   license   = {Apache-2.0}
 }
 ```
 
-See [CITATION.cff](CITATION.cff). A Zenodo DOI will be minted at v1.0.
+See [CITATION.cff](CITATION.cff) or use the DOI: [10.5281/zenodo.21790394](https://doi.org/10.5281/zenodo.21790394).
 
 ## Contributing
 
