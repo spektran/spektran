@@ -1,22 +1,80 @@
 site_name: SPEKTRAN
-site_description: Open simulation engine, data standard, and ML benchmark for TDLAS
+site_description: Open-source simulation engine and ML benchmark for optical gas sensing
+site_url: https://spektran.github.io/spektran/
 repo_url: https://github.com/spektran/spektran
+repo_name: spektran/spektran
+
 theme:
   name: material
+  logo: assets/logo-icon.png
+  favicon: assets/favicon.png
   palette:
-    - scheme: default
-      toggle: { icon: material/brightness-7, name: Dark mode }
-    - scheme: slate
-      toggle: { icon: material/brightness-4, name: Light mode }
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: deep orange
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: deep orange
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: Inter
+    code: JetBrains Mono
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - content.tabs.link
+    - search.highlight
+    - search.suggest
+  icon:
+    repo: fontawesome/brands/github
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/spektran/spektran
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/spektran/
+    - icon: simple/huggingface
+      link: https://huggingface.co/spektran
+
 nav:
   - Home: index.md
-  - Quickstart: quickstart.md
-  - Data schema: schema.md
-  - Benchmark rules: benchmark.md
-  - Leaderboard: leaderboard.md
-  - Reproducibility: reproduce.md
-  - Quality gates: gates.md
+  - Getting Started:
+    - Quickstart: quickstart.md
+    - Data schema: schema.md
+  - Benchmark:
+    - Rules: benchmark.md
+    - Leaderboard: leaderboard.md
+    - Reproducibility: reproduce.md
+  - Reference:
+    - Quality gates: gates.md
+
 markdown_extensions:
   - admonition
+  - pymdownx.details
   - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - tables
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
