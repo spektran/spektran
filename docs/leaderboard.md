@@ -15,14 +15,16 @@ for reproduction instructions.
 
 | Model | Type | MAE (ppm) | MAPE (%) | Code |
 |---|---|---|---|---|
-| Ridge regression | Linear | **2.84** | **29.9** | `baselines/ridge_regression/` |
+| Ridge regression | Linear | **2.84** | 29.9 | `baselines/ridge_regression/` |
+| Patchified Transformer | Deep | 7.39 | **22.7** | `baselines/transformer_t1/` |
 | 1D CNN | Deep | 15.58 | 42.2 | `baselines/cnn1d/` |
-| Patchified Transformer | Deep | — | — | `baselines/transformer_t1/` |
 
-The linear model wins on this v0 configuration: napierian absorbance is linear
-in concentration in the optically thin regime, and ridge averages fringe/noise
-structure effectively. The CNN (60 epochs, CPU) is under-trained by design — it
-is a reference point, not a ceiling.
+The linear model wins on absolute MAE: napierian absorbance is linear in
+concentration in the optically thin regime, and ridge averages fringe/noise
+structure effectively. The Transformer achieves the best MAPE (22.7%), trading
+absolute error for better relative accuracy across the log-uniform range. The
+CNN (60 epochs, CPU) is under-trained by design — it is a reference point, not
+a ceiling.
 
 ---
 
@@ -30,8 +32,8 @@ is a reference point, not a ceiling.
 
 | Model | Type | Spectral RMSE | Peak-weighted RMSE | Code |
 |---|---|---|---|---|
-| Wing-anchored cubic polynomial | Classical | 6.31e-3 | 8.60e-3 | `baselines/wing_poly_t2/` |
-| 1D U-Net | Deep | — | — | `baselines/unet_t2/` |
+| Wing-anchored cubic polynomial | Classical | **6.31e-3** | **8.60e-3** | `baselines/wing_poly_t2/` |
+| 1D U-Net | Deep | *training code only* | — | `baselines/unet_t2/` |
 
 Input: noisy raw scan. Output: clean absorbance spectrum. The classical baseline
 fits a cubic polynomial to the absorption-free wings and subtracts it.
@@ -43,11 +45,13 @@ fits a cubic polynomial to the absorption-free wings and subtracts it.
 | Model | Type | MAE (ppm) | Degradation vs T1 | Code |
 |---|---|---|---|---|
 | Ridge regression | Linear | **3.72** | **1.31x** | `baselines/ridge_regression/` |
+| Patchified Transformer | Deep | 10.81 | 1.46x | `baselines/transformer_t1/` |
 | 1D CNN | Deep | 28.30 | 1.82x | `baselines/cnn1d/` |
 
-The flagship finding: the CNN degrades more across held-out instruments (1.82x)
-than ridge (1.31x) — deep models can overfit *instrument signatures*, which is
-exactly what the cross-instrument track measures.
+The flagship finding: model complexity correlates with instrument overfitting.
+Ridge degrades 1.31x, the Transformer 1.46x, and the CNN 1.82x across held-out
+instruments — deep models can overfit *instrument signatures*, which is exactly
+what the cross-instrument track measures.
 
 ---
 
@@ -56,12 +60,12 @@ exactly what the cross-instrument track measures.
 | Model | Type | MAE (ppm) | MAPE (%) | Code |
 |---|---|---|---|---|
 | Ridge (2f) | Linear | **15.15** | 61.4 | `baselines/ridge_wms_t4/` |
-| 1D CNN (2f) | Deep | 20.35 | **23.2** | `baselines/cnn1d_wms_t4/` |
-| Patchified Transformer | Deep | — | — | `baselines/transformer_t4/` |
+| Patchified Transformer | Deep | 17.83 | **16.4** | `baselines/transformer_t4/` |
+| 1D CNN (2f) | Deep | 20.35 | 23.2 | `baselines/cnn1d_wms_t4/` |
 
-Ridge wins on absolute MAE; the CNN wins on MAPE — its log1p target transform
-trades absolute error at high concentrations for better relative accuracy across
-the log-uniform range.
+Ridge wins on absolute MAE; the Transformer achieves the best MAPE (16.4%) —
+its log1p target transform trades absolute error at high concentrations for
+better relative accuracy across the log-uniform range.
 
 ---
 
@@ -69,8 +73,8 @@ the log-uniform range.
 
 | Model | Type | Window | MAE (ppm) | ADEV @ 1s | ADEV @ 78s | Code |
 |---|---|---|---|---|---|---|
-| Moving average | Classical | 100 | **0.270** | 0.0040 | 0.129 | `baselines/moving_avg_t5/` |
-| TCN | Deep | 5 | — | — | — | `baselines/tcn_t5/` |
+| Moving average | Classical | 100 | **0.270** | **0.0040** | **0.129** | `baselines/moving_avg_t5/` |
+| TCN | Deep | 5 | *training code only* | — | — | `baselines/tcn_t5/` |
 
 The moving average removes fast per-scan noise but leaves slower structured
 error uncorrected — exactly the gap a purpose-built drift-compensation model
@@ -95,10 +99,11 @@ instrument's parameters were deliberately placed between existing tiers.
 
 | Model | Type | MAE (ppm) | Degradation vs T1 | Code |
 |---|---|---|---|---|
-| Ridge (TDLAS→NDIR) | Linear | — | — | `baselines/ridge_regression/` |
+| Ridge (TDLAS→NDIR) | Linear | *pending* | — | `baselines/ridge_regression/` |
 
 Train on TDLAS (T1 training split), test on NDIR (scalar active/reference ratio).
 Same gas and concentration range, entirely different measurement physics.
+Results pending NDIR test data generation.
 
 ---
 

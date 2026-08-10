@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SPEKTRAN Interactive Demo</title>
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  <style>
+    :root {
+      --bg: #f8fafc; --surface: #ffffff; --text: #1e293b;
+      --border: #e2e8f0; --primary: #2563eb; --primary-hover: #1d4ed8;
+      --accent: #dc2626; --muted: #64748b;
+      --tab-bg: #f1f5f9; --tab-active: #ffffff;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f172a; --surface: #1e293b; --text: #e2e8f0;
+        --border: #334155; --primary: #3b82f6; --primary-hover: #60a5fa;
+        --accent: #ef4444; --muted: #94a3b8;
+        --tab-bg: #1e293b; --tab-active: #334155;
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+           background: var(--bg); color: var(--text); line-height: 1.5; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+    h1 { font-size: 1.75rem; margin-bottom: 4px; }
+    .subtitle { color: var(--muted); margin-bottom: 8px; font-size: 0.95rem; }
+    .links { margin-bottom: 20px; font-size: 0.85rem; }
+    .links a { color: var(--primary); text-decoration: none; margin-right: 16px; }
+    .links a:hover { text-decoration: underline; }
+    .tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 20px; }
+    .tab { padding: 10px 20px; cursor: pointer; border: none; background: var(--tab-bg);
+           color: var(--muted); font-size: 0.9rem; font-weight: 500; border-radius: 8px 8px 0 0;
+           transition: all 0.2s; }
+    .tab.active { background: var(--tab-active); color: var(--primary);
+                  border-bottom: 2px solid var(--primary); margin-bottom: -2px; }
+    .tab:hover:not(.active) { color: var(--text); }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .controls-plot { display: flex; gap: 20px; flex-wrap: wrap; }
+    .controls { flex: 0 0 280px; display: flex; flex-direction: column; gap: 12px; }
+    .plot-area { flex: 1; min-width: 300px; min-height: 400px; }
+    label { font-size: 0.85rem; font-weight: 500; display: block; margin-bottom: 2px; }
+    select, input[type=range] { width: 100%; }
+    select { padding: 8px; border: 1px solid var(--border); border-radius: 6px;
+             background: var(--surface); color: var(--text); font-size: 0.9rem; }
+    .slider-row { display: flex; flex-direction: column; }
+    input[type=range] { accent-color: var(--primary); }
+    .btn { padding: 10px 24px; background: var(--primary); color: white; border: none;
+           border-radius: 6px; font-size: 0.9rem; font-weight: 600; cursor: pointer;
+           transition: background 0.2s; margin-top: 4px; }
+    .btn:hover { background: var(--primary-hover); }
+    .footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border);
+              font-size: 0.8rem; color: var(--muted); }
+    @media (max-width: 700px) {
+      .controls-plot { flex-direction: column; }
+      .controls { flex: 1; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>SPEKTRAN Interactive Demo</h1>
+  <p class="subtitle">Try TDLAS gas-sensing simulation in 30 seconds. Beer-Lambert forward model, 10 molecules, real-time in your browser.</p>
+  <div class="links">
+    <a href="https://github.com/spektran/spektran">GitHub</a>
+    <a href="https://huggingface.co/datasets/spektran/spektran-ch4-v0">Dataset</a>
+    <a href="https://pypi.org/project/spektran/">PyPI</a>
+    <a href="https://spektran.github.io/spektran/">Docs</a>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab(this,'da')">Direct Absorption</button>
+    <button class="tab" onclick="switchTab(this,'multi')">Multi-species</button>
+  </div>
+
+  <div id="panel-da" class="panel active">
+    <div class="controls-plot">
+      <div class="controls">
+        <div>
+          <label for="da-mol">Molecule</label>
+          <select id="da-mol" onchange="simDA()"></select>
+        </div>
+        <div class="slider-row">
+          <label>Concentration: <span id="da-conc-v">100</span> ppm</label>
+          <input type="range" id="da-conc" min="1" max="10000" value="100" step="1" oninput="updV(this);simDA()">
+        </div>
+        <div class="slider-row">
+          <label>Temperature: <span id="da-temp-v">296</span> K</label>
+          <input type="range" id="da-temp" min="200" max="1500" value="296" step="1" oninput="updV(this);simDA()">
+        </div>
+        <div class="slider-row">
+          <label>Pressure: <span id="da-pres-v">1.00</span> atm</label>
+          <input type="range" id="da-pres" min="0.01" max="10" value="1" step="0.01" oninput="updV(this,2);simDA()">
+        </div>
+        <div class="slider-row">
+          <label>Path length: <span id="da-path-v">10.0</span> m</label>
+          <input type="range" id="da-path" min="0.1" max="100" value="10" step="0.1" oninput="updV(this,1);simDA()">
+        </div>
+      </div>
+      <div class="plot-area" id="da-plot"></div>
+    </div>
+  </div>
+
+  <div id="panel-multi" class="panel">
+    <div class="controls-plot">
+      <div class="controls">
+        <div>
+          <label for="ms-mol1">Molecule 1</label>
+          <select id="ms-mol1"></select>
+        </div>
+        <div class="slider-row">
+          <label>Concentration 1: <span id="ms-conc1-v">100</span> ppm</label>
+          <input type="range" id="ms-conc1" min="1" max="10000" value="100" step="1" oninput="updV(this)">
+        </div>
+        <div>
+          <label for="ms-mol2">Molecule 2</label>
+          <select id="ms-mol2"></select>
+        </div>
+        <div class="slider-row">
+          <label>Concentration 2: <span id="ms-conc2-v">10000</span> ppm</label>
+          <input type="range" id="ms-conc2" min="1" max="50000" value="10000" step="10" oninput="updV(this)">
+        </div>
+        <div class="slider-row">
+          <label>Temperature: <span id="ms-temp-v">296</span> K</label>
+          <input type="range" id="ms-temp" min="200" max="1500" value="296" step="1" oninput="updV(this)">
+        </div>
+        <div class="slider-row">
+          <label>Pressure: <span id="ms-pres-v">1.00</span> atm</label>
+          <input type="range" id="ms-pres" min="0.01" max="10" value="1" step="0.01" oninput="updV(this,2)">
+        </div>
+        <div class="slider-row">
+          <label>Path length: <span id="ms-path-v">10.0</span> m</label>
+          <input type="range" id="ms-path" min="0.1" max="100" value="10" step="0.1" oninput="updV(this,1)">
+        </div>
+        <button class="btn" onclick="simMulti()">Simulate</button>
+      </div>
+      <div class="plot-area" id="ms-plot"></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Uses approximate built-in line lists for offline operation. Official benchmark uses HITRAN-fetched data.<br>
+    SPEKTRAN v0.5.0 &nbsp;|&nbsp; Apache-2.0 (code) &nbsp;|&nbsp; CC BY 4.0 (data)
+  </div>
+</div>
+
+<script>
+// Physical constants
+const C2 = 1.4387768775, T_REF = 296.0, R_CGS = 82.057338, NA = 6.02214076e23;
+const kB = 1.380649e-16, c_cgs = 2.99792458e10, amu = 1.66053906660e-24;
+const LN2 = Math.log(2), SQRTLN2 = Math.sqrt(LN2), SQRTPI = Math.sqrt(Math.PI);
+const LINEAR = new Set(["CO2","N2O","CO","O2","NO","HCl","HF"]);
+
+const MASS = {
+  CH4:16.0313, H2O:18.010565, CO2:43.98983, CO:27.994915,
+  NH3:17.026549, NO:29.997989, NO2:45.992904, SO2:63.961901,
+  HCl:35.976678, HF:20.006229
+};
+
+// Pseudo-Voigt profile (Thompson, Cox & Hastings, 1987, J. Appl. Cryst. 20, 79)
+// Accurate to ~0.02% — more than sufficient for visualization.
+// fG = Gaussian FWHM, fL = Lorentzian FWHM, both in cm-1
+function pseudoVoigt(dnu, fG, fL) {
+  const fG2 = fG*fG, fG3 = fG2*fG, fG4 = fG3*fG, fG5 = fG4*fG;
+  const fL2 = fL*fL, fL3 = fL2*fL, fL4 = fL3*fL, fL5 = fL4*fL;
+  const fV = Math.pow(fG5 + 2.69269*fG4*fL + 2.42843*fG3*fL2
+                      + 4.47163*fG2*fL3 + 0.07842*fG*fL4 + fL5, 0.2);
+  const r = fL / fV;
+  const eta = 1.36603*r - 0.47719*r*r + 0.11116*r*r*r;
+  const hV = fV / 2;
+  const G = (SQRTLN2 / (hV * SQRTPI)) * Math.exp(-LN2 * (dnu/hV) * (dnu/hV));
+  const L = (1 / (Math.PI * hV)) / (1 + (dnu/hV) * (dnu/hV));
+  return eta * L + (1 - eta) * G;
+}
+
+function numberDensity(p, T) { return p * NA / (R_CGS * T); }
+
+function dopplerHWHM(nu0, T, mass) {
+  return (nu0 / c_cgs) * Math.sqrt(2 * kB * T * LN2 / (mass * amu));
+}
+
+function lorentzHWHM(p, T, gair, gself, x, nair) {
+  return (gair * (1-x) + gself * x) * p * Math.pow(T_REF/T, nair);
+}
+
+function computeSpectrum(mol, conc_ppm, T, P, pathM) {
+  const lines = MOLECULES[mol];
+  const x = conc_ppm * 1e-6;
+  const nabs = numberDensity(P, T) * x;
+  const q = Math.pow(T_REF/T, LINEAR.has(mol) ? 1.0 : 1.5);
+  const N = 2000;
+  const [nu_start, nu_end] = lines.range;
+  const nu = new Float64Array(N);
+  const abs = new Float64Array(N);
+  for (let i = 0; i < N; i++) nu[i] = nu_start + (nu_end-nu_start)*i/(N-1);
+
+  for (let j = 0; j < lines.nu0.length; j++) {
+    const nu0 = lines.nu0[j] + lines.delta_air[j] * P;
+    let sw = lines.sw[j] * q;
+    sw *= Math.exp(-C2*lines.elower[j]/T) / Math.exp(-C2*lines.elower[j]/T_REF);
+    sw *= (1-Math.exp(-C2*nu0/T)) / (1-Math.exp(-C2*nu0/T_REF));
+
+    const aD = dopplerHWHM(nu0, T, MASS[mol]);
+    const gL = lorentzHWHM(P, T, lines.gamma_air[j], lines.gamma_self[j], x, lines.n_air[j]);
+    const fG = 2 * aD;
+    const fL = 2 * gL;
+
+    for (let i = 0; i < N; i++) {
+      abs[i] += nabs * sw * pseudoVoigt(nu[i]-nu0, fG, fL) * pathM * 100;
+    }
+  }
+  return { nu, abs };
+}
+
+// 10 demo molecules — same line data as SPEKTRAN's built-in demo line lists
+const MOLECULES = {
+  CH4: { nu0:[6046.9647,6046.418,6047.51], sw:[1.2e-21,4e-22,2.5e-22],
+    gamma_air:[.06,.062,.058], gamma_self:[.075,.078,.073], n_air:[.72,.7,.74],
+    delta_air:[-.008,-.007,-.009], elower:[62.88,104.77,157.13],
+    range:[6045.5,6048.5], band:"2ν3 R-branch, ~1653 nm" },
+  H2O: { nu0:[7185.597,7186.758,7189.132], sw:[7.29e-23,3.11e-23,1.85e-23],
+    gamma_air:[.0445,.0512,.0398], gamma_self:[.32,.365,.298], n_air:[.65,.61,.69],
+    delta_air:[-.004,.003,-.006], elower:[212.16,142.28,325.62],
+    range:[7184,7191], band:"combination, ~1392 nm" },
+  CO2: { nu0:[4977.696,4978.304,4978.902], sw:[9.8e-24,6.1e-24,3.4e-24],
+    gamma_air:[.0721,.0688,.0745], gamma_self:[.0942,.0895,.0968], n_air:[.68,.7,.66],
+    delta_air:[-.0032,.0015,-.0048], elower:[667.38,505.85,848.91],
+    range:[4976.5,4979.5], band:"combination, ~2009 nm" },
+  CO: { nu0:[2169.204,2172.759], sw:[2.6e-19,2.4e-19],
+    gamma_air:[.0745,.0721], gamma_self:[.0812,.0798], n_air:[.7,.71],
+    delta_air:[-.0065,-.0071], elower:[80.74,107.66],
+    range:[2168,2174], band:"v=1-0, ~4604 nm" },
+  NH3: { nu0:[6548.61,6548.15,6549.07], sw:[1.5e-22,8.2e-23,5.1e-23],
+    gamma_air:[.072,.0695,.074], gamma_self:[.43,.415,.445], n_air:[.69,.72,.67],
+    delta_air:[-.0022,-.0018,-.0025], elower:[396.52,271.84,521.18],
+    range:[6547,6550], band:"ν1+ν3, ~1527 nm" },
+  NO: { nu0:[1900.076,1900.523], sw:[4.8e-20,3.9e-20],
+    gamma_air:[.054,.0525], gamma_self:[.068,.0665], n_air:[.73,.71],
+    delta_air:[-.0003,-.0005], elower:[123.14,178.92],
+    range:[1899.5,1901], band:"v=1-0, ~5263 nm" },
+  NO2: { nu0:[6324.18,6324.65,6325.1], sw:[3.8e-24,2.1e-24,1.4e-24],
+    gamma_air:[.068,.071,.0655], gamma_self:[.082,.0845,.0795], n_air:[.68,.65,.71],
+    delta_air:[-.0015,-.002,-.001], elower:[457.82,318.45,596.1],
+    range:[6323.5,6326], band:"2ν3, ~1581 nm" },
+  SO2: { nu0:[2500.57,2501.08,2500.12], sw:[8.5e-21,5.2e-21,3.1e-21],
+    gamma_air:[.105,.102,.108], gamma_self:[.168,.165,.171], n_air:[.75,.73,.77],
+    delta_air:[-.0045,-.0038,-.0052], elower:[352.4,231.88,478.56],
+    range:[2499.5,2501.5], band:"ν3, ~4000 nm" },
+  HCl: { nu0:[2885.977,2886.45], sw:[3.2e-19,2.8e-19],
+    gamma_air:[.041,.0395], gamma_self:[.052,.0505], n_air:[.75,.73],
+    delta_air:[-.0052,-.0048], elower:[59.56,89.34],
+    range:[2885,2887], band:"v=1-0, ~3465 nm" },
+  HF: { nu0:[4138.33,4139.12], sw:[2e-18,1.6e-18],
+    gamma_air:[.038,.0365], gamma_self:[.051,.0495], n_air:[.68,.66],
+    delta_air:[-.0035,-.003], elower:[41.11,82.22],
+    range:[4137.5,4140], band:"v=1-0, ~2416 nm" }
+};
+
+const molNames = Object.keys(MOLECULES);
+
+// UI helpers
+function populateSelect(id, sel) {
+  const el = document.getElementById(id);
+  molNames.forEach(m => {
+    const o = document.createElement('option');
+    o.value = m; o.text = m + " — " + MOLECULES[m].band;
+    if (m === sel) o.selected = true;
+    el.appendChild(o);
+  });
+}
+
+function updV(el, dec) {
+  document.getElementById(el.id + '-v').textContent =
+    dec != null ? parseFloat(el.value).toFixed(dec) : el.value;
+}
+
+function switchTab(btn, name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-' + name).classList.add('active');
+  if (name === 'da') simDA();
+}
+
+function plotColors() {
+  const d = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  return { font: d ? '#e2e8f0':'#1e293b', grid: d ? 'rgba(148,163,184,.15)':'rgba(100,116,139,.15)' };
+}
+
+function simDA() {
+  const mol = document.getElementById('da-mol').value;
+  const conc = +document.getElementById('da-conc').value;
+  const T = +document.getElementById('da-temp').value;
+  const P = +document.getElementById('da-pres').value;
+  const L = +document.getElementById('da-path').value;
+  const { nu, abs } = computeSpectrum(mol, conc, T, P, L);
+  const peak = Math.max(...abs);
+  const c = plotColors();
+  Plotly.react('da-plot', [{
+    x: Array.from(nu), y: Array.from(abs),
+    type:'scatter', mode:'lines', line:{color:'#2563eb',width:2}, name:mol
+  }], {
+    paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)',
+    margin:{t:40,r:20,b:50,l:70},
+    font:{family:'-apple-system,sans-serif',color:c.font},
+    title:{text:`${mol} Direct Absorption — ${MOLECULES[mol].band}`,font:{size:14,color:c.font}},
+    xaxis:{title:'Wavenumber (cm⁻¹)',gridcolor:c.grid,color:c.font},
+    yaxis:{title:'Absorbance (napierian)',gridcolor:c.grid,color:c.font},
+    annotations:[{x:.02,y:.98,xref:'paper',yref:'paper',showarrow:false,
+      text:`Peak: ${peak.toExponential(3)} | T=${T} K, P=${P.toFixed(2)} atm, L=${L.toFixed(1)} m, [${mol}]=${conc} ppm`,
+      font:{size:11,color:c.font},bgcolor:'rgba(128,128,128,.1)',borderpad:4}]
+  },{responsive:true});
+}
+
+function simMulti() {
+  const mol1=document.getElementById('ms-mol1').value, c1=+document.getElementById('ms-conc1').value;
+  const mol2=document.getElementById('ms-mol2').value, c2=+document.getElementById('ms-conc2').value;
+  const T=+document.getElementById('ms-temp').value, P=+document.getElementById('ms-pres').value;
+  const L=+document.getElementById('ms-path').value;
+  const r1=computeSpectrum(mol1,c1,T,P,L), r2=computeSpectrum(mol2,c2,T,P,L);
+  const c=plotColors();
+  Plotly.react('ms-plot',[
+    {x:Array.from(r1.nu),y:Array.from(r1.abs),type:'scatter',mode:'lines',
+     line:{color:'#2563eb',width:2},name:`${mol1} (${c1} ppm)`,xaxis:'x',yaxis:'y'},
+    {x:Array.from(r2.nu),y:Array.from(r2.abs),type:'scatter',mode:'lines',
+     line:{color:'#dc2626',width:2},name:`${mol2} (${c2} ppm)`,xaxis:'x2',yaxis:'y2'}
+  ],{
+    paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',
+    margin:{t:30,r:20,b:50,l:70},
+    font:{family:'-apple-system,sans-serif',color:c.font},
+    grid:{rows:2,columns:1,subplots:[['xy'],['x2y2']],roworder:'top to bottom'},
+    xaxis:{title:'',gridcolor:c.grid,color:c.font},
+    yaxis:{title:'Absorbance',gridcolor:c.grid,color:c.font},
+    xaxis2:{title:'Wavenumber (cm⁻¹)',gridcolor:c.grid,color:c.font,anchor:'y2'},
+    yaxis2:{title:'Absorbance',gridcolor:c.grid,color:c.font,anchor:'x2'},
+    annotations:[
+      {x:.5,y:1,xref:'paper',yref:'paper',showarrow:false,
+       text:`${mol1} — ${MOLECULES[mol1].band}`,font:{size:13,color:c.font}},
+      {x:.5,y:.45,xref:'paper',yref:'paper',showarrow:false,
+       text:`${mol2} — ${MOLECULES[mol2].band}`,font:{size:13,color:c.font}}
+    ],
+    showlegend:true, legend:{x:1,xanchor:'right',y:1}
+  },{responsive:true});
+}
+
+// Init
+populateSelect('da-mol','CH4');
+populateSelect('ms-mol1','CH4');
+populateSelect('ms-mol2','H2O');
+simDA();
+</script>
+</body>
+</html>

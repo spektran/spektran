@@ -1,5 +1,16 @@
 # SPEKTRAN
 
+[![CI](https://github.com/spektran/spektran/actions/workflows/ci.yml/badge.svg)](https://github.com/spektran/spektran/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/spektran)](https://pypi.org/project/spektran/)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue)](https://pypi.org/project/spektran/)
+[![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://spektran.github.io/spektran/)
+[![Demo](https://img.shields.io/badge/demo-HF%20Spaces-yellow)](https://huggingface.co/spaces/spektran/spektran-demo)
+
+<p align="center">
+  <img src="assets/logo.jpg" alt="SPEKTRAN logo" width="600">
+</p>
+
 **Open-source simulation engines, data standards, and ML benchmarks for physical sensing — every modality where physically rigorous synthetic training data can be generated.**
 
 SPEKTRAN builds one platform pattern — parameterized forward physics + literature-anchored instrument-noise chains + reproducible benchmark splits — and applies it modality by modality. The first shipped domain is **laser gas absorption spectroscopy (TDLAS)**: fully reproducible synthetic spectra with realistic instrument noise (laser scan nonlinearity, etalon fringes, 1/f noise, baseline drift) and standardized tasks for concentration regression, spectral denoising, and cross-instrument generalization. NDIR, photoacoustic, and cavity-ringdown spectroscopy are the next planned techniques; the record schema carries a `technique` field from day one so new modalities extend, not fork, the standard.
@@ -7,17 +18,19 @@ SPEKTRAN builds one platform pattern — parameterized forward physics + literat
 - **Code**: Apache-2.0 ([LICENSE](LICENSE))
 - **Data & schema**: CC BY 4.0 ([LICENSE-DATA](LICENSE-DATA))
 
-> ⚠️ **Status: alpha (v0.5.0).** Two modalities: TDLAS (10 molecules, 14+ instruments, 9 tasks, 12+ baselines) and NDIR (4 instruments, concentration regression). 9 benchmark tasks (T1-T9) including multi-species regression, temperature regression, and cross-modality transfer. Hartmann-Tran Profile (HTP), WMS 2f/1f ratio, laser RIN, isotopologue handling. Public leaderboard. APIs and schema may still change until v1.0.
+> **Status: beta (v0.5.0).** Two modalities: TDLAS (10 molecules, 14+ instruments, 9 tasks, 12+ baselines) and NDIR (4 instruments, concentration regression). 9 benchmark tasks (T1-T9) including multi-species regression, temperature regression, and cross-modality transfer. Hartmann-Tran Profile (HTP), WMS 2f/1f ratio, laser RIN, isotopologue handling. Public leaderboard. [Interactive demo →](https://huggingface.co/spaces/spektran/spektran-demo)
 
 ## Why SPEKTRAN?
+
+**You don't need to be a spectroscopist.** If you work on regression, denoising, domain generalization, or anomaly detection, SPEKTRAN gives you 9 ready-to-use benchmark tasks backed by real physics — with the same convenience as MNIST or CIFAR, but grounded in a domain where ML has direct industrial impact.
 
 Machine learning for physical sensing lacks what computer vision has had for a decade: standard datasets, standard tasks, and comparable baselines. Every paper simulates (or measures) its own signals, with its own noise assumptions, and reports metrics nobody else can reproduce.
 
 SPEKTRAN attacks this with three assets:
 
-1. **A parameterized simulation engine** — HITRAN-based forward physics (direct absorption and wavelength-modulation spectroscopy) plus a modular instrument-noise chain modeled after real hardware.
+1. **A parameterized simulation engine** — HITRAN-based forward physics (direct absorption and wavelength-modulation spectroscopy) plus a modular instrument-noise chain modeled after real hardware. Advanced line shapes (Hartmann-Tran Profile), laser RIN, etalon fringes, thermal chirp, and more.
 2. **A data standard** — a JSON Schema for spectra records with explicit units, full provenance (generator version, random seed, every sampled noise parameter), and a `technique` field ready for NDIR / PAS / CRDS extensions.
-3. **A tiered benchmark** — official train/val/test splits, three difficulty levels, six tasks (concentration regression, denoising, cross-instrument generalization, WMS concentration, drift compensation, OOD detection), and a flagship *cross-instrument generalization* track built on held-out virtual instruments.
+3. **A tiered benchmark** — official train/val/test splits, three difficulty levels, 9 tasks (concentration regression, denoising, cross-instrument generalization, WMS concentration, drift compensation, OOD detection, cross-modality transfer, multi-species regression, temperature regression), and a flagship *cross-instrument generalization* track built on held-out virtual instruments.
 
 All shipped data is simulation-born and labeled `data_origin: simulated`. The sim-to-real gap is not hidden — it is the research topic of the generalization track.
 
@@ -81,16 +94,14 @@ alpha_h2o = absorption_coefficient(nu, demo_h2o(), 0.01, 296.0, 1.0)  # 1% H2O
 
 | Model | T1 MAE (ppm) | T1 MAPE (%) | T3 MAE (ppm) | T3 degradation |
 |---|---|---|---|---|
-| Ridge regression (baseline) | 2.84 | 29.9 | 3.72 | 1.31x |
-| 1D CNN (baseline) | 15.58 | 42.2 | 28.30 | 1.82x |
+| Ridge regression | **2.84** | 29.9 | **3.72** | **1.31x** |
+| Patchified Transformer | 7.39 | **22.7** | 10.81 | 1.46x |
+| 1D CNN | 15.58 | 42.2 | 28.30 | 1.82x |
 
-Deep learning baselines also available: Patchified Transformer (T1/T4),
-1D U-Net (T2 denoising), TCN (T5 drift compensation).
-
-T2 denoising: wing-anchored cubic-polynomial baseline — spectral RMSE 6.31e-3,
-peak-weighted RMSE 8.60e-3. T4 WMS: ridge 15.15 ppm MAE, 1D CNN 20.35 ppm MAE.
-T5 drift: moving-average baseline 0.270 ppm MAE. T6 OOD: PCA + Mahalanobis
-0.672 AUROC. T8 multi-species: ridge CH4 MAE 0.89 ppm, H2O MAE 3937 ppm.
+T4 WMS: ridge **15.15** ppm MAE, Transformer 17.83 ppm, 1D CNN 20.35 ppm.
+T2 denoising: wing-anchored cubic-polynomial — spectral RMSE 6.31e-3.
+T5 drift: moving-average 0.270 ppm MAE. T6 OOD: PCA + Mahalanobis 0.672 AUROC.
+T8 multi-species: ridge CH4 MAE 0.89 ppm, H2O MAE 3937 ppm.
 T9 temperature: ridge MAE 9.4 K (MAPE 2.0%).
 
 Full results on the [leaderboard](https://spektran.github.io/spektran/leaderboard/).
