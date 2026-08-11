@@ -1,9 +1,9 @@
 # WMS hard tier
 instrument_config_id: vi-wms-hard-06
-schema_version: "0.1"
+schema_version: "0.2"
 technique: TDLAS-WMS
 held_out: false
-description: "Harsh WMS: strong RAM and fringes, larger phase error, low SNR."
+description: "Harsh WMS: full noise chain — shot noise, EMI, speckle, gain NL, strong RAM."
 laser:
   center_wavenumber_cm1: 6047.0
   scan_range_cm1: {dist: uniform, low: 0.6, high: 1.4}
@@ -31,8 +31,18 @@ etalons:
     phase_drift_rad_per_s: {dist: uniform, low: 2.0e-3, high: 8.0e-3}
 detector:
   white_noise_rel: {dist: loguniform, low: 1.4e-4, high: 3.2e-4}
+  shot_noise_gain: {dist: loguniform, low: 3.0e-4, high: 1.0e-3}
   one_over_f_sigma_rel: {dist: loguniform, low: 6.0e-5, high: 1.8e-4}
   one_over_f_slope: {dist: uniform, low: 0.8, high: 1.4}
+  emi_frequencies_Hz: [50.0, 100.0]
+  emi_amplitudes_rel:
+    - {dist: loguniform, low: 3.0e-5, high: 2.0e-4}
+    - {dist: loguniform, low: 1.0e-5, high: 8.0e-5}
+  speckle_noise_sigma: {dist: loguniform, low: 3.0e-5, high: 2.0e-4}
+  speckle_correlation_length: {dist: uniform, low: 8, high: 30}
+  gain_nonlinearity_rel: {dist: uniform, low: 0.0, high: 0.01}
+  gain_cubic_rel: {dist: loguniform, low: 1.0e-4, high: 5.0e-3}
+  clock_jitter_rel: {dist: loguniform, low: 5.0e-6, high: 5.0e-5}
 environment:
   temperature_K: 296.0
   pressure_atm: 1.0

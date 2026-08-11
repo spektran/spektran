@@ -1,6 +1,6 @@
 # CO2 WMS hard tier: strong RAM, high noise, coarse ADC
 instrument_config_id: vi-co2-wms-hard-23
-schema_version: "0.1"
+schema_version: "0.2"
 technique: TDLAS-WMS
 held_out: false
 description: "Harsh-environment WMS for CO2: strong RAM and fringes, coarse ADC."
@@ -31,6 +31,8 @@ detector:
   one_over_f_slope: {dist: uniform, low: 0.8, high: 1.4}
   gain_nonlinearity_rel: {dist: uniform, low: 0.0, high: 0.02}
   adc_bits: 12
+  emi_frequencies_Hz: [50.0]
+  emi_amplitudes_rel: [{dist: loguniform, low: 2.0e-5, high: 1.0e-4}]
 environment:
   temperature_K: 296.0
   pressure_atm: 1.0

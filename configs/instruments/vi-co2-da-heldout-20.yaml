@@ -1,7 +1,7 @@
 # CO2 HELD-OUT DA instrument: parameter ranges deliberately offset from the
 # training instruments. Test-set only (generalization track).
 instrument_config_id: vi-co2-da-heldout-20
-schema_version: "0.1"
+schema_version: "0.2"
 technique: TDLAS-DA
 held_out: true
 description: "Held-out DA instrument for CO2 cross-instrument generalization track."
@@ -30,9 +30,12 @@ optics:
     - {dist: normal, mean: -0.012, sigma: 0.008}
 detector:
   white_noise_rel: {dist: loguniform, low: 9.0e-5, high: 2.4e-4}
+  shot_noise_gain: {dist: loguniform, low: 2.0e-4, high: 8.0e-4}
   one_over_f_sigma_rel: {dist: loguniform, low: 4.0e-5, high: 1.4e-4}
   one_over_f_slope: {dist: uniform, low: 1.1, high: 1.5}
   adc_bits: 13
+  emi_frequencies_Hz: [50.0]
+  emi_amplitudes_rel: [{dist: loguniform, low: 2.0e-5, high: 1.0e-4}]
 environment:
   temperature_K: 296.0
   pressure_atm: 1.0

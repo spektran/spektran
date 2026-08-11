@@ -1,7 +1,7 @@
 # CO2 DA easy tier: high SNR, weak single fringe, benign baseline
 # Center on CO2 2ν1+ν3 combination band near 4978 cm-1
 instrument_config_id: vi-co2-da-easy-17
-schema_version: "0.1"
+schema_version: "0.2"
 technique: TDLAS-DA
 held_out: false
 description: "Laboratory-grade DA instrument for CO2: low noise, one weak etalon, gentle baseline."
@@ -24,6 +24,7 @@ optics:
     - {dist: normal, mean: 0.0, sigma: 0.005}
 detector:
   white_noise_rel: {dist: loguniform, low: 2.5e-5, high: 8.0e-5}
+  shot_noise_gain: {dist: loguniform, low: 5.0e-5, high: 2.0e-4}
   adc_bits: 16
 environment:
   temperature_K: 296.0

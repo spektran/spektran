@@ -1,6 +1,6 @@
 # Medium tier with window contamination and beam wander effects
 instrument_config_id: vi-da-contaminated-11
-schema_version: "0.1"
+schema_version: "0.2"
 technique: TDLAS-DA
 held_out: false
 description: "Field DA instrument with window contamination and beam wander."
@@ -29,6 +29,7 @@ optics:
   beam_wander_cutoff_norm: {dist: uniform, low: 0.02, high: 0.08}
 detector:
   white_noise_rel: {dist: loguniform, low: 7.0e-5, high: 2.0e-4}
+  shot_noise_gain: {dist: loguniform, low: 1.0e-4, high: 5.0e-4}
   one_over_f_sigma_rel: {dist: loguniform, low: 3.0e-5, high: 1.0e-4}
   one_over_f_slope: {dist: uniform, low: 0.9, high: 1.2}
   adc_bits: 14

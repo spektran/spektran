@@ -436,10 +436,46 @@ def generate_record(
                            etalon_transmission_of_nu=etalon_fn)
         n_t = len(out["t_s"])
         noisy = out["intensity"]
+        if shot_gain:
+            noisy = noisy + shot_noise(rng, noisy, shot_gain)
         if sigma_w:
             noisy = noisy + white_noise(rng, n_t, sigma_w)
+        sigma_dark_wms = det.get("dark_current_sigma_rel", 0.0)
+        if sigma_dark_wms:
+            noisy = noisy + dark_current_noise(
+                rng, n_t, sigma_dark_wms,
+                det.get("detector_temperature_K", temperature_K),
+                det.get("reference_temperature_K", 296.0),
+                det.get("dark_current_activation_eV", 0.37),
+            )
         if sigma_f:
             noisy = noisy + one_over_f_noise(rng, n_t, sigma_f, det.get("one_over_f_slope", 1.0))
+        if emi_freqs and emi_amps:
+            noisy = noisy + periodic_interference(
+                rng, n_t, emi_freqs, emi_amps, scan_rate, n_t,
+            )
+        if speckle_sigma:
+            noisy = noisy + speckle_noise(
+                rng, n_t, speckle_sigma, int(det.get("speckle_correlation_length", 10)),
+            )
+        if gnl:
+            noisy = gain_nonlinearity(
+                noisy, gnl,
+                cubic_rel=det.get("gain_cubic_rel", 0.0),
+                saturation_level=det.get("saturation_level", 0.0),
+            )
+        wms_tia_bw = det.get("tia_bandwidth_Hz")
+        if wms_tia_bw is not None:
+            noisy = tia_bandwidth_filter(noisy, wms_tia_bw, fs)
+        wms_adc_bits = det.get("adc_bits", 0)
+        if wms_adc_bits:
+            noisy = adc_quantize(noisy, int(round(wms_adc_bits)), full_scale=1.5)
+        wms_jitter_rel = det.get("clock_jitter_rel", 0.0)
+        if wms_jitter_rel:
+            jitter_wms = clock_jitter(rng, n_t, wms_jitter_rel)
+            idx_wms = np.arange(n_t, dtype=np.float64) + jitter_wms
+            idx_wms = np.clip(idx_wms, 0, n_t - 1)
+            noisy = np.interp(idx_wms, np.arange(n_t, dtype=np.float64), noisy)
         from .physics.wms import lockin_demodulate
 
         stride = max(1, n_t // n)

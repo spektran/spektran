@@ -1,5 +1,5 @@
 instrument_config_id: vi-ndir-easy-13
-schema_version: "0.1"
+schema_version: "0.2"
 technique: NDIR
 held_out: false
 description: "Laboratory NDIR: low noise thermopile, narrow Gaussian filters, stable source."

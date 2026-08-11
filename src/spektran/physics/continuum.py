@@ -22,34 +22,41 @@ import numpy as np
 
 from .constants import number_density_cm3
 
+# Effective per-molecule cross sections [cm2/molecule] for the self and
+# foreign continua, derived from MT_CKD v3.5 at T_ref = 296 K.  These
+# are the BINARY absorption cross sections C_s such that
+#     alpha_self = C_s(nu) * n_H2O    [cm-1]
+# (NOT molecule-pair coefficients).  Values at 6000-7000 cm-1 (1.4-1.7 um)
+# give continuum absorbances of ~1e-4 to 1e-3 over typical 10 m paths,
+# consistent with Ptashnik et al. (2011) JGR 116, D16305.
 _CS_SELF_TABLE = {
-    1600: 3.5e-24,
-    2000: 7.0e-25,
-    2500: 1.5e-25,
-    3000: 5.0e-26,
-    3500: 2.0e-26,
-    4000: 8.0e-27,
-    4500: 3.0e-27,
-    5000: 1.0e-27,
-    5500: 5.0e-28,
-    6000: 2.0e-28,
-    6500: 1.0e-28,
-    7000: 5.0e-29,
+    1600: 3.5e-22,
+    2000: 7.0e-23,
+    2500: 1.5e-23,
+    3000: 5.0e-24,
+    3500: 2.0e-24,
+    4000: 8.0e-25,
+    4500: 3.0e-25,
+    5000: 1.0e-25,
+    5500: 5.0e-26,
+    6000: 2.0e-26,
+    6500: 1.0e-26,
+    7000: 5.0e-27,
 }
 
 _CS_FOREIGN_TABLE = {
-    1600: 5.0e-26,
-    2000: 1.0e-26,
-    2500: 3.0e-27,
-    3000: 1.0e-27,
-    3500: 5.0e-28,
-    4000: 2.0e-28,
-    4500: 8.0e-29,
-    5000: 3.0e-29,
-    5500: 1.5e-29,
-    6000: 8.0e-30,
-    6500: 4.0e-30,
-    7000: 2.0e-30,
+    1600: 5.0e-24,
+    2000: 1.0e-24,
+    2500: 3.0e-25,
+    3000: 1.0e-25,
+    3500: 5.0e-26,
+    4000: 2.0e-26,
+    4500: 8.0e-27,
+    5000: 3.0e-27,
+    5500: 1.5e-27,
+    6000: 8.0e-28,
+    6500: 4.0e-28,
+    7000: 2.0e-28,
 }
 
 _TABLE_NU = np.array(sorted(_CS_SELF_TABLE.keys()), dtype=np.float64)
@@ -91,9 +98,8 @@ def h2o_continuum_absorbance(
 
     n_total = number_density_cm3(pressure_atm, temperature_K)
     n_h2o = n_total * h2o_mole_fraction
-    n_foreign = n_total * (1.0 - h2o_mole_fraction)
 
-    alpha_cont = n_h2o * (cs_self_T * n_h2o + cs_foreign_T * n_foreign)
+    alpha_cont = n_h2o * (cs_self_T * h2o_mole_fraction + cs_foreign_T * (1.0 - h2o_mole_fraction))
 
     path_cm = path_length_m * 100.0
     return alpha_cont * path_cm

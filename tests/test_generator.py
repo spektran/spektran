@@ -82,14 +82,19 @@ class TestPhysicalSanity:
         easy = load_instrument_config(CONFIG_DIR / "vi-da-easy-01.yaml")
         hard = load_instrument_config(CONFIG_DIR / "vi-da-hard-03.yaml")
         spec = make_spec(2000)
-        spec.concentration_ppm_low = spec.concentration_ppm_high = 1e-3  # ~no gas
+        spec.concentration_ppm_low = spec.concentration_ppm_high = 500.0
 
-        def hf_noise(cfg, seed):
+        def noise_metric(cfg, seed):
             rec = generate_dataset(spec, cfg, 1, master_seed=seed)[0]
             raw = rec["arrays"]["raw_scan"]
-            return np.std(np.diff(raw))  # high-frequency component
+            smooth = np.convolve(raw, np.ones(20) / 20, mode="same")
+            residual = raw - smooth
+            ptp = max(float(np.ptp(raw)), 1e-12)
+            return np.std(residual) / ptp
 
-        assert hf_noise(hard, 3) > hf_noise(easy, 3)
+        easy_nrel = np.median([noise_metric(easy, s) for s in range(5)])
+        hard_nrel = np.median([noise_metric(hard, s) for s in range(5)])
+        assert hard_nrel > easy_nrel
 
 
 class TestHDF5RoundTrip:

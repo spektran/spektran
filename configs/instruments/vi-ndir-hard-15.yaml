@@ -1,5 +1,5 @@
 instrument_config_id: vi-ndir-hard-15
-schema_version: "0.1"
+schema_version: "0.2"
 technique: NDIR
 held_out: false
 description: "Field NDIR: high noise, large source drift, wide temperature variation."

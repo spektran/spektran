@@ -12,7 +12,7 @@
       "pattern": "^[a-z0-9][a-z0-9-]*$",
       "description": "Stable identifier, e.g. 'vi-easy-01'."
     },
-    "schema_version": { "const": "0.1" },
+    "schema_version": { "enum": ["0.1", "0.2"] },
     "technique": { "enum": ["TDLAS-DA", "TDLAS-WMS", "NDIR"] },
     "held_out": {
       "type": "boolean",
@@ -39,6 +39,14 @@
         },
         "center_drift_cm1_per_s": { "$ref": "#/$defs/dist_or_number" },
         "linewidth_MHz": { "$ref": "#/$defs/dist_or_number" },
+        "mode_hop_probability": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Probability of a mode hop per scan (0 to 1). DFB lasers: typically < 0.01."
+        },
+        "mode_hop_size_cm1": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Frequency jump size on mode hop [cm-1]. Typical DFB: 0.1 to 0.5."
+        },
         "tuning_model": {
           "enum": ["thermal_chirp"],
           "description": "Optional physically-motivated current->frequency tuning model, replacing scan_nonlinearity_poly_cm1. 'thermal_chirp' splits scan_range_cm1 into an instantaneous current (plasma) term and a thermally-lagged term (see tuning_params)."
@@ -148,6 +156,23 @@
         "beam_wander_cutoff_norm": {
           "$ref": "#/$defs/dist_or_number",
           "description": "Beam wander low-pass cutoff as fraction of Nyquist rate."
+        },
+        "gas_flow_turbulence_sigma_rel": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Std-dev of multiplicative refractive-index fluctuation from gas flow (relative). Typical: 1e-5 to 5e-4."
+        },
+        "gas_flow_turbulence_cutoff": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Low-pass cutoff (fraction of Nyquist) for turbulence filter."
+        },
+        "baseline_drift_coeffs_sigma": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/dist_or_number" },
+          "description": "Sigma of OU-process polynomial drift coefficients (order 1, 2, ...). Replaces baseline_poly_rel when present."
+        },
+        "baseline_drift_tau": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "OU correlation time in scans for baseline drift. Typical: 10 to 100."
         }
       }
     },
@@ -207,6 +232,40 @@
         "responsivity_rolloff_cm1": {
           "$ref": "#/$defs/dist_or_number",
           "description": "Width of the responsivity sigmoid roll-off [cm-1]. Default 200."
+        },
+        "shot_noise_gain": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Shot-noise scaling factor: sigma = gain * sqrt(|signal|). Typical InGaAs: 1e-4 to 1e-3."
+        },
+        "emi_frequencies_Hz": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/dist_or_number" },
+          "description": "Frequencies of periodic electromagnetic interference [Hz]. Typically 50 or 60 Hz mains + harmonics."
+        },
+        "emi_amplitudes_rel": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/dist_or_number" },
+          "description": "Amplitudes of EMI (relative). Typical: 1e-5 to 5e-4."
+        },
+        "speckle_noise_sigma": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Sigma of spectrally-correlated speckle noise (relative). Typical: 1e-5 to 5e-4."
+        },
+        "speckle_correlation_length": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Correlation length in samples for speckle noise. Typical: 5 to 50."
+        },
+        "gain_cubic_rel": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Cubic gain nonlinearity coefficient: output += cubic_rel * signal^3."
+        },
+        "saturation_level": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Detector saturation level (tanh clamp). 0 = no saturation."
+        },
+        "clock_jitter_rel": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "ADC clock jitter sigma (relative to sample interval). Typical: 1e-6 to 1e-4."
         }
       }
     },
@@ -218,6 +277,84 @@
         "pressure_atm": { "$ref": "#/$defs/dist_or_number" },
         "temperature_jitter_K": { "$ref": "#/$defs/dist_or_number" },
         "pressure_jitter_atm": { "$ref": "#/$defs/dist_or_number" }
+      }
+    },
+    "physics": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Forward-model physics options beyond line-by-line.",
+      "properties": {
+        "line_mixing": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable first-order Rosenkranz line-mixing correction."
+        },
+        "h2o_continuum_fraction": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "H2O mole fraction for MT_CKD continuum absorption. 0 = disable."
+        },
+        "line_profile": {
+          "enum": ["voigt", "htp"],
+          "default": "voigt",
+          "description": "Line-shape model: 'voigt' (default) or 'htp' (Hartmann-Tran Profile)."
+        }
+      }
+    },
+    "reference_channel": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Reference channel for common-mode noise rejection (balanced detection).",
+      "properties": {
+        "noise_sigma_rel": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "White-noise sigma on the reference channel (relative)."
+        }
+      }
+    },
+    "multipass_etalon": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Multi-pass cell etalon (Herriott/White cell). Replaces 'etalons' when present.",
+      "properties": {
+        "n_passes": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Number of passes through the cell. Typical: 10 to 100."
+        },
+        "base_fsr_cm1": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Free spectral range of the base cavity [cm-1]."
+        },
+        "base_amplitude_rel": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Base fringe amplitude (relative) per pass."
+        },
+        "phase_rad": { "$ref": "#/$defs/dist_or_number" },
+        "amplitude_decay": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Per-pass amplitude decay factor (0 to 1). Typical: 0.7 to 0.95."
+        }
+      }
+    },
+    "gas_path_layers": {
+      "type": "array",
+      "description": "Non-uniform gas path: each layer has distinct T, P, concentration scaling. Fractions must sum to ~1.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "length_fraction": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Fraction of total path length for this layer."
+          },
+          "temperature_K": { "$ref": "#/$defs/dist_or_number" },
+          "pressure_atm": { "$ref": "#/$defs/dist_or_number" },
+          "concentration_scale": {
+            "$ref": "#/$defs/dist_or_number",
+            "description": "Multiplicative factor for target concentration in this layer."
+          }
+        }
       }
     },
     "performance": {

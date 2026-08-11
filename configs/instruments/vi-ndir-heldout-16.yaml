@@ -1,5 +1,5 @@
 instrument_config_id: vi-ndir-heldout-16
-schema_version: "0.1"
+schema_version: "0.2"
 technique: NDIR
 held_out: true
 description: "Held-out NDIR: tophat filters, distinct noise profile for cross-instrument testing."

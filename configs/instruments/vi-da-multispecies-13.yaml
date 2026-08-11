@@ -1,7 +1,7 @@
 # Multi-species instrument: CH4 + H2O overlap in the 2nu3 region
 # H2O has weak but non-negligible lines near 6046-6048 cm-1
 instrument_config_id: vi-da-multispecies-13
-schema_version: "0.1"
+schema_version: "0.2"
 technique: TDLAS-DA
 held_out: false
 description: "Multi-species DA instrument: CH4 + H2O interference, medium noise."
@@ -27,6 +27,7 @@ optics:
     - {dist: normal, mean: 0.0, sigma: 0.005}
 detector:
   white_noise_rel: {dist: loguniform, low: 5.0e-5, high: 1.5e-4}
+  shot_noise_gain: {dist: loguniform, low: 1.0e-4, high: 5.0e-4}
   one_over_f_sigma_rel: {dist: loguniform, low: 2.0e-5, high: 8.0e-5}
   one_over_f_slope: {dist: uniform, low: 0.9, high: 1.1}
   adc_bits: 14

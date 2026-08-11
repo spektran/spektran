@@ -1,7 +1,7 @@
 # CO DA hard tier: harsh env
 # Center on CO fundamental band near 2171 cm-1
 instrument_config_id: vi-co-da-hard-32
-schema_version: "0.1"
+schema_version: "0.2"
 technique: TDLAS-DA
 held_out: false
 description: "DA instrument for CO (hard tier): harsh env."
@@ -24,7 +24,10 @@ optics:
     - {dist: normal, mean: 0.0, sigma: 0.01}
 detector:
   white_noise_rel: {dist: loguniform, low: 1.4e-4, high: 3.2e-4}
+  shot_noise_gain: {dist: loguniform, low: 2.0e-4, high: 8.0e-4}
   adc_bits: 12
+  emi_frequencies_Hz: [50.0]
+  emi_amplitudes_rel: [{dist: loguniform, low: 2.0e-5, high: 1.0e-4}]
 environment:
   temperature_K: 296.0
   pressure_atm: 1.0

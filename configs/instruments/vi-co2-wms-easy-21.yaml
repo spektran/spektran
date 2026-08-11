@@ -1,6 +1,6 @@
 # CO2 WMS easy tier: clean 2f, low RAM, weak fringes
 instrument_config_id: vi-co2-wms-easy-21
-schema_version: "0.1"
+schema_version: "0.2"
 technique: TDLAS-WMS
 held_out: false
 description: "Laboratory WMS instrument for CO2: clean 2f, low RAM, weak fringes."

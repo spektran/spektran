@@ -1,6 +1,6 @@
 # CO2 WMS medium tier: moderate noise, stronger RAM
 instrument_config_id: vi-co2-wms-medium-22
-schema_version: "0.1"
+schema_version: "0.2"
 technique: TDLAS-WMS
 held_out: false
 description: "Field WMS instrument for CO2: moderate RAM and noise, two etalons."

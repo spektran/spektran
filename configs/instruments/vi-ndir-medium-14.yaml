@@ -1,5 +1,5 @@
 instrument_config_id: vi-ndir-medium-14
-schema_version: "0.1"
+schema_version: "0.2"
 technique: NDIR
 held_out: false
 description: "Industrial NDIR: moderate noise, broader filters, more source drift."

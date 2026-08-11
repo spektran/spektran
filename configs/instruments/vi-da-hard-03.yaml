@@ -1,9 +1,9 @@
 # Hard tier: low SNR, three strong fringes, strong baseline, gain nonlinearity
 instrument_config_id: vi-da-hard-03
-schema_version: "0.1"
+schema_version: "0.2"
 technique: TDLAS-DA
 held_out: false
-description: "Harsh-environment DA: strong fringes and drift, nonlinear gain, coarse ADC."
+description: "Harsh-environment DA: full sim-to-real chain — shot noise, EMI, speckle, gain NL with cubic+saturation, mode hops, flow turbulence, H2O continuum, line mixing."
 laser:
   center_wavenumber_cm1: 6047.0
   scan_range_cm1: {dist: uniform, low: 1.6, high: 2.4}
@@ -12,6 +12,8 @@ laser:
     - {dist: normal, mean: 0.0, sigma: 0.06}
     - {dist: normal, mean: 0.0, sigma: 0.04}
   linewidth_MHz: {dist: uniform, low: 5.0, high: 30.0}
+  mode_hop_probability: {dist: loguniform, low: 5.0e-3, high: 2.0e-2}
+  mode_hop_size_cm1: {dist: uniform, low: 0.2, high: 0.5}
 etalons:
   - free_spectral_range_cm1: {dist: uniform, low: 0.5, high: 0.9}
     amplitude_rel: {dist: loguniform, low: 1.0e-4, high: 2.6e-4}
@@ -33,12 +35,30 @@ optics:
     - {dist: normal, mean: 0.0, sigma: 0.03}
     - {dist: normal, mean: 0.0, sigma: 0.02}
     - {dist: normal, mean: 0.0, sigma: 0.02}
+  beam_wander_sigma_rel: {dist: loguniform, low: 5.0e-5, high: 2.0e-4}
+  gas_flow_turbulence_sigma_rel: {dist: loguniform, low: 3.0e-5, high: 2.0e-4}
+  gas_flow_turbulence_cutoff: {dist: uniform, low: 0.05, high: 0.15}
 detector:
   white_noise_rel: {dist: loguniform, low: 1.4e-4, high: 3.2e-4}
+  shot_noise_gain: {dist: loguniform, low: 3.0e-4, high: 1.0e-3}
   one_over_f_sigma_rel: {dist: loguniform, low: 6.0e-5, high: 1.8e-4}
   one_over_f_slope: {dist: uniform, low: 0.8, high: 1.4}
+  emi_frequencies_Hz: [50.0, 100.0]
+  emi_amplitudes_rel:
+    - {dist: loguniform, low: 3.0e-5, high: 2.0e-4}
+    - {dist: loguniform, low: 1.0e-5, high: 8.0e-5}
+  speckle_noise_sigma: {dist: loguniform, low: 3.0e-5, high: 2.0e-4}
+  speckle_correlation_length: {dist: uniform, low: 8, high: 30}
   gain_nonlinearity_rel: {dist: uniform, low: 0.0, high: 0.02}
+  gain_cubic_rel: {dist: loguniform, low: 1.0e-4, high: 5.0e-3}
+  saturation_level: {dist: uniform, low: 1.2, high: 1.8}
   adc_bits: 12
+  clock_jitter_rel: {dist: loguniform, low: 5.0e-6, high: 5.0e-5}
+physics:
+  line_mixing: true
+  h2o_continuum_fraction: {dist: uniform, low: 0.01, high: 0.03}
+reference_channel:
+  noise_sigma_rel: {dist: loguniform, low: 3.0e-5, high: 1.0e-4}
 environment:
   temperature_K: 296.0
   pressure_atm: 1.0

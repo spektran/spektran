@@ -1,6 +1,6 @@
 # WMS easy tier
 instrument_config_id: vi-wms-easy-04
-schema_version: "0.1"
+schema_version: "0.2"
 technique: TDLAS-WMS
 held_out: false
 description: "Laboratory WMS instrument: clean 2f, low RAM, weak fringes."
@@ -23,6 +23,7 @@ etalons:
     phase_drift_rad_per_s: {dist: uniform, low: 3.0e-4, high: 1.5e-3}
 detector:
   white_noise_rel: {dist: loguniform, low: 2.5e-5, high: 8.0e-5}
+  shot_noise_gain: {dist: loguniform, low: 5.0e-5, high: 2.0e-4}
 environment:
   temperature_K: 296.0
   pressure_atm: 1.0

@@ -1,7 +1,7 @@
 # Temperature regression instrument: wide T range for TDLAS thermometry
 # Uses CH4 2nu3 lines whose relative strengths are T-sensitive
 instrument_config_id: vi-da-temp-regression-14
-schema_version: "0.1"
+schema_version: "0.2"
 technique: TDLAS-DA
 held_out: false
 description: "Temperature-regression DA instrument: fixed concentration, wide T range, low noise for thermometry."
@@ -25,6 +25,7 @@ optics:
     - {dist: normal, mean: 0.0, sigma: 0.005}
 detector:
   white_noise_rel: {dist: loguniform, low: 3.0e-5, high: 1.0e-4}
+  shot_noise_gain: {dist: loguniform, low: 1.0e-4, high: 5.0e-4}
   one_over_f_sigma_rel: {dist: loguniform, low: 1.0e-5, high: 5.0e-5}
   one_over_f_slope: 1.0
   adc_bits: 16

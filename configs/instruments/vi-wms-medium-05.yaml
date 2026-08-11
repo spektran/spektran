@@ -1,9 +1,9 @@
 # WMS medium tier
 instrument_config_id: vi-wms-medium-05
-schema_version: "0.1"
+schema_version: "0.2"
 technique: TDLAS-WMS
 held_out: false
-description: "Field WMS instrument: moderate noise, RAM, phase error, two etalons."
+description: "Field WMS instrument: moderate noise with shot noise, speckle, EMI."
 laser:
   center_wavenumber_cm1: 6047.0
   scan_range_cm1: {dist: uniform, low: 0.7, high: 1.3}
@@ -27,8 +27,13 @@ etalons:
     phase_drift_rad_per_s: {dist: uniform, low: 8.0e-4, high: 3.0e-3}
 detector:
   white_noise_rel: {dist: loguniform, low: 7.0e-5, high: 2.0e-4}
+  shot_noise_gain: {dist: loguniform, low: 1.0e-4, high: 5.0e-4}
   one_over_f_sigma_rel: {dist: loguniform, low: 3.0e-5, high: 1.0e-4}
   one_over_f_slope: {dist: uniform, low: 0.9, high: 1.2}
+  emi_frequencies_Hz: [50.0]
+  emi_amplitudes_rel: [{dist: loguniform, low: 1.0e-5, high: 5.0e-5}]
+  speckle_noise_sigma: {dist: loguniform, low: 1.0e-5, high: 5.0e-5}
+  speckle_correlation_length: {dist: uniform, low: 5, high: 15}
 environment:
   temperature_K: 296.0
   pressure_atm: 1.0
