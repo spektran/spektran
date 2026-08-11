@@ -11,6 +11,8 @@
 
 <br>
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/spektran/spektran/blob/main/notebooks/quickstart_colab.ipynb)
+[![GitHub Stars](https://img.shields.io/github/stars/spektran/spektran?style=flat-square)](https://github.com/spektran/spektran/stargazers)
 [![CI](https://img.shields.io/github/actions/workflow/status/spektran/spektran/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/spektran/spektran/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/spektran?style=flat-square&color=blue)](https://pypi.org/project/spektran/)
 [![Python](https://img.shields.io/badge/python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white)](https://pypi.org/project/spektran/)
@@ -221,6 +223,18 @@ SPEKTRAN's benchmarks mirror problems that matter in industry and environmental 
 ```
 
 See [CITATION.cff](CITATION.cff) or use the DOI: [10.5281/zenodo.21790394](https://doi.org/10.5281/zenodo.21790394).
+
+## Star History
+
+<a href="https://star-history.com/#spektran/spektran&Date">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=spektran/spektran&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=spektran/spektran&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=spektran/spektran&type=Date" width="600" />
+ </picture>
+</a>
+
+<br>
 
 ## Contributing
 
