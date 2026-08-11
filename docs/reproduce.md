@@ -14,3 +14,6 @@
   must agree to 0.1% / 1% on 1000 random points — see [Quality gates](gates.md).
 - v0.2 introduces the `spektran generate` CLI as the primary generation
   interface; `scripts/generate_dataset.py` remains available as an alternative.
+- v0.5 adds `spektran train --baseline <name>` for one-command baseline
+  training with automatic data generation. All commands support `--json`
+  output for AI agent integration (see [`AGENTS.md`](https://github.com/spektran/spektran/blob/main/AGENTS.md)).

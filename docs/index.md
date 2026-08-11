@@ -1,13 +1,14 @@
 # SPEKTRAN
 
 <div style="text-align: center; margin: 1em 0 2em;">
-<strong style="font-size: 1.2em;">The MNIST of Gas Sensing</strong><br>
-<em>Open-source simulation engine + ML benchmark for optical spectroscopy</em>
+<strong style="font-size: 1.2em;">The MNIST of Gas Sensing — AI Agent Ready</strong><br>
+<em>Simulate, train, and evaluate optical gas sensing ML models via natural language</em>
 </div>
 
 [:material-play-circle: Try the Demo](https://huggingface.co/spaces/spektran/spektran-demo){ .md-button .md-button--primary }
 [:material-download: Install](quickstart.md){ .md-button }
 [:material-trophy: Leaderboard](leaderboard.md){ .md-button }
+[:material-robot: Agent Interface](https://github.com/spektran/spektran/blob/main/AGENTS.md){ .md-button }
 
 ---
 
@@ -57,6 +58,13 @@
     Concentration regression, denoising, cross-instrument,
     WMS, drift, OOD, cross-modality, multi-species, temperature
 
+-   :material-robot:{ .lg .middle } **AI Agent Ready**
+
+    ---
+
+    Every CLI command outputs JSON. Discovery, training, and
+    evaluation via natural language with any AI coding agent
+
 </div>
 
 ---
@@ -93,6 +101,20 @@
     spektran generate configs/datasets/ch4-t1-train-v0.yaml --out data
     spektran benchmark --task T1-concentration \
         --truth data/test.h5 --predictions preds.csv
+    ```
+
+=== "AI Agent"
+
+    Tell your AI coding agent (Claude Code, Cursor, etc.):
+
+    > "Train the ridge baseline on T1 and show me the scores"
+
+    The agent reads [`AGENTS.md`](https://github.com/spektran/spektran/blob/main/AGENTS.md) and runs:
+
+    ```bash
+    spektran info --json                      # Bootstrap
+    spektran train --baseline ridge --json    # Auto-generates data + trains
+    # → {"scores": {"T1": {"mae_ppm": 2.84, "mape_pct": 29.87}}}
     ```
 
 ---

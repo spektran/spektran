@@ -6,8 +6,8 @@
 
 ### The MNIST of Gas Sensing
 
-**Open-source simulation engine + ML benchmark for optical spectroscopy**<br>
-*HITRAN-grade physics. Reproducible splits. 9 tasks. Beat the baselines.*
+**AI Agent-Ready simulation engine + ML benchmark for optical gas sensing**<br>
+*HITRAN-grade physics. 9 tasks. 14 baselines. Full pipeline via natural language.*
 
 <br>
 
@@ -19,6 +19,7 @@
 [![License](https://img.shields.io/badge/code-Apache%202.0-green?style=flat-square)](LICENSE)
 [![License](https://img.shields.io/badge/data-CC%20BY%204.0-green?style=flat-square)](LICENSE-DATA)
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.21790394-blue?style=flat-square)](https://doi.org/10.5281/zenodo.21790394)
+[![AI Agent Ready](https://img.shields.io/badge/%F0%9F%A4%96_AI_Agent-Ready-blueviolet?style=flat-square)](AGENTS.md)
 
 [**Documentation**](https://spektran.github.io/spektran/) &nbsp;&middot;&nbsp;
 [**Interactive Demo**](https://huggingface.co/spaces/spektran/spektran-demo) &nbsp;&middot;&nbsp;
@@ -31,6 +32,8 @@
 <br>
 
 > **You don't need to be a spectroscopist.** &nbsp;If you work on regression, denoising, domain generalization, or anomaly detection, SPEKTRAN gives you 9 ready-to-use benchmark tasks backed by real physics — with the same convenience as MNIST, but grounded in a domain where ML has direct industrial impact.
+>
+> **You don't even need to type code.** &nbsp;SPEKTRAN is fully **AI Agent-ready** — tell Claude Code, Cursor, or any coding agent what you want, and it operates the entire pipeline through natural language. See [AGENTS.md](AGENTS.md).
 
 <br>
 
@@ -52,9 +55,9 @@
 
 ### ML Benchmark
 - **9 tasks** (T1–T9) — regression, denoising, OOD, transfer, multi-species
-- **12+ baselines** — Ridge, CNN, Transformer, U-Net, TCN
+- **14 baselines** — Ridge, CNN, Transformer, U-Net, TCN, ...
 - **Official splits** — train / val / test / held-out instrument
-- **One-command evaluation** via `spektran benchmark`
+- **AI Agent-ready CLI** — `--json` on every command, discoverable API
 - **Public leaderboard** on GitHub Pages
 
 </td>
@@ -114,11 +117,73 @@ alpha_h2o = absorption_coefficient(nu, demo_h2o(), 0.01, 296.0, 1.0)
 
 See [`examples/multispecies_ch4_h2o.py`](examples/multispecies_ch4_h2o.py).
 
-**CLI:**
+**CLI** (all commands support `--json` for AI agents):
 
 ```bash
-spektran generate configs/datasets/ch4-t1-train-v0.yaml --out data
+spektran info --json                      # Project discovery (agent bootstrap)
+spektran list tasks --json                # Available benchmark tasks
+spektran train --baseline ridge --json    # Train with auto data generation
+spektran generate configs/datasets/ch4-t1-train-v0.yaml --out data --json
 spektran benchmark --task T1-concentration --truth data/test.h5 --predictions preds.csv
+```
+
+</details>
+
+<br>
+
+## AI Agent Ready
+
+SPEKTRAN is designed from the ground up for the AI agent era. Every CLI command outputs
+structured JSON, every resource is discoverable, and the full ML pipeline — **simulate →
+generate → train → evaluate** — runs with zero manual steps.
+
+**Works with**: Claude Code, Cursor, GitHub Copilot, Windsurf, Cline, and any agent that
+can run shell commands.
+
+**Agent interface**: [`AGENTS.md`](AGENTS.md) — the agent reads this file and immediately
+understands how to operate the entire project.
+
+```
+You: "Train the ridge baseline on T1 and show me the scores"
+
+Agent: spektran train --baseline ridge --task T1 --json
+       → {"baseline": "ridge", "scores": {"T1": {"mae_ppm": 2.84, "mape_pct": 29.87}}}
+```
+
+<details>
+<summary><b>Agent workflow examples</b></summary>
+
+<br>
+
+**Discovery** — agent bootstraps itself:
+```bash
+spektran info --json           # What is this project? What's available?
+spektran list tasks --json     # 9 tasks with metrics and available baselines
+spektran list baselines --json # 14 baselines with pre-computed scores
+spektran status --json         # What data exists? What's been trained?
+```
+
+**One-command training** — agent trains any baseline:
+```bash
+spektran train --baseline ridge --json        # Auto-generates data if missing
+spektran train --baseline transformer --json  # Works for any registered baseline
+spektran train --baseline cnn1d --task T1 --json  # Target a specific task
+```
+
+**Compare all baselines** — agent scripts a leaderboard run:
+```bash
+for baseline in ridge cnn1d transformer; do
+  spektran train --baseline $baseline --task T1 --json
+done
+```
+
+**Custom model** — agent writes code, evaluates with CLI:
+```bash
+# Agent generates training code using spektran.io.read_records
+# Agent writes predictions CSV
+spektran benchmark --task T1-concentration \
+  --truth data/ch4-t1-test-v0.h5 \
+  --predictions my_model_predictions.csv
 ```
 
 </details>

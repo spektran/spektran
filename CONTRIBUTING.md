@@ -22,6 +22,16 @@ The PR template includes a CLA checkbox that must be checked before merging.
 4. All stochastic code must accept an explicit `seed`/`rng` argument. Non-reproducible default behavior is rejected.
 5. Code license: Apache-2.0. By submitting a PR you agree to the CLA above.
 
+## Adding a new baseline
+
+SPEKTRAN is AI Agent-ready — new baselines are automatically available to AI agents
+via the registry.
+
+1. Create `baselines/<name>/train.py` following the pattern in existing baselines (see `baselines/common.py` for data loading helpers).
+2. Add an entry to `baselines/registry.yaml` with display name, description, tasks, datasets, and score file paths.
+3. Verify: `spektran train --baseline <name> --json` should auto-generate data, run training, and report scores.
+4. Open a PR with your baseline code and the registry entry.
+
 ## Schema changes
 
 Schema modifications are write-privileged:

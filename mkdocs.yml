@@ -1,5 +1,5 @@
 site_name: SPEKTRAN
-site_description: Open-source simulation engine and ML benchmark for optical gas sensing
+site_description: AI Agent-ready simulation engine and ML benchmark for optical gas sensing
 site_url: https://spektran.github.io/spektran/
 repo_url: https://github.com/spektran/spektran
 repo_name: spektran/spektran
@@ -52,6 +52,7 @@ nav:
   - Home: index.md
   - Getting Started:
     - Quickstart: quickstart.md
+    - AI Agent Guide: agent.md
     - Data schema: schema.md
   - Benchmark:
     - Rules: benchmark.md

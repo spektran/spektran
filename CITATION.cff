@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use SPEKTRAN, please cite it as below."
-title: "SPEKTRAN: an open simulation engine, data standard, and ML benchmark for TDLAS"
+title: "SPEKTRAN: AI Agent-ready simulation engine and ML benchmark for optical gas sensing"
 type: software
 authors:
   - name: "SPEKTRAN contributors"
@@ -13,5 +13,6 @@ keywords:
   - gas sensing
   - machine learning
   - benchmark
+  - AI agent
 version: 0.5.0
 date-released: "2026-08-05"

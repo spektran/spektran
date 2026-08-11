@@ -17,8 +17,9 @@
 ## Official splits (v0)
 
 Defined entirely by configs under `configs/datasets/` (instrument mixtures +
-disjoint master seeds). Regenerate locally with `scripts/generate_dataset.py`;
-identical bytes for everyone at the same generator version.
+disjoint master seeds). Regenerate locally with `spektran generate` (or
+`scripts/generate_dataset.py`); identical bytes for everyone at the same
+generator version. All CLI commands support `--json` for AI agent integration.
 
 - T1: train 5000 / val 500 / test 1000, mixture of easy+medium+hard DA
   instruments.

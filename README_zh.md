@@ -6,8 +6,8 @@
 
 ### 气体传感领域的 MNIST
 
-**面向光学光谱学的开源仿真引擎与机器学习基准**<br>
-*HITRAN 级物理精度。可复现数据划分。9 项任务。超越基线模型。*
+**AI Agent-Ready 光学气体传感仿真引擎与 ML 基准**<br>
+*HITRAN 级物理精度。9 项任务。14 种基线。自然语言驱动全链条 ML 流水线。*
 
 <br>
 
@@ -19,6 +19,7 @@
 [![License](https://img.shields.io/badge/code-Apache%202.0-green?style=flat-square)](LICENSE)
 [![License](https://img.shields.io/badge/data-CC%20BY%204.0-green?style=flat-square)](LICENSE-DATA)
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.21790394-blue?style=flat-square)](https://doi.org/10.5281/zenodo.21790394)
+[![AI Agent Ready](https://img.shields.io/badge/%F0%9F%A4%96_AI_Agent-Ready-blueviolet?style=flat-square)](AGENTS.md)
 
 [**文档**](https://spektran.github.io/spektran/) &nbsp;&middot;&nbsp;
 [**在线演示**](https://huggingface.co/spaces/spektran/spektran-demo) &nbsp;&middot;&nbsp;
@@ -31,6 +32,8 @@
 <br>
 
 > **你不需要是光谱学专家。** &nbsp;无论你从事回归、去噪、领域泛化还是异常检测研究，SPEKTRAN 都能提供 9 项开箱即用、基于真实物理构建的基准任务——具备 MNIST 般的易用性，却扎根于一个机器学习能够产生直接产业影响的真实领域。
+>
+> **你甚至不需要写代码。** &nbsp;SPEKTRAN 是完全的 **AI Agent-Ready** 项目——告诉 Claude Code、Cursor 或任何 AI 编程助手你想做什么，它就能通过自然语言操控整条流水线。详见 [AGENTS.md](AGENTS.md)。
 
 <br>
 
@@ -52,9 +55,9 @@
 
 ### 机器学习基准
 - **9 项任务（T1–T9）** — 回归、去噪、OOD、迁移、多组分
-- **12+ 种基线模型** — Ridge、CNN、Transformer、U-Net、TCN
+- **14 种基线模型** — Ridge、CNN、Transformer、U-Net、TCN 等
 - **官方数据划分** — 训练集 / 验证集 / 测试集 / 留出仪器集
-- **一条命令完成评测**，通过 `spektran benchmark`
+- **AI Agent-Ready CLI** — 全命令 `--json` 输出，可发现式 API
 - **公开排行榜**，托管于 GitHub Pages
 
 </td>
@@ -114,11 +117,60 @@ alpha_h2o = absorption_coefficient(nu, demo_h2o(), 0.01, 296.0, 1.0)
 
 详见 [`examples/multispecies_ch4_h2o.py`](examples/multispecies_ch4_h2o.py)。
 
-**命令行工具：**
+**命令行工具**（所有命令支持 `--json` 供 AI Agent 使用）：
 
 ```bash
-spektran generate configs/datasets/ch4-t1-train-v0.yaml --out data
+spektran info --json                      # 项目发现（Agent 自举）
+spektran list tasks --json                # 可用基准任务
+spektran train --baseline ridge --json    # 自动生成数据并训练
+spektran generate configs/datasets/ch4-t1-train-v0.yaml --out data --json
 spektran benchmark --task T1-concentration --truth data/test.h5 --predictions preds.csv
+```
+
+</details>
+
+<br>
+
+## AI Agent Ready
+
+SPEKTRAN 从底层架构就为 AI Agent 时代而设计。每条 CLI 命令都输出结构化 JSON，每项资源都可被发现，完整的 ML 流水线——**仿真 → 生成 → 训练 → 评测**——全程零手动操作。
+
+**兼容**: Claude Code、Cursor、GitHub Copilot、Windsurf、Cline，以及一切能执行 Shell 命令的 AI Agent。
+
+**Agent 接口文件**: [`AGENTS.md`](AGENTS.md) — Agent 读取此文件后即可理解并操控整个项目。
+
+```
+你: "用 ridge 基线在 T1 任务上训练，然后告诉我分数"
+
+Agent: spektran train --baseline ridge --task T1 --json
+       → {"baseline": "ridge", "scores": {"T1": {"mae_ppm": 2.84, "mape_pct": 29.87}}}
+```
+
+<details>
+<summary><b>Agent 工作流示例</b></summary>
+
+<br>
+
+**发现** — Agent 自举启动：
+```bash
+spektran info --json           # 这个项目是什么？有哪些资源？
+spektran list tasks --json     # 9 项任务及其指标、可用基线
+spektran list baselines --json # 14 种基线及预计算分数
+spektran status --json         # 已生成的数据和训练状态
+```
+
+**一键训练** — Agent 训练任何基线：
+```bash
+spektran train --baseline ridge --json        # 自动生成缺失数据
+spektran train --baseline transformer --json  # 适用于任何已注册基线
+spektran train --baseline cnn1d --task T1 --json  # 指定特定任务
+```
+
+**横向对比** — Agent 脚本化运行排行榜：
+```bash
+for baseline in ridge cnn1d transformer; do
+  spektran train --baseline $baseline --task T1 --json
+done
 ```
 
 </details>

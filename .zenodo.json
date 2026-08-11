@@ -1,6 +1,6 @@
 {
-  "title": "SPEKTRAN: an open simulation engine, data standard, and ML benchmark for TDLAS",
-  "description": "Open-source simulation engine, data standard, and ML benchmark for optical gas sensing (TDLAS + NDIR). v0.5.0: Hartmann-Tran line profile via hapi, WMS 2f/1f ratio, laser RIN and electronic bandwidth, multi-species (T8) and temperature regression (T9) benchmarks, isotopologue handling, sim-to-real validation. 10 target molecules, 9 benchmark tasks (T1-T9), 10 ML baselines. Built on hapi (HITRAN API) for spectroscopic physics.",
+  "title": "SPEKTRAN: AI Agent-ready simulation engine and ML benchmark for optical gas sensing",
+  "description": "AI Agent-ready simulation engine and ML benchmark for optical gas sensing (TDLAS + NDIR). Full ML pipeline operable via natural language and structured CLI. v0.5.0: 10 target molecules, 9 benchmark tasks (T1-T9), 14 ML baselines, 18 virtual instruments, JSON-output CLI for AI agent integration. Built on hapi (HITRAN API) for spectroscopic physics.",
   "license": "Apache-2.0",
   "upload_type": "software",
   "keywords": [
@@ -12,7 +12,8 @@
     "synthetic data",
     "HITRAN",
     "NDIR",
-    "Hartmann-Tran profile"
+    "AI agent",
+    "agent-ready"
   ],
   "creators": [
     { "name": "SPEKTRAN contributors" }

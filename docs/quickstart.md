@@ -1,6 +1,17 @@
 # Quickstart
 
-## Option 0: just the data (no install)
+## Option 0: AI Agent (zero code)
+
+If you use an AI coding agent (Claude Code, Cursor, GitHub Copilot, Windsurf),
+just tell it what you want:
+
+> "Train the ridge baseline on the concentration task and show me the MAE"
+
+The agent reads [`AGENTS.md`](https://github.com/spektran/spektran/blob/main/AGENTS.md)
+and operates the full pipeline through `spektran` CLI commands with `--json` output.
+No manual steps needed. See the [AI Agent interface](https://github.com/spektran/spektran/blob/main/AGENTS.md) for the full command reference.
+
+## Option 1: just the data (no install)
 
 The official v0 splits are hosted on Hugging Face:
 
@@ -78,6 +89,14 @@ configs, and gas-truth distributions. The four official v0 splits total
 config, not part of the benchmark splits.)
 
 ## Train and score a baseline
+
+**One command** (auto-generates data if missing):
+
+```bash
+spektran train --baseline ridge --json
+```
+
+**Step by step** (manual control):
 
 ```bash
 pip install scikit-learn torch   # torch only needed for the CNN baseline

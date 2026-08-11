@@ -1,16 +1,23 @@
 # Baselines
 
-Reference models for the SPEKTRAN benchmark. They chase reproducibility,
-not state of the art (plan §6.3): fixed seeds, published hyperparameters,
-one command each.
+14 reference models for the SPEKTRAN benchmark. They chase reproducibility,
+not state of the art: fixed seeds, published hyperparameters, one command each.
 
-## Setup
+All baselines are registered in [`registry.yaml`](registry.yaml) and can be
+trained via the AI Agent-ready CLI:
+
+```bash
+spektran train --baseline ridge --json    # auto-generates data, trains, reports scores
+spektran list baselines --json            # list all 14 baselines with metadata
+```
+
+## Setup (manual)
 
 ```bash
 pip install -e ".[dev]" scikit-learn torch
 # generate the official v0 splits first:
 for s in t1-train t1-val t1-test t3-test-heldout; do
-  python scripts/generate_dataset.py configs/datasets/ch4-$s-v0.yaml --out data
+  spektran generate configs/datasets/ch4-$s-v0.yaml --out data
 done
 ```
 

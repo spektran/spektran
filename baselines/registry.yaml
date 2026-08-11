@@ -1,0 +1,186 @@
+# Baseline registry — maps short names to training scripts and metadata.
+# Used by `spektran list baselines`, `spektran train`, and `spektran status`.
+
+baselines:
+  ridge:
+    display_name: Ridge Regression
+    description: "StandardScaler + L2-regularized linear regression (~201 params)"
+    directory: ridge_regression
+    tasks:
+      T1:
+        script: train.py
+        datasets: [ch4-t1-train-v0, ch4-t1-val-v0, ch4-t1-test-v0, ch4-t3-test-heldout-v0]
+        predictions:
+          T1: predictions_t1-test.csv
+          T3: predictions_t3-test-heldout.csv
+        scores:
+          T1: scores_t1.json
+          T3: scores_t3.json
+
+  cnn1d:
+    display_name: 1D CNN
+    description: "3-layer Conv1d + global pool + dense head (~50K params)"
+    directory: cnn1d
+    tasks:
+      T1:
+        script: train.py
+        datasets: [ch4-t1-train-v0, ch4-t1-val-v0, ch4-t1-test-v0, ch4-t3-test-heldout-v0]
+        predictions:
+          T1: predictions_t1-test.csv
+          T3: predictions_t3-test-heldout.csv
+        scores:
+          T1: scores_t1.json
+          T3: scores_t3.json
+
+  transformer:
+    display_name: Patchified Transformer
+    description: "Patchified input + 4-layer encoder + regression head (~100K params)"
+    directory: transformer_t1
+    tasks:
+      T1:
+        script: train.py
+        datasets: [ch4-t1-train-v0, ch4-t1-val-v0, ch4-t1-test-v0, ch4-t3-test-heldout-v0]
+        predictions:
+          T1: predictions_t1-test.csv
+          T3: predictions_t3-test-heldout.csv
+
+  wing_poly:
+    display_name: Wing-Anchored Polynomial
+    description: "Classical spectroscopic baseline: cubic fit on wing regions"
+    directory: wing_poly_t2
+    tasks:
+      T2:
+        script: train.py
+        datasets: [ch4-t1-train-v0, ch4-t1-test-v0]
+        predictions:
+          T2: predictions_t2.h5
+        scores:
+          T2: scores_t2.json
+
+  unet:
+    display_name: 1D U-Net
+    description: "Encoder-decoder with skip connections for spectral denoising"
+    directory: unet_t2
+    tasks:
+      T2:
+        script: train.py
+        datasets: [ch4-t1-train-v0, ch4-t1-val-v0, ch4-t1-test-v0]
+        predictions:
+          T2: predictions_t2.h5
+        scores:
+          T2: scores_t2.json
+
+  ridge_wms:
+    display_name: Ridge (WMS)
+    description: "Ridge regression on 2f demodulated WMS signal"
+    directory: ridge_wms_t4
+    tasks:
+      T4:
+        script: train.py
+        datasets: [ch4-t4-train-v0, ch4-t4-val-v0, ch4-t4-test-v0]
+        predictions:
+          T4: predictions_t4-test.csv
+        scores:
+          T4: scores_t4-test.json
+
+  cnn1d_wms:
+    display_name: 1D CNN (WMS)
+    description: "Conv1d baseline on WMS 2f signal"
+    directory: cnn1d_wms_t4
+    tasks:
+      T4:
+        script: train.py
+        datasets: [ch4-t4-train-v0, ch4-t4-val-v0, ch4-t4-test-v0]
+        predictions:
+          T4: predictions_t4-test.csv
+        scores:
+          T4: scores_t4-test.json
+
+  transformer_wms:
+    display_name: Transformer (WMS)
+    description: "Patchified Transformer on WMS 2f signal"
+    directory: transformer_t4
+    tasks:
+      T4:
+        script: train.py
+        datasets: [ch4-t4-train-v0, ch4-t4-val-v0, ch4-t4-test-v0]
+        predictions:
+          T4: predictions_t4-test.csv
+
+  moving_avg:
+    display_name: Moving Average
+    description: "Simple moving-average filter for drift compensation"
+    directory: moving_avg_t5
+    tasks:
+      T5:
+        script: train.py
+        datasets: [ch4-t5-train-v0, ch4-t5-test-v0]
+        predictions:
+          T5: predictions_t5-test.csv
+        scores:
+          T5: scores_t5-test.json
+
+  tcn:
+    display_name: TCN
+    description: "Temporal Convolutional Network for drift compensation"
+    directory: tcn_t5
+    tasks:
+      T5:
+        script: train.py
+        datasets: [ch4-t5-train-v0, ch4-t5-test-v0]
+        predictions:
+          T5: predictions_t5-test.csv
+        scores:
+          T5: scores_t5.json
+
+  mahalanobis:
+    display_name: PCA + Mahalanobis
+    description: "PCA-whitened Gaussian with Mahalanobis distance OOD score"
+    directory: mahalanobis_t6
+    tasks:
+      T6:
+        script: train.py
+        datasets: [ch4-t6-train-v0, ch4-t6-test-v0]
+        predictions:
+          T6: predictions_t6-test.csv
+        scores:
+          T6: scores_t6-test.json
+
+  ridge_cross_modality:
+    display_name: Ridge (Cross-Modality)
+    description: "Ridge regression for TDLAS to NDIR cross-modality transfer"
+    directory: ridge_cross_modality_t7
+    tasks:
+      T7:
+        script: train.py
+        datasets: [ch4-t1-train-v0, ch4-t1-val-v0, ch4-cross-modality-test-v0]
+        predictions:
+          T7: predictions_t7-test.csv
+        scores:
+          T7: scores.json
+
+  ridge_multispecies:
+    display_name: Ridge (Multi-Species)
+    description: "Ridge regression for multi-target (CH4+H2O) concentration"
+    directory: ridge_multispecies_t8
+    tasks:
+      T8:
+        script: train.py
+        datasets: [ch4-h2o-t8-train-v0, ch4-h2o-t8-test-v0]
+        predictions:
+          T8: predictions_t8-test.csv
+        scores:
+          T8: scores.json
+
+  ridge_temp:
+    display_name: Ridge (Temperature)
+    description: "Ridge regression for gas temperature estimation"
+    directory: ridge_temp_t9
+    tasks:
+      T9:
+        script: train.py
+        datasets: [ch4-t9-train-v0, ch4-t9-test-v0]
+        predictions:
+          T9: predictions_t9-test.csv
+        scores:
+          T9: scores.json
