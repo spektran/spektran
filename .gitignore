@@ -27,6 +27,10 @@ data/
 .idea/
 .vscode/
 
+# Environment variables
+.env
+.env.*
+
 # baseline prediction artifacts (regenerable)
 baselines/*/predictions_*.csv
 baselines/*/predictions_*.h5

@@ -2,7 +2,7 @@
 
 This roadmap is public and technical. It describes what the project intends to build, not what has been promised. Timelines are estimates. Contributions that accelerate any milestone are welcome.
 
-## Current state: v0.5.0 (2026-08)
+## Current state: v0.5.1 (2026-08)
 
 Two modalities shipped — TDLAS and NDIR:
 - **TDLAS**: DA + WMS forward physics, 10 molecules, 14+ virtual instruments,
