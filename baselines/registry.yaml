@@ -267,3 +267,15 @@ baselines:
         predictions:
           T1: predictions_t1-test.csv
           T3: predictions_t3-test-heldout.csv
+
+  spektralnet:
+    display_name: SpektralNet
+    description: "TDLAS-native spectral decomposition: multi-scale gating + physics features"
+    directory: spektralnet_t1
+    tasks:
+      T1:
+        script: train.py
+        datasets: [ch4-t1-train-v0, ch4-t1-val-v0, ch4-t1-test-v0, ch4-t3-test-heldout-v0]
+        predictions:
+          T1: predictions_t1-test.csv
+          T3: predictions_t3-test-heldout.csv

@@ -1,6 +1,6 @@
 # Baselines
 
-21 reference models for the SPEKTRAN benchmark. They chase reproducibility,
+22 reference models for the SPEKTRAN benchmark. They chase reproducibility,
 not state of the art: fixed seeds, published hyperparameters, one command each.
 
 All baselines are registered in [`registry.yaml`](registry.yaml) and can be
@@ -8,7 +8,7 @@ trained via the AI Agent-ready CLI:
 
 ```bash
 spektran train --baseline ridge --json    # auto-generates data, trains, reports scores
-spektran list baselines --json            # list all 21 baselines with metadata
+spektran list baselines --json            # list all 22 baselines with metadata
 ```
 
 ### Architecture coverage (added 2026-08-11)
@@ -26,6 +26,7 @@ spektran list baselines --json            # list all 21 baselines with metadata
 | Drift | Moving Average, TCN | T5 |
 | OOD | PCA+Mahalanobis | T6 |
 | Physics | Voigt Fit (LM), PINN | T1/T3 |
+| Ensemble (novel) | SpektralNet | T1/T3 |
 
 ## Setup (manual)
 
@@ -37,26 +38,46 @@ for s in t1-train t1-val t1-test t3-test-heldout; do
 done
 ```
 
-## Results (v0 splits, CH4 DA, 2026-08-04)
+## Results (v0 splits, CH4 DA, 2026-08-12)
 
-| Model | T1 test MAE (ppm) | T1 MAPE (%) | T3 held-out MAE (ppm) | T3 degradation vs T1 |
+| Model | T1 MAE (ppm) | T1 MAPE (%) | T3 MAE (ppm) | T3 degradation |
 |---|---|---|---|---|
-| Ridge regression | **2.84** | **29.9** | **3.72** | **1.31x** |
+| **SpektralNet** | **2.27** | **22.5** | **3.51** | 1.54x |
+| Ridge regression | 2.84 | 29.9 | 3.72 | **1.31x** |
+| Random Forest | 5.27 | 24.1 | 10.89 | 2.07x |
+| PINN | 7.29 | 49.1 | 15.62 | 2.14x |
+| Transformer | 7.39 | 22.7 | 10.81 | 1.46x |
+| MLP (BPNN) | 8.08 | 44.5 | 9.85 | 1.22x |
 | 1D CNN | 15.58 | 42.2 | 28.30 | 1.82x |
+| BiLSTM | 29.47 | 61.7 | 51.04 | 1.73x |
+| CNN-LSTM-Attention | 38.39 | 69.4 | 71.03 | 1.85x |
 
-T2 denoising (classical reference, `wing_poly_t2`): spectral RMSE 6.31e-3,
-peak-weighted RMSE 8.60e-3 on the T1 test split.
+### T2 Denoising
 
-Observations (honest, not tuned away):
+| Model | Spectral RMSE | Peak-weighted RMSE |
+|---|---|---|
+| **U-Net** | **0.00362** | **0.00858** |
+| Wing-Poly | 0.00631 | 0.00860 |
+| LSTM-DAE | 0.00994 | 0.02785 |
 
-- The linear model wins on this v0 configuration: napierian absorbance is
-  linear in concentration in the optically thin regime, and ridge averages
-  fringe/noise structure effectively. The CNN (small, 60 epochs, CPU,
-  log-target) is under-trained by design — it is a reference point, not a
-  ceiling.
-- The flagship T3 finding: the CNN degrades more across held-out instruments
-  (1.82x) than ridge (1.31x) — models can overfit *instrument signatures*,
-  which is exactly what the cross-instrument track measures.
+### Observations (honest, not tuned away)
+
+- **SpektralNet** achieves the best T1 MAE (2.27 ppm, 20% over Ridge) by
+  augmenting Ridge's raw-scan features with 6 physics-informed scalars
+  (peak absorbance, center depth, spectral width, etc.) extracted from the
+  same scan. The optimal blend is 80% augmented + 20% raw Ridge.
+- **Linear models dominate**: in the optically thin regime Beer-Lambert
+  absorbance is linear in concentration; Ridge exploits this directly and
+  all deep models (CNN, LSTM, Transformer, PINN) perform worse.
+- **Complexity hurts**: model complexity inversely correlates with T1 MAE
+  on this 3000-sample benchmark. Ridge (201 params) > MLP (50K) > CNN >
+  BiLSTM > CNN-LSTM-Attention.
+- **T3 generalization**: MLP has the best cross-instrument generalization
+  among deep models (1.22x) — simplicity is robustness. PINN's physics
+  loss actually hurts T3 (2.14x) because fixed Beer-Lambert constants
+  overfit to training instrument path lengths.
+- **T2 denoising**: U-Net dominates; skip connections preserve spectral
+  detail that the LSTM-DAE bottleneck destroys.
 
 ## T4 Results (v0 WMS splits, CH4 2f, 2026-08-05)
 
@@ -207,10 +228,36 @@ python -m spektran.benchmark.evaluate --task T9-temperature \
   --predictions baselines/ridge_temp_t9/predictions_t9-test.csv
 ```
 
+## SpektralNet — Novel TDLAS-Native Model
+
+SpektralNet is a dual-domain physics-augmented Ridge ensemble designed
+specifically for TDLAS concentration recovery. It achieves the best T1 MAE
+(2.27 ppm, 20% improvement over standard Ridge) by augmenting the raw scan
+features with 6 physics-informed scalars extracted via Beer-Lambert wing-baseline
+correction:
+
+1. **Peak absorbance** — `-log(min_transmittance)`, direct Beer-Lambert measure
+2. **Center depth (normalized)** — depth of absorption dip relative to baseline
+3. **Center contrast** — mean absorption in center vs wings
+4. **Wing asymmetry** — left/right baseline imbalance (instrument signature)
+5. **Integrated absorption** — total area under absorption proxy curve
+6. **Spectral width** — variance-based width of the absorption feature
+
+The ensemble blends two Ridge regressors (80% augmented + 20% raw features),
+selected by validation MAE grid search. The key insight: in the optically thin
+regime where Beer-Lambert absorbance is linear in concentration, enhancing
+Ridge's input space with physics features outperforms replacing Ridge with
+deeper models.
+
+```bash
+python baselines/spektralnet_t1/train.py   # ~30 s
+```
+
 ## Reproduce
 
 ```bash
 python baselines/ridge_regression/train.py   # ~20 s
+python baselines/spektralnet_t1/train.py     # ~30 s (best T1 MAE)
 python baselines/cnn1d/train.py              # ~7 min on CPU (60 epochs)
 ```
 

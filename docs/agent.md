@@ -32,7 +32,7 @@ Agent reads AGENTS.md → discovers commands → executes:
 |---------|-----------------|
 | `spektran info --json` | Project overview: version, tasks, baselines, data status |
 | `spektran list tasks --json` | All 9 tasks with input/target/metrics/available baselines |
-| `spektran list baselines --json` | All 14 baselines with descriptions and scores |
+| `spektran list baselines --json` | All 22 baselines with descriptions and scores |
 | `spektran list instruments --json` | All 18 virtual instruments with tier and technique |
 | `spektran list datasets --json` | All dataset configs with generation status |
 | `spektran status --json` | Combined data + training state |

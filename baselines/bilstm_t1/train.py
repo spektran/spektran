@@ -28,7 +28,7 @@ from common import REPO, load_split, write_predictions_csv  # noqa: E402
 
 OUT = Path(__file__).resolve().parent
 SEED = 20260811
-EPOCHS = 60
+EPOCHS = 100
 BATCH = 64
 LR = 1e-3
 
@@ -38,9 +38,10 @@ class BiLSTM(nn.Module):
         super().__init__()
         self.downsample = nn.Sequential(
             nn.Conv1d(1, 16, 7, stride=4, padding=3), nn.ReLU(),
+            nn.Conv1d(16, 32, 5, stride=4, padding=2), nn.ReLU(),
         )
         self.lstm = nn.LSTM(
-            input_size=16, hidden_size=hidden,
+            input_size=32, hidden_size=hidden,
             num_layers=n_layers, batch_first=True, bidirectional=True,
         )
         self.head = nn.Sequential(
@@ -50,8 +51,8 @@ class BiLSTM(nn.Module):
 
     def forward(self, x):
         # x: [B, 1, n_points]
-        feat = self.downsample(x)  # [B, 16, seq_len]
-        feat = feat.permute(0, 2, 1)  # [B, seq_len, 16]
+        feat = self.downsample(x)  # [B, 32, seq_len]
+        feat = feat.permute(0, 2, 1)  # [B, seq_len, 32]
         _, (h_n, _) = self.lstm(feat)  # h_n: [n_layers*2, B, hidden]
         h_fwd = h_n[-2]  # last layer forward
         h_bwd = h_n[-1]  # last layer backward
@@ -91,6 +92,7 @@ def main() -> int:
             opt.zero_grad()
             loss = loss_fn(model(Xt[idx]), yt[idx])
             loss.backward()
+            nn.utils.clip_grad_norm_(model.parameters(), 1.0)
             opt.step()
         model.train(False)
         with torch.no_grad():
@@ -112,7 +114,7 @@ def main() -> int:
 
     (OUT / "hyperparams.json").write_text(json.dumps({
         "seed": SEED, "epochs": EPOCHS, "batch": BATCH, "lr": LR,
-        "architecture": "Conv1d(4x downsample) -> BiLSTM(2 layers, hidden=64) -> MLP head",
+        "architecture": "Conv1d(16x downsample) -> BiLSTM(2 layers, hidden=64) -> MLP head",
         "best_val_mae_ppm": best_val,
         "target_transform": "log1p, z-standardized",
         "train_log": log,

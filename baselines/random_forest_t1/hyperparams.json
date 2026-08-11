@@ -1,0 +1,19 @@
+{
+  "selected_model": "gbr",
+  "seed": 20260811,
+  "rf_val_mae_ppm": 6.114204042098012,
+  "gbr_val_mae_ppm": 5.304443445581089,
+  "rf_params": {
+    "n_estimators": 200,
+    "max_depth": 20,
+    "min_samples_leaf": 5
+  },
+  "gbr_params": {
+    "n_estimators": 300,
+    "max_depth": 5,
+    "learning_rate": 0.1,
+    "subsample": 0.8
+  },
+  "target_transform": "log1p",
+  "scaler": "standard"
+}

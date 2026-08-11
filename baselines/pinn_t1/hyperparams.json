@@ -1,0 +1,333 @@
+{
+  "seed": 20260811,
+  "epochs": 80,
+  "batch": 64,
+  "lr": 0.001,
+  "physics_weight": 0.1,
+  "architecture": "256-128-64-1 MLP with Beer-Lambert physics loss",
+  "physics_constraint": "Beer-Lambert: predicted conc -> theoretical absorbance vs observed",
+  "best_val_mae_ppm": 7.721031927194011,
+  "target_transform": "log1p, z-standardized",
+  "train_log": [
+    {
+      "epoch": 0,
+      "val_mae_ppm": 61.41510283253428
+    },
+    {
+      "epoch": 1,
+      "val_mae_ppm": 56.32100279678832
+    },
+    {
+      "epoch": 2,
+      "val_mae_ppm": 51.335132945783904
+    },
+    {
+      "epoch": 3,
+      "val_mae_ppm": 34.75621810636534
+    },
+    {
+      "epoch": 4,
+      "val_mae_ppm": 37.781221195868966
+    },
+    {
+      "epoch": 5,
+      "val_mae_ppm": 30.62651297877253
+    },
+    {
+      "epoch": 6,
+      "val_mae_ppm": 39.56121288037434
+    },
+    {
+      "epoch": 7,
+      "val_mae_ppm": 40.775293919615066
+    },
+    {
+      "epoch": 8,
+      "val_mae_ppm": 28.745528993924225
+    },
+    {
+      "epoch": 9,
+      "val_mae_ppm": 33.99131434158368
+    },
+    {
+      "epoch": 10,
+      "val_mae_ppm": 27.77264020446528
+    },
+    {
+      "epoch": 11,
+      "val_mae_ppm": 26.77495217286423
+    },
+    {
+      "epoch": 12,
+      "val_mae_ppm": 25.54049791095052
+    },
+    {
+      "epoch": 13,
+      "val_mae_ppm": 27.326778465489507
+    },
+    {
+      "epoch": 14,
+      "val_mae_ppm": 25.091355828737672
+    },
+    {
+      "epoch": 15,
+      "val_mae_ppm": 30.78790404922219
+    },
+    {
+      "epoch": 16,
+      "val_mae_ppm": 24.129859213289237
+    },
+    {
+      "epoch": 17,
+      "val_mae_ppm": 22.03048214683851
+    },
+    {
+      "epoch": 18,
+      "val_mae_ppm": 30.133813632471277
+    },
+    {
+      "epoch": 19,
+      "val_mae_ppm": 31.435709594485697
+    },
+    {
+      "epoch": 20,
+      "val_mae_ppm": 32.426221297269066
+    },
+    {
+      "epoch": 21,
+      "val_mae_ppm": 18.09292890015415
+    },
+    {
+      "epoch": 22,
+      "val_mae_ppm": 27.755141067811483
+    },
+    {
+      "epoch": 23,
+      "val_mae_ppm": 16.853651302819816
+    },
+    {
+      "epoch": 24,
+      "val_mae_ppm": 13.739626555646337
+    },
+    {
+      "epoch": 25,
+      "val_mae_ppm": 20.57240352292634
+    },
+    {
+      "epoch": 26,
+      "val_mae_ppm": 19.203779975240213
+    },
+    {
+      "epoch": 27,
+      "val_mae_ppm": 30.362528657030786
+    },
+    {
+      "epoch": 28,
+      "val_mae_ppm": 26.831761237543024
+    },
+    {
+      "epoch": 29,
+      "val_mae_ppm": 14.73118172612284
+    },
+    {
+      "epoch": 30,
+      "val_mae_ppm": 27.830534584132575
+    },
+    {
+      "epoch": 31,
+      "val_mae_ppm": 29.738030980256166
+    },
+    {
+      "epoch": 32,
+      "val_mae_ppm": 19.58435746864455
+    },
+    {
+      "epoch": 33,
+      "val_mae_ppm": 11.542278501841333
+    },
+    {
+      "epoch": 34,
+      "val_mae_ppm": 17.904490908022016
+    },
+    {
+      "epoch": 35,
+      "val_mae_ppm": 33.53289549974733
+    },
+    {
+      "epoch": 36,
+      "val_mae_ppm": 12.258643677909992
+    },
+    {
+      "epoch": 37,
+      "val_mae_ppm": 10.449611178318632
+    },
+    {
+      "epoch": 38,
+      "val_mae_ppm": 22.839242846830167
+    },
+    {
+      "epoch": 39,
+      "val_mae_ppm": 29.178541784875783
+    },
+    {
+      "epoch": 40,
+      "val_mae_ppm": 17.394468542208546
+    },
+    {
+      "epoch": 41,
+      "val_mae_ppm": 27.88983099024745
+    },
+    {
+      "epoch": 42,
+      "val_mae_ppm": 11.141745230072988
+    },
+    {
+      "epoch": 43,
+      "val_mae_ppm": 12.588412532831853
+    },
+    {
+      "epoch": 44,
+      "val_mae_ppm": 24.712311645237744
+    },
+    {
+      "epoch": 45,
+      "val_mae_ppm": 19.05425043570267
+    },
+    {
+      "epoch": 46,
+      "val_mae_ppm": 16.276310007764923
+    },
+    {
+      "epoch": 47,
+      "val_mae_ppm": 13.284088123580037
+    },
+    {
+      "epoch": 48,
+      "val_mae_ppm": 29.358017151040862
+    },
+    {
+      "epoch": 49,
+      "val_mae_ppm": 22.414418776635337
+    },
+    {
+      "epoch": 50,
+      "val_mae_ppm": 19.56393642283968
+    },
+    {
+      "epoch": 51,
+      "val_mae_ppm": 30.437480317377027
+    },
+    {
+      "epoch": 52,
+      "val_mae_ppm": 16.35401226201156
+    },
+    {
+      "epoch": 53,
+      "val_mae_ppm": 14.415130420894497
+    },
+    {
+      "epoch": 54,
+      "val_mae_ppm": 13.505326229960593
+    },
+    {
+      "epoch": 55,
+      "val_mae_ppm": 11.362491110015759
+    },
+    {
+      "epoch": 56,
+      "val_mae_ppm": 21.650138229258467
+    },
+    {
+      "epoch": 57,
+      "val_mae_ppm": 9.4308729767856
+    },
+    {
+      "epoch": 58,
+      "val_mae_ppm": 25.656467231844843
+    },
+    {
+      "epoch": 59,
+      "val_mae_ppm": 8.999016678347841
+    },
+    {
+      "epoch": 60,
+      "val_mae_ppm": 23.103324870007004
+    },
+    {
+      "epoch": 61,
+      "val_mae_ppm": 11.834001577973075
+    },
+    {
+      "epoch": 62,
+      "val_mae_ppm": 26.300199964764204
+    },
+    {
+      "epoch": 63,
+      "val_mae_ppm": 12.847704589038917
+    },
+    {
+      "epoch": 64,
+      "val_mae_ppm": 18.977268737015095
+    },
+    {
+      "epoch": 65,
+      "val_mae_ppm": 28.915877171947557
+    },
+    {
+      "epoch": 66,
+      "val_mae_ppm": 19.595411123269027
+    },
+    {
+      "epoch": 67,
+      "val_mae_ppm": 14.369393271862263
+    },
+    {
+      "epoch": 68,
+      "val_mae_ppm": 17.553900341478524
+    },
+    {
+      "epoch": 69,
+      "val_mae_ppm": 8.075584590033444
+    },
+    {
+      "epoch": 70,
+      "val_mae_ppm": 20.310847890341865
+    },
+    {
+      "epoch": 71,
+      "val_mae_ppm": 16.50922310425254
+    },
+    {
+      "epoch": 72,
+      "val_mae_ppm": 13.590969281958573
+    },
+    {
+      "epoch": 73,
+      "val_mae_ppm": 7.721031927194011
+    },
+    {
+      "epoch": 74,
+      "val_mae_ppm": 17.498813622818364
+    },
+    {
+      "epoch": 75,
+      "val_mae_ppm": 20.426635120383885
+    },
+    {
+      "epoch": 76,
+      "val_mae_ppm": 13.570219433285617
+    },
+    {
+      "epoch": 77,
+      "val_mae_ppm": 14.35315315921996
+    },
+    {
+      "epoch": 78,
+      "val_mae_ppm": 25.09134461973964
+    },
+    {
+      "epoch": 79,
+      "val_mae_ppm": 19.128187831379023
+    }
+  ]
+}

@@ -7,7 +7,7 @@
 ### The MNIST of Gas Sensing
 
 **AI Agent-Ready simulation engine + ML benchmark for optical gas sensing**<br>
-*HITRAN-grade physics. 9 tasks. 14 baselines. Full pipeline via natural language.*
+*HITRAN-grade physics. 9 tasks. 22 baselines. Full pipeline via natural language.*
 
 <br>
 
@@ -55,7 +55,7 @@
 
 ### ML Benchmark
 - **9 tasks** (T1–T9) — regression, denoising, OOD, transfer, multi-species
-- **14 baselines** — Ridge, CNN, Transformer, U-Net, TCN, ...
+- **22 baselines** — Ridge, CNN, Transformer, U-Net, SpektralNet, RF, PINN, ...
 - **Official splits** — train / val / test / held-out instrument
 - **AI Agent-ready CLI** — `--json` on every command, discoverable API
 - **Public leaderboard** on GitHub Pages
@@ -162,7 +162,7 @@ Agent: spektran train --baseline ridge --task T1 --json
 ```bash
 spektran info --json           # What is this project? What's available?
 spektran list tasks --json     # 9 tasks with metrics and available baselines
-spektran list baselines --json # 14 baselines with pre-computed scores
+spektran list baselines --json # 22 baselines with pre-computed scores
 spektran status --json         # What data exists? What's been trained?
 ```
 
@@ -215,11 +215,17 @@ spektran benchmark --task T1-concentration \
 
 | Model | T1 MAE ↓ | T1 MAPE ↓ | T3 MAE ↓ | T3 Degradation |
 |:------|:--------:|:---------:|:--------:|:--------------:|
-| Ridge regression | **2.84** | 29.9% | **3.72** | **1.31x** |
+| **SpektralNet** | **2.27** | 22.5% | **3.51** | 1.54x |
+| Ridge regression | 2.84 | 29.9% | 3.72 | **1.31x** |
+| Random Forest | 5.27 | 24.1% | 10.89 | 2.07x |
+| PINN | 7.29 | 49.1% | 15.62 | 2.14x |
 | Patchified Transformer | 7.39 | **22.7%** | 10.81 | 1.46x |
+| MLP (BPNN) | 8.08 | 44.5% | 9.85 | 1.22x |
 | 1D CNN | 15.58 | 42.2% | 28.30 | 1.82x |
+| BiLSTM | 29.47 | 61.7% | 51.04 | 1.73x |
+| CNN-LSTM-Attention | 38.39 | 69.4% | 71.03 | 1.85x |
 
-> Model complexity correlates with instrument overfitting: Ridge 1.31x → Transformer 1.46x → CNN 1.82x. Can you build a model that breaks this pattern?
+> Key insight: **linear models dominate** on this benchmark because Beer-Lambert absorbance is linear in concentration. SpektralNet achieves SOTA by augmenting Ridge with physics-informed features, not by adding depth.
 
 <details>
 <summary><b>Results for other tasks</b></summary>

@@ -1,0 +1,31 @@
+{
+  "seed": 20260811,
+  "architecture": "SpektralNet: Dual-Domain Physics-Augmented Ridge",
+  "strategy": "blend(w_aug=0.8)",
+  "blend_weight_augmented": 0.8,
+  "individual_results": {
+    "raw_ridge": {
+      "alpha": 1.0,
+      "val_mae_ppm": 2.802550903090626
+    },
+    "augmented_ridge": {
+      "alpha": 1.0,
+      "val_mae_ppm": 2.2859980010182315
+    },
+    "physics_only": {
+      "alpha": 0.01,
+      "val_mae_ppm": 54.68399058730591
+    }
+  },
+  "best_val_mae_ppm": 2.2670951579080065,
+  "physics_features": [
+    "peak_absorbance",
+    "center_depth_normalized",
+    "center_contrast",
+    "wing_asymmetry",
+    "integrated_absorption",
+    "spectral_width"
+  ],
+  "target_transform": "none (raw ppm, matching standard Ridge baseline)",
+  "design_rationale": "Ridge dominates because Beer-Lambert is linear. SpektralNet augments Ridge's feature space with 6 physics-informed scalars extracted from the raw scan (peak absorbance, center depth, contrast, wing asymmetry, integrated absorption, spectral width). An optional blend with pure Ridge captures complementary information from both the full spectral and physics-scalar views."
+}

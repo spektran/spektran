@@ -1,0 +1,411 @@
+{
+  "seed": 20260811,
+  "epochs": 100,
+  "batch": 32,
+  "lr": 0.001,
+  "architecture": "Conv1d(4x down)->LSTM enc->latent(64)->LSTM dec->ConvT1d(4x up)",
+  "best_val_spectral_rmse": 0.00983482491154824,
+  "paradigm": "bottleneck compression (no skip connections)",
+  "train_log": [
+    {
+      "epoch": 0,
+      "val_spectral_rmse": 0.015179856941446895
+    },
+    {
+      "epoch": 1,
+      "val_spectral_rmse": 0.013415118080189187
+    },
+    {
+      "epoch": 2,
+      "val_spectral_rmse": 0.01212187284414018
+    },
+    {
+      "epoch": 3,
+      "val_spectral_rmse": 0.0142385181687223
+    },
+    {
+      "epoch": 4,
+      "val_spectral_rmse": 0.010822515250315762
+    },
+    {
+      "epoch": 5,
+      "val_spectral_rmse": 0.011767479493623728
+    },
+    {
+      "epoch": 6,
+      "val_spectral_rmse": 0.010161652477480078
+    },
+    {
+      "epoch": 7,
+      "val_spectral_rmse": 0.010223817439353751
+    },
+    {
+      "epoch": 8,
+      "val_spectral_rmse": 0.010170864819920957
+    },
+    {
+      "epoch": 9,
+      "val_spectral_rmse": 0.009970743556929092
+    },
+    {
+      "epoch": 10,
+      "val_spectral_rmse": 0.013167746582130964
+    },
+    {
+      "epoch": 11,
+      "val_spectral_rmse": 0.00992336844655798
+    },
+    {
+      "epoch": 12,
+      "val_spectral_rmse": 0.010240652901586218
+    },
+    {
+      "epoch": 13,
+      "val_spectral_rmse": 0.01000667673196325
+    },
+    {
+      "epoch": 14,
+      "val_spectral_rmse": 0.010203268592431449
+    },
+    {
+      "epoch": 15,
+      "val_spectral_rmse": 0.010800804515897534
+    },
+    {
+      "epoch": 16,
+      "val_spectral_rmse": 0.01012178535648073
+    },
+    {
+      "epoch": 17,
+      "val_spectral_rmse": 0.010161670522902351
+    },
+    {
+      "epoch": 18,
+      "val_spectral_rmse": 0.010652255232432621
+    },
+    {
+      "epoch": 19,
+      "val_spectral_rmse": 0.010006086099417003
+    },
+    {
+      "epoch": 20,
+      "val_spectral_rmse": 0.010113228604887236
+    },
+    {
+      "epoch": 21,
+      "val_spectral_rmse": 0.010224579948687933
+    },
+    {
+      "epoch": 22,
+      "val_spectral_rmse": 0.010359385369753856
+    },
+    {
+      "epoch": 23,
+      "val_spectral_rmse": 0.009875169495611846
+    },
+    {
+      "epoch": 24,
+      "val_spectral_rmse": 0.010602494494036437
+    },
+    {
+      "epoch": 25,
+      "val_spectral_rmse": 0.009859386697804957
+    },
+    {
+      "epoch": 26,
+      "val_spectral_rmse": 0.011427437193490882
+    },
+    {
+      "epoch": 27,
+      "val_spectral_rmse": 0.009872978649199785
+    },
+    {
+      "epoch": 28,
+      "val_spectral_rmse": 0.010132235282551558
+    },
+    {
+      "epoch": 29,
+      "val_spectral_rmse": 0.009997756053622207
+    },
+    {
+      "epoch": 30,
+      "val_spectral_rmse": 0.010651536746171314
+    },
+    {
+      "epoch": 31,
+      "val_spectral_rmse": 0.009928811693343725
+    },
+    {
+      "epoch": 32,
+      "val_spectral_rmse": 0.01110769320423185
+    },
+    {
+      "epoch": 33,
+      "val_spectral_rmse": 0.01010600289912467
+    },
+    {
+      "epoch": 34,
+      "val_spectral_rmse": 0.010344705320632936
+    },
+    {
+      "epoch": 35,
+      "val_spectral_rmse": 0.01111600222203475
+    },
+    {
+      "epoch": 36,
+      "val_spectral_rmse": 0.010434677371263345
+    },
+    {
+      "epoch": 37,
+      "val_spectral_rmse": 0.01055851431633705
+    },
+    {
+      "epoch": 38,
+      "val_spectral_rmse": 0.011095375658068571
+    },
+    {
+      "epoch": 39,
+      "val_spectral_rmse": 0.009861565076986647
+    },
+    {
+      "epoch": 40,
+      "val_spectral_rmse": 0.00996770818729004
+    },
+    {
+      "epoch": 41,
+      "val_spectral_rmse": 0.010027622464913469
+    },
+    {
+      "epoch": 42,
+      "val_spectral_rmse": 0.009839472459225587
+    },
+    {
+      "epoch": 43,
+      "val_spectral_rmse": 0.010054018557500832
+    },
+    {
+      "epoch": 44,
+      "val_spectral_rmse": 0.009864753194819078
+    },
+    {
+      "epoch": 45,
+      "val_spectral_rmse": 0.009911151837966188
+    },
+    {
+      "epoch": 46,
+      "val_spectral_rmse": 0.010357801831311493
+    },
+    {
+      "epoch": 47,
+      "val_spectral_rmse": 0.010281335974399767
+    },
+    {
+      "epoch": 48,
+      "val_spectral_rmse": 0.010401120826723793
+    },
+    {
+      "epoch": 49,
+      "val_spectral_rmse": 0.010180969107382531
+    },
+    {
+      "epoch": 50,
+      "val_spectral_rmse": 0.009967632242313642
+    },
+    {
+      "epoch": 51,
+      "val_spectral_rmse": 0.010117253883970155
+    },
+    {
+      "epoch": 52,
+      "val_spectral_rmse": 0.010258058367413666
+    },
+    {
+      "epoch": 53,
+      "val_spectral_rmse": 0.010235542981836604
+    },
+    {
+      "epoch": 54,
+      "val_spectral_rmse": 0.009862322300044619
+    },
+    {
+      "epoch": 55,
+      "val_spectral_rmse": 0.00986201714272993
+    },
+    {
+      "epoch": 56,
+      "val_spectral_rmse": 0.00989599429027668
+    },
+    {
+      "epoch": 57,
+      "val_spectral_rmse": 0.010128334793907448
+    },
+    {
+      "epoch": 58,
+      "val_spectral_rmse": 0.011423856610688312
+    },
+    {
+      "epoch": 59,
+      "val_spectral_rmse": 0.00989006037661817
+    },
+    {
+      "epoch": 60,
+      "val_spectral_rmse": 0.009924878202659719
+    },
+    {
+      "epoch": 61,
+      "val_spectral_rmse": 0.009841813633831931
+    },
+    {
+      "epoch": 62,
+      "val_spectral_rmse": 0.010397382431632447
+    },
+    {
+      "epoch": 63,
+      "val_spectral_rmse": 0.010091831832970166
+    },
+    {
+      "epoch": 64,
+      "val_spectral_rmse": 0.01047818970423248
+    },
+    {
+      "epoch": 65,
+      "val_spectral_rmse": 0.010307135210980044
+    },
+    {
+      "epoch": 66,
+      "val_spectral_rmse": 0.010731327182459805
+    },
+    {
+      "epoch": 67,
+      "val_spectral_rmse": 0.009870028935384042
+    },
+    {
+      "epoch": 68,
+      "val_spectral_rmse": 0.009857547782287705
+    },
+    {
+      "epoch": 69,
+      "val_spectral_rmse": 0.009906176604216773
+    },
+    {
+      "epoch": 70,
+      "val_spectral_rmse": 0.010077145608093056
+    },
+    {
+      "epoch": 71,
+      "val_spectral_rmse": 0.010535742685625519
+    },
+    {
+      "epoch": 72,
+      "val_spectral_rmse": 0.010156034298073466
+    },
+    {
+      "epoch": 73,
+      "val_spectral_rmse": 0.009915891666014774
+    },
+    {
+      "epoch": 74,
+      "val_spectral_rmse": 0.010050307812409677
+    },
+    {
+      "epoch": 75,
+      "val_spectral_rmse": 0.010103427801173941
+    },
+    {
+      "epoch": 76,
+      "val_spectral_rmse": 0.01017743427074827
+    },
+    {
+      "epoch": 77,
+      "val_spectral_rmse": 0.009927872746790453
+    },
+    {
+      "epoch": 78,
+      "val_spectral_rmse": 0.009908016919203585
+    },
+    {
+      "epoch": 79,
+      "val_spectral_rmse": 0.009853902369892675
+    },
+    {
+      "epoch": 80,
+      "val_spectral_rmse": 0.009893642631681097
+    },
+    {
+      "epoch": 81,
+      "val_spectral_rmse": 0.009964659250745498
+    },
+    {
+      "epoch": 82,
+      "val_spectral_rmse": 0.010024985352127962
+    },
+    {
+      "epoch": 83,
+      "val_spectral_rmse": 0.009837728176227757
+    },
+    {
+      "epoch": 84,
+      "val_spectral_rmse": 0.010200023996144773
+    },
+    {
+      "epoch": 85,
+      "val_spectral_rmse": 0.009864595259842367
+    },
+    {
+      "epoch": 86,
+      "val_spectral_rmse": 0.010472835714169125
+    },
+    {
+      "epoch": 87,
+      "val_spectral_rmse": 0.010022036249735343
+    },
+    {
+      "epoch": 88,
+      "val_spectral_rmse": 0.010227891654708459
+    },
+    {
+      "epoch": 89,
+      "val_spectral_rmse": 0.009840501201712488
+    },
+    {
+      "epoch": 90,
+      "val_spectral_rmse": 0.009981606386414432
+    },
+    {
+      "epoch": 91,
+      "val_spectral_rmse": 0.010112605696717692
+    },
+    {
+      "epoch": 92,
+      "val_spectral_rmse": 0.01116131782818646
+    },
+    {
+      "epoch": 93,
+      "val_spectral_rmse": 0.009930020510940685
+    },
+    {
+      "epoch": 94,
+      "val_spectral_rmse": 0.009889333797464683
+    },
+    {
+      "epoch": 95,
+      "val_spectral_rmse": 0.00989516712129452
+    },
+    {
+      "epoch": 96,
+      "val_spectral_rmse": 0.00983482491154824
+    },
+    {
+      "epoch": 97,
+      "val_spectral_rmse": 0.010213434609249046
+    },
+    {
+      "epoch": 98,
+      "val_spectral_rmse": 0.00989378894064892
+    },
+    {
+      "epoch": 99,
+      "val_spectral_rmse": 0.009871572371622844
+    }
+  ]
+}

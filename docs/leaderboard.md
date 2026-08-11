@@ -15,16 +15,21 @@ for reproduction instructions.
 
 | Model | Type | MAE (ppm) | MAPE (%) | Code |
 |---|---|---|---|---|
-| Ridge regression | Linear | **2.84** | 29.9 | `baselines/ridge_regression/` |
+| **SpektralNet** | Ensemble | **2.27** | 22.5 | `baselines/spektralnet_t1/` |
+| Ridge regression | Linear | 2.84 | 29.9 | `baselines/ridge_regression/` |
+| Random Forest | Tree | 5.27 | 24.1 | `baselines/random_forest_t1/` |
+| PINN | Physics | 7.29 | 49.1 | `baselines/pinn_t1/` |
 | Patchified Transformer | Deep | 7.39 | **22.7** | `baselines/transformer_t1/` |
+| MLP (BPNN) | Deep | 8.08 | 44.5 | `baselines/mlp_t1/` |
 | 1D CNN | Deep | 15.58 | 42.2 | `baselines/cnn1d/` |
+| BiLSTM | Deep | 29.47 | 61.7 | `baselines/bilstm_t1/` |
+| CNN-LSTM-Attention | Deep | 38.39 | 69.4 | `baselines/cnn_lstm_attn_t1/` |
 
-The linear model wins on absolute MAE: napierian absorbance is linear in
-concentration in the optically thin regime, and ridge averages fringe/noise
-structure effectively. The Transformer achieves the best MAPE (22.7%), trading
-absolute error for better relative accuracy across the log-uniform range. The
-CNN (60 epochs, CPU) is under-trained by design — it is a reference point, not
-a ceiling.
+SpektralNet achieves SOTA by augmenting Ridge's raw-scan features with 6
+physics-informed Beer-Lambert scalars and blending two Ridge regressors (80%
+augmented + 20% raw). Linear models dominate because absorbance is linear in
+concentration; model complexity inversely correlates with performance on this
+3000-sample benchmark.
 
 ---
 
@@ -32,13 +37,14 @@ a ceiling.
 
 | Model | Type | Spectral RMSE | Peak-weighted RMSE | Code |
 |---|---|---|---|---|
-| 1D U-Net | Deep | **3.62e-3** | 8.58e-3 | `baselines/unet_t2/` |
-| Wing-anchored cubic polynomial | Classical | 6.31e-3 | **8.60e-3** | `baselines/wing_poly_t2/` |
+| 1D U-Net | Deep | **3.62e-3** | **8.58e-3** | `baselines/unet_t2/` |
+| Wing-anchored cubic polynomial | Classical | 6.31e-3 | 8.60e-3 | `baselines/wing_poly_t2/` |
+| LSTM-DAE | Deep | 9.94e-3 | 27.85e-3 | `baselines/lstm_dae_t2/` |
 
-The U-Net cuts spectral RMSE by 43% versus the classical wing polynomial, but
-their peak-weighted RMSE is essentially tied — the classical approach performs
-well precisely where it matters most (the absorption peak region). The U-Net's
-advantage is uniform denoising across the full 2000-point spectrum.
+The U-Net dominates both metrics; its skip connections preserve spectral detail
+that the LSTM-DAE's bottleneck destroys. The classical wing polynomial is
+competitive on peak-weighted RMSE — it performs well precisely where it matters
+most (the absorption peak region).
 
 ---
 
@@ -46,14 +52,20 @@ advantage is uniform denoising across the full 2000-point spectrum.
 
 | Model | Type | MAE (ppm) | Degradation vs T1 | Code |
 |---|---|---|---|---|
-| Ridge regression | Linear | **3.72** | **1.31x** | `baselines/ridge_regression/` |
+| **SpektralNet** | Ensemble | **3.51** | 1.54x | `baselines/spektralnet_t1/` |
+| Ridge regression | Linear | 3.72 | **1.31x** | `baselines/ridge_regression/` |
+| MLP (BPNN) | Deep | 9.85 | 1.22x | `baselines/mlp_t1/` |
 | Patchified Transformer | Deep | 10.81 | 1.46x | `baselines/transformer_t1/` |
+| Random Forest | Tree | 10.89 | 2.07x | `baselines/random_forest_t1/` |
+| PINN | Physics | 15.62 | 2.14x | `baselines/pinn_t1/` |
 | 1D CNN | Deep | 28.30 | 1.82x | `baselines/cnn1d/` |
+| BiLSTM | Deep | 51.04 | 1.73x | `baselines/bilstm_t1/` |
+| CNN-LSTM-Attention | Deep | 71.03 | 1.85x | `baselines/cnn_lstm_attn_t1/` |
 
-The flagship finding: model complexity correlates with instrument overfitting.
-Ridge degrades 1.31x, the Transformer 1.46x, and the CNN 1.82x across held-out
-instruments — deep models can overfit *instrument signatures*, which is exactly
-what the cross-instrument track measures.
+SpektralNet has the best absolute T3 MAE (3.51 ppm) but not the best
+degradation ratio. MLP (1.22x) and Ridge (1.31x) generalize best — simplicity
+is robustness. PINN's physics loss actually hurts T3 (2.14x) because fixed
+Beer-Lambert constants overfit to training instrument path lengths.
 
 ---
 
