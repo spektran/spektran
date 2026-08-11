@@ -1,0 +1,8 @@
+{
+  "task": "T7",
+  "model": "Ridge (TDLAS\u2192NDIR, Planck-normalized absorbance)",
+  "mae_ppm": 130.68347665238414,
+  "mape_pct": 407.2094699992151,
+  "t1_ridge_mae": 2.84,
+  "degradation_vs_t1": 46.01530868041696
+}

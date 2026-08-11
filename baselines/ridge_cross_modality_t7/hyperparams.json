@@ -1,0 +1,8 @@
+{
+  "seed": 20260819,
+  "alpha": 1.0,
+  "feature": "integrated absorbance (TDLAS: wing-baseline; NDIR: Planck-normalized ratio)",
+  "target_transform": "log1p",
+  "training_data": "ch4-t1-train-v0 (TDLAS, 5000 records)",
+  "test_data": "ch4-cross-modality-test-v0 (NDIR, 1000 records)"
+}

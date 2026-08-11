@@ -150,6 +150,9 @@ def main() -> int:
         for rid, pred in zip(ids_te, preds):
             grp.create_dataset(rid, data=pred)
 
+    torch.save(best_state, OUT / "model.pt")
+    np.savez(OUT / "normalization.npz", input_mean=mu, input_std=sd)
+
     (OUT / "hyperparams.json").write_text(json.dumps({
         "seed": SEED, "epochs": EPOCHS, "batch": BATCH, "lr": LR, "optimizer": "Adam",
         "best_val_spectral_rmse": best_val,

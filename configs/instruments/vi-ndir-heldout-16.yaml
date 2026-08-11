@@ -15,7 +15,7 @@ filters:
   shape: tophat
 detector:
   white_noise_rel: {dist: loguniform, low: 3.0e-5, high: 3.0e-4}
-  type: "pyroelectric (simulated)"
+
 environment:
   temperature_K: 296.0
   pressure_atm: 1.0

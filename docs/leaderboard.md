@@ -32,11 +32,13 @@ a ceiling.
 
 | Model | Type | Spectral RMSE | Peak-weighted RMSE | Code |
 |---|---|---|---|---|
-| Wing-anchored cubic polynomial | Classical | **6.31e-3** | **8.60e-3** | `baselines/wing_poly_t2/` |
-| 1D U-Net | Deep | *training code only* | — | `baselines/unet_t2/` |
+| 1D U-Net | Deep | **3.62e-3** | 8.58e-3 | `baselines/unet_t2/` |
+| Wing-anchored cubic polynomial | Classical | 6.31e-3 | **8.60e-3** | `baselines/wing_poly_t2/` |
 
-Input: noisy raw scan. Output: clean absorbance spectrum. The classical baseline
-fits a cubic polynomial to the absorption-free wings and subtracts it.
+The U-Net cuts spectral RMSE by 43% versus the classical wing polynomial, but
+their peak-weighted RMSE is essentially tied — the classical approach performs
+well precisely where it matters most (the absorption peak region). The U-Net's
+advantage is uniform denoising across the full 2000-point spectrum.
 
 ---
 
@@ -74,11 +76,13 @@ better relative accuracy across the log-uniform range.
 | Model | Type | Window | MAE (ppm) | ADEV @ 1s | ADEV @ 78s | Code |
 |---|---|---|---|---|---|---|
 | Moving average | Classical | 100 | **0.270** | **0.0040** | **0.129** | `baselines/moving_avg_t5/` |
-| TCN | Deep | 5 | *training code only* | — | — | `baselines/tcn_t5/` |
+| TCN | Deep | 5 | 4.233 | 0.132 | 0.415 | `baselines/tcn_t5/` |
 
-The moving average removes fast per-scan noise but leaves slower structured
-error uncorrected — exactly the gap a purpose-built drift-compensation model
-should close.
+The moving average dominates: its 100-scan window matches the slow drift
+timescale, while the TCN's 5-scan context misses the low-frequency structure
+entirely. The TCN also overfits badly (train MAE 0.43 vs test 4.23 ppm) —
+without a dedicated T5 validation split, no early stopping is possible.
+Temporal context length matters more than model complexity for drift.
 
 ---
 
@@ -99,11 +103,15 @@ instrument's parameters were deliberately placed between existing tiers.
 
 | Model | Type | MAE (ppm) | Degradation vs T1 | Code |
 |---|---|---|---|---|
-| Ridge (TDLAS→NDIR) | Linear | *pending* | — | `baselines/ridge_regression/` |
+| Ridge (TDLAS→NDIR) | Linear | **130.68** | **46.02x** | `baselines/ridge_cross_modality_t7/` |
 
 Train on TDLAS (T1 training split), test on NDIR (scalar active/reference ratio).
-Same gas and concentration range, entirely different measurement physics.
-Results pending NDIR test data generation.
+The 46x degradation decomposes as ~44x from information reduction (2000-point
+spectrum → 1 scalar ratio) and ~1.05x from actual domain gap. The physics bridge
+uses Planck-normalized integrated absorbance: the TDLAS model extracts integrated
+Beer-Lambert absorbance from wing-baseline-corrected scans, while NDIR ratios are
+normalized by the zero-gas Planck baseline to yield transmittance in the same
+physical space.
 
 ---
 

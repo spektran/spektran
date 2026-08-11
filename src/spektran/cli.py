@@ -263,10 +263,26 @@ def cmd_benchmark(args: argparse.Namespace) -> int:
 
 
 def cmd_download(args: argparse.Namespace) -> int:
-    print("spektran download: fetches pre-built datasets from Hugging Face.")
-    print("Usage: pip install datasets && python -c "
-          "\"from datasets import load_dataset; "
-          "ds = load_dataset('spektran/spektran-ch4-v0')\"")
+    print("spektran download: fetches pre-built datasets from Hugging Face.\n")
+    print("pip install datasets\n")
+    configs = [
+        ("da", "T1/T3 concentration + generalization (TDLAS DA)"),
+        ("wms", "T4 WMS concentration"),
+        ("drift", "T5 drift compensation (time series)"),
+        ("ood", "T6 OOD instrument detection"),
+        ("ndir", "T7 NDIR + cross-modality transfer"),
+        ("multispecies", "T8 multi-species regression (CH4+H2O)"),
+        ("temperature", "T9 temperature regression"),
+        ("da_hitran", "T1/T3 with HITRAN production lines (76 lines)"),
+        ("wms_hitran", "T4 with HITRAN production lines"),
+        ("da_large", "T1 large-scale (50K train / 5K val / 10K test)"),
+    ]
+    print("Available configs:")
+    for name, desc in configs:
+        print(f"  {name:15s} {desc}")
+    print(f"\nExample:")
+    print('  from datasets import load_dataset')
+    print('  ds = load_dataset("spektran/spektran-ch4-v0", "da")')
     return 0
 
 

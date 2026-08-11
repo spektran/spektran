@@ -52,6 +52,28 @@ CONFIGS = {
         "t9_train": "ch4-t9-train-v0.h5",
         "t9_test": "ch4-t9-test-v0.h5",
     },
+    "ndir": {
+        "ndir_train": "ch4-ndir-train-v0.h5",
+        "ndir_test": "ch4-ndir-test-v0.h5",
+        "ndir_heldout": "ch4-ndir-test-heldout-v0.h5",
+        "cross_modality_test": "ch4-cross-modality-test-v0.h5",
+    },
+    "da_hitran": {
+        "train": "ch4-t1-train-v0-hitran.h5",
+        "validation": "ch4-t1-val-v0-hitran.h5",
+        "test": "ch4-t1-test-v0-hitran.h5",
+        "test_heldout_instrument": "ch4-t3-test-heldout-v0-hitran.h5",
+    },
+    "wms_hitran": {
+        "t4_train": "ch4-t4-train-v0-hitran.h5",
+        "t4_validation": "ch4-t4-val-v0-hitran.h5",
+        "t4_test": "ch4-t4-test-v0-hitran.h5",
+    },
+    "da_large": {
+        "train_50k": "ch4-t1-train-v0-50k.h5",
+        "validation_5k": "ch4-t1-val-v0-5k.h5",
+        "test_10k": "ch4-t1-test-v0-10k.h5",
+    },
 }
 
 
@@ -59,18 +81,23 @@ def _record_to_row(rec: dict, include_ood: bool = False) -> dict:
     meta = rec["meta"]
     arrays = rec["arrays"]
     species = meta["labels"]["species"]
+    technique = meta.get("technique", "TDLAS")
 
     row = {
         "record_id": meta["record_id"],
-        "raw_scan": arrays["raw_scan"].tolist(),
-        "absorbance_clean": arrays["absorbance_clean"].tolist(),
         "concentration_ppm": species[0]["concentration_ppm"],
         "temperature_K": meta["conditions"]["temperature_K"],
         "pressure_atm": meta["conditions"]["pressure_atm"],
         "path_length_m": meta["conditions"]["path_length_m"],
         "instrument_config_id": meta["provenance"]["instrument_config_id"],
-        "technique": meta["technique"],
+        "technique": technique,
     }
+
+    if technique == "NDIR":
+        row["ratio"] = float(arrays["ratio"])
+    else:
+        row["raw_scan"] = arrays["raw_scan"].tolist()
+        row["absorbance_clean"] = arrays["absorbance_clean"].tolist()
 
     if "demod_1f" in arrays:
         row["demod_1f"] = arrays["demod_1f"].tolist()

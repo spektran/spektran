@@ -319,7 +319,20 @@ python -m spektran.benchmark.evaluate --task T7-cross-modality \
   --t1-mae <your_t1_mae>
 ```
 
-No baseline is shipped for T7 -- it is an open research challenge. The
-dimensionality mismatch (2000 -> 1) makes naive transfer non-trivial;
-approaches might include feature extraction, physics-informed embeddings,
-or multi-task learning.
+Reference baseline: `baselines/ridge_cross_modality_t7/`
+
+```bash
+python baselines/ridge_cross_modality_t7/train.py
+```
+
+The Ridge baseline uses a physics-bridged approach: it extracts integrated
+Beer-Lambert absorbance from both modalities. For TDLAS, a wing-anchored cubic
+polynomial baseline is subtracted and -ln(transmittance) integrated over the
+absorption center. For NDIR, the observed active/reference ratio is normalized
+by the zero-gas Planck baseline ratio (computed from source temperature and
+filter parameters), yielding transmittance in the same physical space.
+
+Result: MAE 130.68 ppm, degradation 46.02x vs T1 Ridge. The 46x decomposes as
+~44x from information reduction (2000 spectral points → 1 scalar) and ~1.05x
+from actual domain gap — the physics bridge successfully places both modalities
+in the same feature space.

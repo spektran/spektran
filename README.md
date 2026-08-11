@@ -156,10 +156,11 @@ spektran benchmark --task T1-concentration --truth data/test.h5 --predictions pr
 
 | Task | Best Model | Score |
 |:-----|:-----------|:------|
-| **T2** Denoising | Wing-anchored polynomial | RMSE 6.31e-3 |
+| **T2** Denoising | 1D U-Net | RMSE 3.62e-3 |
 | **T4** WMS | Ridge | MAE 15.15 ppm |
 | **T5** Drift | Moving average | MAE 0.270 ppm |
 | **T6** OOD | PCA + Mahalanobis | AUROC 0.672 |
+| **T7** Cross-modality | Ridge (TDLAS→NDIR) | MAE 130.68 ppm (46x) |
 | **T8** Multi-species | Ridge (dual) | CH4 0.89 / H2O 3937 ppm |
 | **T9** Temperature | Ridge | MAE 9.4 K |
 

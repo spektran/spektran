@@ -30,6 +30,11 @@ identical bytes for everyone at the same generator version.
   frozen `vi-da-medium-02` realization per series (`mode: time_series`).
 - T6: train 3000 (in-distribution only: easy+medium+hard DA) / test 1000
   (500 in-distribution + 500 held-out `vi-da-heldout-07`, `ood_task: true`).
+- T7: train on T1 TDLAS splits / test 1000 NDIR records
+  (`ch4-cross-modality-test-v0`). NDIR splits also available: train 3000 /
+  test 1000 / heldout 500 (4 NDIR virtual instruments).
+- T8: train 5000 / test 1000 multi-species (CH4 + H2O).
+- T9: train 5000 / test 1000 temperature regression (fixed 100 ppm CH4).
 
 ## Dataset scale options
 
@@ -55,6 +60,24 @@ done
 
 Large-scale seeds (201xxx) are disjoint from standard seeds (101xxx), so no
 records overlap between scale tiers.
+
+## HITRAN production data
+
+The standard splits use approximate demo line lists (3 lines) for fast offline
+generation. HITRAN production variants use the full 76-line CH4 list from
+HITRAN2020 (fetched via hapi). Available for T1/T3 and T4:
+
+```bash
+for s in t1-train-v0-hitran t1-val-v0-hitran t1-test-v0-hitran \
+         t3-test-heldout-v0-hitran \
+         t4-train-v0-hitran t4-val-v0-hitran t4-test-v0-hitran; do
+  spektran generate configs/datasets/ch4-$s.yaml --out data
+done
+```
+
+Ridge baseline comparison (demo vs HITRAN): T1 MAE nearly identical (2.84 →
+2.77 ppm, -2.5%), T3 improves 13% (3.72 → 3.24 ppm), T4 WMS becomes harder
+(15.32 → 24.87 ppm, +62%) due to richer 2f spectral complexity from 76 lines.
 
 ## Rules
 
@@ -113,6 +136,28 @@ probability -- `evaluate_ood`/`ood_auroc` are rank-based). Reference
 baseline: `baselines/mahalanobis_t6` (PCA-whitened Gaussian fit to
 in-distribution training scans; OOD score = Mahalanobis distance from that
 fit).
+
+### T7: Cross-modality transfer (TDLAS → NDIR)
+
+Train on TDLAS direct-absorption scans (T1 training split), test on NDIR
+scalar ratios. Same gas (CH4) and concentration range, entirely different
+measurement physics: TDLAS provides a 2000-point spectrum while NDIR
+collapses to a single active/reference detector ratio.
+
+Dataset configs: `ch4-ndir-{train,test,test-heldout}-v0.yaml` (NDIR splits),
+`ch4-cross-modality-test-v0.yaml` (the actual T7 test set: NDIR ratios with
+concentrations drawn from the same distribution as T1). Training uses the
+standard T1 TDLAS splits — the challenge is zero-shot transfer to the NDIR
+modality. Primary metric: MAE + degradation ratio vs T1 Ridge.
+
+Reference baseline: `baselines/ridge_cross_modality_t7` (Planck-normalized
+integrated absorbance bridge; MAE 130.68 ppm, 46.02x degradation). The 46x
+degradation decomposes as ~44x from information reduction (2000 spectral
+points → 1 scalar) and ~1.05x from actual domain gap. The physics bridge
+computes zero-gas Planck baseline ratios per instrument, normalizes observed
+ratios to transmittance, and extracts -ln(transmittance) as the absorption
+feature — placing both TDLAS and NDIR features in the same Beer-Lambert
+absorbance space.
 
 ### T8: Multi-species regression (CH4 + H2O)
 

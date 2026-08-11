@@ -36,3 +36,13 @@ private/
 
 # Local AI agent config (contains account names and internal info)
 CLAUDE.md
+.claude/
+
+# Model checkpoints (pushed to HF Model Hub, not git)
+checkpoints/
+
+# Built documentation site (deployed via GitHub Actions)
+site/
+
+# Internal development plans (auto-generated)
+docs/superpowers/

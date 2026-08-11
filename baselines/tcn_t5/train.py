@@ -135,6 +135,10 @@ def main() -> int:
     test_mae = float(np.mean(np.abs(preds - yw_te)))
 
     write_predictions_csv(OUT / "predictions_t5-test.csv", ids_win_te, preds)
+    torch.save(model.state_dict(), OUT / "model.pt")
+    np.savez(OUT / "normalization.npz",
+             input_mean=mu, input_std=sd,
+             target_mean=np.array([y_mu]), target_std=np.array([y_sd]))
     (OUT / "hyperparams.json").write_text(json.dumps({
         "seed": SEED, "epochs": EPOCHS, "batch": BATCH, "lr": LR,
         "window_size": WINDOW_SIZE, "optimizer": "Adam",

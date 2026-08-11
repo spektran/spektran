@@ -156,10 +156,11 @@ spektran benchmark --task T1-concentration --truth data/test.h5 --predictions pr
 
 | 任务 | 最佳模型 | 得分 |
 |:-----|:-----------|:------|
-| **T2** 去噪 | 翼锚定多项式（Wing-anchored Polynomial） | RMSE 6.31e-3 |
+| **T2** 去噪 | 一维 U-Net（1D U-Net） | RMSE 3.62e-3 |
 | **T4** WMS | Ridge | MAE 15.15 ppm |
 | **T5** 漂移 | 移动平均（Moving Average） | MAE 0.270 ppm |
 | **T6** OOD | PCA + 马氏距离（Mahalanobis） | AUROC 0.672 |
+| **T7** 跨模态 | Ridge（TDLAS→NDIR） | MAE 130.68 ppm（46x） |
 | **T8** 多组分 | Ridge（双通道） | CH4 0.89 / H2O 3937 ppm |
 | **T9** 温度 | Ridge | MAE 9.4 K |
 
