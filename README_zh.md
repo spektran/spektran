@@ -7,7 +7,7 @@
 ### 气体传感领域的 MNIST
 
 **AI Agent-Ready 光学气体传感仿真引擎与 ML 基准**<br>
-*HITRAN 级物理精度。9 项任务。14 种基线。自然语言驱动全链条 ML 流水线。*
+*HITRAN 级物理精度。9 项任务。22 种基线。自然语言驱动全链条 ML 流水线。*
 
 <br>
 
@@ -55,7 +55,7 @@
 
 ### 机器学习基准
 - **9 项任务（T1–T9）** — 回归、去噪、OOD、迁移、多组分
-- **14 种基线模型** — Ridge、CNN、Transformer、U-Net、TCN 等
+- **22 种基线模型** — Ridge、SpektralNet、CNN、Transformer、U-Net、RF、PINN 等
 - **官方数据划分** — 训练集 / 验证集 / 测试集 / 留出仪器集
 - **AI Agent-Ready CLI** — 全命令 `--json` 输出，可发现式 API
 - **公开排行榜**，托管于 GitHub Pages
@@ -158,7 +158,7 @@ Agent: spektran train --baseline ridge --task T1 --json
 ```bash
 spektran info --json           # 这个项目是什么？有哪些资源？
 spektran list tasks --json     # 9 项任务及其指标、可用基线
-spektran list baselines --json # 14 种基线及预计算分数
+spektran list baselines --json # 22 种基线及预计算分数
 spektran status --json         # 已生成的数据和训练状态
 ```
 
@@ -202,11 +202,17 @@ done
 
 | 模型 | T1 MAE ↓ | T1 MAPE ↓ | T3 MAE ↓ | T3 性能衰减 |
 |:------|:--------:|:---------:|:--------:|:--------------:|
-| 岭回归（Ridge Regression） | **2.84** | 29.9% | **3.72** | **1.31x** |
+| **SpektralNet** | **2.27** | 22.5% | **3.51** | 1.54x |
+| 岭回归（Ridge Regression） | 2.84 | 29.9% | 3.72 | **1.31x** |
+| 随机森林（Random Forest） | 5.27 | 24.1% | 10.89 | 2.07x |
+| 物理信息神经网络（PINN） | 7.29 | 49.1% | 15.62 | 2.14x |
 | 分块 Transformer（Patchified Transformer） | 7.39 | **22.7%** | 10.81 | 1.46x |
+| 多层感知机（MLP/BPNN） | 8.08 | 44.5% | 9.85 | 1.22x |
 | 一维 CNN（1D CNN） | 15.58 | 42.2% | 28.30 | 1.82x |
+| 双向 LSTM（BiLSTM） | 29.47 | 61.7% | 51.04 | 1.73x |
+| CNN-LSTM-Attention | 38.39 | 69.4% | 71.03 | 1.85x |
 
-> 模型复杂度与仪器过拟合程度呈正相关：Ridge 1.31x → Transformer 1.46x → CNN 1.82x。你能否构建一个打破这一规律的模型？
+> 核心发现：**线性模型在该基准上占据主导地位**，因为 Beer-Lambert 吸光度与浓度呈线性关系。SpektralNet 通过物理特征增强 Ridge 而非增加模型深度来实现最优性能。
 
 <details>
 <summary><b>其他任务结果</b></summary>

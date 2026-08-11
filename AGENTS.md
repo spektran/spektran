@@ -8,7 +8,7 @@
 
 An open-source simulation engine + ML benchmark for optical gas sensing (TDLAS/NDIR).
 It generates physically rigorous synthetic training data and provides 9 benchmark tasks
-with 14 baselines. Think "MNIST for gas sensing" — but grounded in real physics.
+with 22 baselines. Think "MNIST for gas sensing" — but grounded in real physics.
 
 - **Version**: 0.5.1
 - **License**: Apache-2.0 (code), CC BY 4.0 (data)
@@ -32,7 +32,7 @@ has been generated. Every command supports `--json` for structured output.
 |---------|---------|---------|
 | `spektran info --json` | Project overview (start here) | See above |
 | `spektran list tasks --json` | All 9 benchmark tasks with metrics | Discovery |
-| `spektran list baselines --json` | All 14 baselines with scores | Discovery |
+| `spektran list baselines --json` | All 22 baselines with scores | Discovery |
 | `spektran list instruments --json` | All 18 virtual instruments | Discovery |
 | `spektran list datasets --json` | All datasets + generation status | Discovery |
 | `spektran status --json` | Data & training state | Inspection |
@@ -137,7 +137,7 @@ spektran/
     instruments/         # 18 virtual instrument configs (vi-*.yaml)
     datasets/            # 25+ dataset split configs (ch4-*.yaml)
   baselines/
-    registry.yaml        # Baseline metadata registry (14 baselines)
+    registry.yaml        # Baseline metadata registry (22 baselines)
     ridge_regression/    # Each baseline has: train.py, predictions, scores
     cnn1d/
     transformer_t1/

@@ -11,7 +11,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - **AI Agent-ready CLI** — 8 commands (`info`, `list`, `status`, `train`, `generate`, `validate`, `benchmark`, `download`), all with `--json` structured output for AI agent integration
 - **AGENTS.md** — public AI agent interface file; any coding agent reads this to operate the full pipeline
 - **`spektran train`** — one-command baseline training with auto data generation and score reporting
-- **Baseline registry** (`baselines/registry.yaml`) — declarative manifest of all 14 baselines
+- **Baseline registry** (`baselines/registry.yaml`) — declarative manifest of all 22 baselines
 - **AI Agent Guide** — dedicated documentation page (`docs/agent.md`)
 - **CO2 benchmark dataset** (`spektran/spektran-co2-v0`) — DA (train/val/test/heldout) + WMS (train/val/test) configs for CO2 near 4978 cm⁻¹, with 4 new virtual instruments
 - **Industrial emission dataset** (`spektran/spektran-industrial-v0`) — SO2, NO, CO concentration regression benchmarks with 9 new virtual instruments
