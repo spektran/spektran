@@ -28,19 +28,35 @@ import numpy as np
 from . import __version__
 from .instrument.detector import (
     adc_quantize,
+    clock_jitter,
     dark_current_noise,
     gain_nonlinearity,
     one_over_f_noise,
+    periodic_interference,
+    shot_noise,
+    speckle_noise,
     thermal_noise_scale,
     white_noise,
 )
 from .instrument.electronics import detector_responsivity, rin_noise, tia_bandwidth_filter
 from .instrument.environment import jittered_conditions
-from .instrument.etalon import multi_etalon_transmission
-from .instrument.laser import intensity_ramp, linewidth_convolve, scan_frequency_axis
-from .instrument.optics import baseline_polynomial, beam_wander, window_contamination
+from .instrument.etalon import multi_etalon_transmission, multipass_etalon_transmission
+from .instrument.laser import (
+    apply_mode_hop,
+    intensity_ramp,
+    linewidth_convolve,
+    scan_frequency_axis,
+)
+from .instrument.optics import (
+    baseline_polynomial,
+    beam_wander,
+    correlated_baseline_drift,
+    gas_flow_turbulence,
+    window_contamination,
+)
 from .instrument.sampling import sample_instrument
-from .physics.absorption import absorption_coefficient
+from .physics.absorption import absorption_coefficient, rosenkranz_line_mixing
+from .physics.continuum import h2o_continuum_absorbance
 from .physics.hitran import MOLECULE_IDS, LineList
 from .physics.wms import WMSConfig, simulate_wms
 
@@ -135,16 +151,46 @@ def generate_record(
         tuning_model=laser.get("tuning_model"),
         tuning_params=laser.get("tuning_params"),
     )
+    mode_hop_prob = laser.get("mode_hop_probability", 0.0)
+    if mode_hop_prob > 0:
+        nu = apply_mode_hop(
+            nu, rng, mode_hop_prob, laser.get("mode_hop_size_cm1", 0.3)
+        )
 
     # --- forward physics: clean absorbance ---
-    alpha = absorption_coefficient(
-        nu,
-        spec.lines,
-        mole_fraction=concentration_ppm * 1e-6,
-        temperature_K=temperature_K,
-        pressure_atm=pressure_atm,
-    )
-    absorbance = alpha * spec.path_length_m * 100.0
+    layers = inst.get("gas_path_layers")
+    if layers and len(layers) > 1:
+        absorbance = np.zeros_like(nu, dtype=np.float64)
+        for layer in layers:
+            l_frac = layer.get("length_fraction", 1.0 / len(layers))
+            l_T = layer.get("temperature_K", temperature_K)
+            l_P = layer.get("pressure_atm", pressure_atm)
+            l_x = layer.get("concentration_scale", 1.0)
+            a_layer = absorption_coefficient(
+                nu, spec.lines,
+                mole_fraction=concentration_ppm * 1e-6 * l_x,
+                temperature_K=l_T, pressure_atm=l_P,
+            )
+            absorbance = absorbance + a_layer * spec.path_length_m * l_frac * 100.0
+    else:
+        alpha = absorption_coefficient(
+            nu, spec.lines,
+            mole_fraction=concentration_ppm * 1e-6,
+            temperature_K=temperature_K, pressure_atm=pressure_atm,
+        )
+        absorbance = alpha * spec.path_length_m * 100.0
+    physics_cfg = inst.get("physics", {})
+    if physics_cfg.get("line_mixing", False):
+        mixing_alpha = rosenkranz_line_mixing(
+            nu, spec.lines, temperature_K, pressure_atm,
+            mole_fraction=concentration_ppm * 1e-6,
+        )
+        absorbance = absorbance + mixing_alpha * spec.path_length_m * 100.0
+    h2o_frac = physics_cfg.get("h2o_continuum_fraction", 0.0)
+    if h2o_frac > 0:
+        absorbance = absorbance + h2o_continuum_absorbance(
+            nu, h2o_frac, temperature_K, pressure_atm, spec.path_length_m,
+        )
     sampled_interferents = []
     for interf in spec.interferents:
         if "concentration_ppm" in interf:
@@ -181,9 +227,28 @@ def generate_record(
         optics.get("intensity_ramp_slope_rel", 0.0),
         optics.get("intensity_ramp_curvature_rel", 0.0),
     )
-    baseline = baseline_polynomial(ramp, optics.get("baseline_poly_rel", []) or [])
+    baseline_coeffs_sigma = optics.get("baseline_drift_coeffs_sigma")
+    if baseline_coeffs_sigma:
+        baseline, _ou_coeffs = correlated_baseline_drift(
+            rng, n, baseline_coeffs_sigma, tau_scans=optics.get("baseline_drift_tau", 50.0),
+        )
+    else:
+        baseline = baseline_polynomial(ramp, optics.get("baseline_poly_rel", []) or [])
     etalons = inst.get("etalons", []) or []
-    fringes = multi_etalon_transmission(nu, etalons, t_s=scan_time_s) if etalons else 1.0
+    multipass = inst.get("multipass_etalon")
+    if multipass:
+        fringes = multipass_etalon_transmission(
+            nu,
+            int(multipass.get("n_passes", 20)),
+            multipass["base_fsr_cm1"],
+            multipass["base_amplitude_rel"],
+            multipass.get("phase_rad", 0.0),
+            multipass.get("amplitude_decay", 0.85),
+        )
+    elif etalons:
+        fringes = multi_etalon_transmission(nu, etalons, t_s=scan_time_s)
+    else:
+        fringes = 1.0
     decay = 1.0 - optics.get("transmittance_drift_rel_per_s", 0.0) * scan_time_s
     contam_rel = optics.get("window_contamination_rel", 0.0)
     window_trans = (
@@ -197,12 +262,19 @@ def generate_record(
         if bw_sigma
         else 1.0
     )
+    turb_sigma = optics.get("gas_flow_turbulence_sigma_rel", 0.0)
+    turbulence = (
+        gas_flow_turbulence(rng, n, turb_sigma, optics.get("gas_flow_turbulence_cutoff", 0.1))
+        if turb_sigma
+        else 1.0
+    )
     transmitted = (
         intensity0
         * baseline
         * fringes
         * window_trans
         * wander
+        * turbulence
         * max(decay, 0.0)
         * np.exp(-absorbance_measured)
     )
@@ -226,6 +298,9 @@ def generate_record(
         transmitted = transmitted * resp
 
     # --- detector chain ---
+    shot_gain = det.get("shot_noise_gain", 0.0)
+    if shot_gain:
+        transmitted = transmitted + shot_noise(rng, transmitted, shot_gain)
     sigma_w = det.get("white_noise_rel", 0.0)
     if sigma_w:
         det_temp = det.get("detector_temperature_K")
@@ -249,9 +324,25 @@ def generate_record(
         transmitted = transmitted + one_over_f_noise(
             rng, n, sigma_f, det.get("one_over_f_slope", 1.0)
         )
+    emi_freqs = det.get("emi_frequencies_Hz")
+    emi_amps = det.get("emi_amplitudes_rel")
+    if emi_freqs and emi_amps:
+        scan_rate_Hz = laser.get("scan_rate_Hz", 100.0)
+        transmitted = transmitted + periodic_interference(
+            rng, n, emi_freqs, emi_amps, scan_rate_Hz, n,
+        )
+    speckle_sigma = det.get("speckle_noise_sigma", 0.0)
+    if speckle_sigma:
+        transmitted = transmitted + speckle_noise(
+            rng, n, speckle_sigma, int(det.get("speckle_correlation_length", 10)),
+        )
     gnl = det.get("gain_nonlinearity_rel", 0.0)
     if gnl:
-        transmitted = gain_nonlinearity(transmitted, gnl)
+        transmitted = gain_nonlinearity(
+            transmitted, gnl,
+            cubic_rel=det.get("gain_cubic_rel", 0.0),
+            saturation_level=det.get("saturation_level", 0.0),
+        )
     tia_bw = det.get("tia_bandwidth_Hz")
     if tia_bw is not None:
         scan_rate_Hz = laser.get("scan_rate_Hz", 100.0)
@@ -259,6 +350,20 @@ def generate_record(
     bits = det.get("adc_bits", 0)
     if bits:
         transmitted = adc_quantize(transmitted, int(round(bits)), full_scale=1.5)
+    jitter_rel = det.get("clock_jitter_rel", 0.0)
+    if jitter_rel:
+        jitter = clock_jitter(rng, n, jitter_rel)
+        indices = np.arange(n, dtype=np.float64) + jitter
+        indices = np.clip(indices, 0, n - 1)
+        transmitted = np.interp(indices, np.arange(n, dtype=np.float64), transmitted)
+
+    ref_cfg = inst.get("reference_channel")
+    if ref_cfg:
+        ref_signal = intensity0 * baseline * max(decay, 0.0) * wander * turbulence
+        ref_sigma = ref_cfg.get("noise_sigma_rel", sigma_w)
+        if ref_sigma:
+            ref_signal = ref_signal + white_noise(rng, n, ref_sigma)
+        transmitted = transmitted / np.clip(ref_signal, 1e-10, None)
 
     record_id = str(uuid.UUID(bytes=rng.bytes(16), version=4))
     arrays = {"raw_scan": transmitted, "absorbance_clean": absorbance}

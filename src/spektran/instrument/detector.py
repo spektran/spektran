@@ -43,13 +43,24 @@ def one_over_f_noise(
     return noise
 
 
-def gain_nonlinearity(signal: np.ndarray, quadratic_rel: float) -> np.ndarray:
-    """Memoryless second-order gain compression/expansion.
+def gain_nonlinearity(
+    signal: np.ndarray,
+    quadratic_rel: float,
+    cubic_rel: float = 0.0,
+    saturation_level: float = 0.0,
+) -> np.ndarray:
+    """Memoryless polynomial gain compression/expansion with optional saturation.
 
-    out = s + c * s^2  (s in relative full-scale units; c is the relative
-    deviation from linear response at full scale).
+    out = s + c2*s^2 + c3*s^3, then soft-clipped at saturation_level if > 0.
+    The cubic term models asymmetric distortion at high photocurrents.
+    Saturation models detector/amplifier output clipping via tanh soft-clip.
     """
-    return signal + quadratic_rel * signal * signal
+    out = signal + quadratic_rel * signal * signal
+    if cubic_rel:
+        out = out + cubic_rel * signal * signal * signal
+    if saturation_level > 0:
+        out = saturation_level * np.tanh(out / saturation_level)
+    return out
 
 
 def adc_quantize(
@@ -85,6 +96,89 @@ def thermal_noise_scale(
     if temperature_K <= 0 or reference_temperature_K <= 0:
         raise ValueError("Temperature must be positive")
     return float(np.sqrt(temperature_K / reference_temperature_K))
+
+
+def shot_noise(
+    rng: np.random.Generator,
+    signal: np.ndarray,
+    gain: float = 1.0,
+) -> np.ndarray:
+    """Signal-dependent shot noise (Poisson statistics).
+
+    Real photodetectors produce shot noise with variance proportional to
+    the photocurrent (and thus to the optical signal). For large photon
+    counts the Poisson distribution is well approximated by a Gaussian
+    with sigma = sqrt(gain * |signal|).
+
+    ``gain`` controls the noise magnitude: higher gain → more shot noise.
+    Physically it lumps together detector quantum efficiency, transimpedance
+    gain, and electronic-unit conversion. Typical relative values: 1e-4
+    to 1e-3 for well-designed NIR TDLAS receivers.
+    """
+    sigma = np.sqrt(gain * np.abs(signal))
+    return rng.normal(0.0, 1.0, len(signal)) * sigma
+
+
+def periodic_interference(
+    rng: np.random.Generator,
+    n: int,
+    frequencies_Hz: list[float],
+    amplitudes_rel: list[float],
+    scan_rate_Hz: float,
+    n_points: int,
+) -> np.ndarray:
+    """Additive periodic interference from EMI/powerline/mechanical sources.
+
+    Models 50/60 Hz harmonics, fan/pump vibration, and other periodic
+    disturbances that appear as fixed-frequency sinusoids in the time
+    domain of each scan. Phase is randomized per scan (captures
+    asynchronous relationship between scan trigger and mains cycle).
+    """
+    t = np.arange(n) / (scan_rate_Hz * n_points)
+    signal = np.zeros(n)
+    for freq, amp in zip(frequencies_Hz, amplitudes_rel):
+        phase = rng.uniform(0.0, 2.0 * np.pi)
+        signal += amp * np.sin(2.0 * np.pi * freq * t + phase)
+    return signal
+
+
+def speckle_noise(
+    rng: np.random.Generator,
+    n: int,
+    sigma: float,
+    correlation_length: int = 10,
+) -> np.ndarray:
+    """Wavelength-correlated speckle noise from coherent illumination.
+
+    In long-path or multi-pass TDLAS systems, laser speckle from rough
+    surfaces (mirrors, cell walls) creates noise that is correlated across
+    nearby spectral points. Modeled as filtered Gaussian noise with a
+    configurable correlation length (in samples).
+    """
+    if correlation_length < 1:
+        return rng.normal(0.0, sigma, n)
+    raw = rng.normal(0.0, 1.0, n + correlation_length)
+    kernel = np.ones(correlation_length) / np.sqrt(correlation_length)
+    filtered = np.convolve(raw, kernel, mode="valid")[:n]
+    std = filtered.std()
+    if std > 0:
+        filtered = filtered * (sigma / std)
+    return filtered
+
+
+def clock_jitter(
+    rng: np.random.Generator,
+    n: int,
+    jitter_rel: float,
+) -> np.ndarray:
+    """ADC sampling clock jitter — fractional-sample timing perturbations.
+
+    Returns an array of fractional index offsets that perturb the effective
+    sample positions. The caller uses these to interpolate the signal onto
+    the jittered grid, simulating the effect of clock instability on the
+    effective frequency axis.
+    """
+    return rng.normal(0.0, jitter_rel, n)
 
 
 def dark_current_noise(

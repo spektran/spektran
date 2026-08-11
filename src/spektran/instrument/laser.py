@@ -97,6 +97,35 @@ def current_tuning_model(
     return center_wavenumber_cm1 + scan_range_cm1 * (current_contrib + thermal_contrib)
 
 
+def apply_mode_hop(
+    nu_cm1: np.ndarray,
+    rng: np.random.Generator,
+    probability: float = 0.0,
+    hop_size_cm1: float = 0.3,
+) -> np.ndarray:
+    """Apply a probabilistic laser mode hop to the frequency axis.
+
+    DFB lasers occasionally exhibit mode hops at scan extremes, causing
+    a sudden frequency discontinuity. When triggered (with ``probability``
+    per scan), a random position in the outer 20% of the scan receives a
+    step offset of ``hop_size_cm1`` (sign randomized). The result is a
+    frequency axis with a visible jump — a realistic anomaly that ML models
+    should learn to be robust against.
+    """
+    if probability <= 0 or rng.uniform() > probability:
+        return nu_cm1
+    n = len(nu_cm1)
+    outer_frac = 0.2
+    if rng.uniform() < 0.5:
+        hop_idx = rng.integers(0, max(1, int(n * outer_frac)))
+    else:
+        hop_idx = rng.integers(max(1, int(n * (1.0 - outer_frac))), n)
+    sign = 1.0 if rng.uniform() < 0.5 else -1.0
+    result = nu_cm1.copy()
+    result[hop_idx:] += sign * hop_size_cm1
+    return result
+
+
 def intensity_ramp(
     ramp: np.ndarray,
     mean_intensity: float = 1.0,

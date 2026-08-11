@@ -87,3 +87,54 @@ def beam_wander(
     if std > 0.0:
         slow = slow * (sigma_rel / std)
     return 1.0 + slow
+
+
+def gas_flow_turbulence(
+    rng: np.random.Generator,
+    n: int,
+    sigma_rel: float,
+    cutoff_norm: float = 0.1,
+) -> np.ndarray:
+    """Multiplicative refractive-index fluctuation from gas flow turbulence.
+
+    Turbulent eddies in flow-through gas cells cause optical path length
+    variations. Produces band-limited multiplicative noise (mid-frequency).
+    Returns 1 + delta.
+    """
+    if sigma_rel <= 0.0 or n < 4:
+        return np.ones(max(n, 1), dtype=np.float64)
+    raw = rng.normal(0.0, 1.0, n)
+    sos = butter(2, min(cutoff_norm, 0.49), btype="low", output="sos")
+    filtered = sosfiltfilt(sos, raw)
+    std = filtered.std()
+    if std > 0.0:
+        filtered = filtered * (sigma_rel / std)
+    return 1.0 + filtered
+
+
+def correlated_baseline_drift(
+    rng: np.random.Generator,
+    n: int,
+    coeffs_sigma: list[float],
+    previous_coeffs: list[float] | None = None,
+    tau_scans: float = 50.0,
+) -> tuple[np.ndarray, list[float]]:
+    """Baseline polynomial with Ornstein-Uhlenbeck drift across scans.
+
+    Coefficients evolve as correlated random walks (OU processes) instead
+    of being re-sampled independently. Returns (baseline_array, new_coeffs)
+    so the caller can chain scans in time-series mode.
+    """
+    du = np.linspace(-0.5, 0.5, n)
+    if previous_coeffs is None:
+        coeffs = [rng.normal(0.0, s) for s in coeffs_sigma]
+    else:
+        alpha = np.exp(-1.0 / max(tau_scans, 1e-6))
+        coeffs = [
+            alpha * prev + np.sqrt(1.0 - alpha * alpha) * rng.normal(0.0, s)
+            for prev, s in zip(previous_coeffs, coeffs_sigma)
+        ]
+    base = np.ones(n, dtype=np.float64)
+    for k, c in enumerate(coeffs):
+        base = base + c * du ** (k + 1)
+    return base, coeffs

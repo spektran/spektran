@@ -167,6 +167,60 @@ def absorption_coefficient(
     return n_absorber * alpha
 
 
+def rosenkranz_line_mixing(
+    nu_cm1: np.ndarray,
+    lines: LineList,
+    temperature_K: float,
+    pressure_atm: float,
+    mole_fraction: float,
+    y_coeffs: np.ndarray | None = None,
+) -> np.ndarray:
+    """First-order Rosenkranz line-mixing correction to absorption coefficient.
+
+    Line mixing arises from collisional transfer of population between
+    rotational states. The first-order (pressure-linear) approximation
+    adds an antisymmetric dispersive component to each line:
+
+        alpha_mix(nu) += n * x * sum_j S_j * Y_j * P * psi_j(nu)
+
+    where psi_j is the dispersive (imaginary part of Faddeeva) counterpart
+    of the Voigt profile phi_j, and Y_j is the first-order mixing coefficient
+    [cm-1/atm]. Rosenkranz (1975) doi:10.1109/TAP.1975.1141105
+
+    When ``y_coeffs`` is None, uses a simple empirical scaling of the
+    air-broadening coefficient as a rough estimate.
+    """
+    if len(lines) == 0:
+        return np.zeros_like(nu_cm1, dtype=np.float64)
+
+    q = tips_q_ratio(lines.molecule, temperature_K)
+    strengths = line_strength_at_T(
+        lines.sw_cm_per_molec, lines.nu0_cm1, lines.elower_cm1, temperature_K, q
+    )
+    n_absorber = number_density_cm3(pressure_atm, temperature_K) * mole_fraction
+
+    nu0_shifted = lines.nu0_cm1 + lines.delta_air * pressure_atm
+    a_d = doppler_hwhm_cm1(nu0_shifted, temperature_K, lines.molar_mass_amu)
+    g_l = lorentz_hwhm_cm1(
+        pressure_atm, temperature_K,
+        lines.gamma_air, lines.gamma_self, mole_fraction, lines.n_air,
+    )
+
+    if y_coeffs is None:
+        y_coeffs = -0.01 * lines.gamma_air
+
+    sigma = a_d / _SQRT_2LN2
+    delta_nu = nu_cm1[np.newaxis, :] - nu0_shifted[:, np.newaxis]
+    z = (delta_nu + 1j * g_l[:, np.newaxis]) / (sigma[:, np.newaxis] * np.sqrt(2.0))
+    w = wofz(z)
+    psi = np.imag(w) / (sigma[:, np.newaxis] * _SQRT_2PI)
+
+    mixing_contrib = np.sum(
+        strengths[:, np.newaxis] * y_coeffs[:, np.newaxis] * pressure_atm * psi, axis=0
+    )
+    return n_absorber * mixing_contrib
+
+
 def simulate_absorbance(
     molecule: str = "CH4",
     concentration_ppm: float = 100.0,
