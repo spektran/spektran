@@ -1,3 +1,3 @@
 """SPEKTRAN: simulation engine, data standard, and ML benchmark for TDLAS."""
 
-__version__ = "0.5.0"
+__version__ = "0.5.1"

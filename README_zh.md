@@ -269,7 +269,7 @@ SPEKTRAN 的基准任务对应着工业和环境科学中的真实问题：
   title     = {SPEKTRAN: Simulation Engine and ML Benchmark for Optical Gas Sensing},
   url       = {https://github.com/spektran/spektran},
   doi       = {10.5281/zenodo.21790394},
-  version   = {0.5.0},
+  version   = {0.5.1},
   license   = {Apache-2.0}
 }
 ```

@@ -10,7 +10,7 @@ An open-source simulation engine + ML benchmark for optical gas sensing (TDLAS/N
 It generates physically rigorous synthetic training data and provides 9 benchmark tasks
 with 14 baselines. Think "MNIST for gas sensing" — but grounded in real physics.
 
-- **Version**: 0.5.0
+- **Version**: 0.5.1
 - **License**: Apache-2.0 (code), CC BY 4.0 (data)
 - **Python**: 3.10+
 - **Install**: `pip install spektran`

@@ -5,6 +5,22 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ---
 
+## [0.5.1] — 2026-08-11 — AI Agent Ready
+
+### Added
+- **AI Agent-ready CLI** — 8 commands (`info`, `list`, `status`, `train`, `generate`, `validate`, `benchmark`, `download`), all with `--json` structured output for AI agent integration
+- **AGENTS.md** — public AI agent interface file; any coding agent reads this to operate the full pipeline
+- **`spektran train`** — one-command baseline training with auto data generation and score reporting
+- **Baseline registry** (`baselines/registry.yaml`) — declarative manifest of all 14 baselines
+- **AI Agent Guide** — dedicated documentation page (`docs/agent.md`)
+
+### Changed
+- All project branding updated to "AI Agent-Ready" positioning across README, README_zh, docs site, pyproject.toml, CITATION.cff, .zenodo.json, Colab notebook, HF dataset card, and HF Space
+- Quickstart docs now lead with "Option 0: AI Agent (zero code)"
+- GitHub repo description and topics updated (`agent-ready`, `ai-agent`)
+
+---
+
 ## [0.5.0] — 2026-08-05 — TDLAS Deep Dive
 
 ### Added
@@ -91,6 +107,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - HDF5 persistence + Hugging Face Hub integration
 - MkDocs documentation, CI/CD pipeline, PyPI publishing
 
+[0.5.1]: https://github.com/spektran/spektran/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/spektran/spektran/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/spektran/spektran/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/spektran/spektran/compare/v0.3.0...v0.3.1
