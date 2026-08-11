@@ -1,0 +1,25 @@
+# Picarro-class commercial CRDS: high finesse, temperature stabilized
+instrument_config_id: vi-crds-picarro-37
+schema_version: "0.2"
+technique: CRDS
+held_out: false
+description: "Picarro-class commercial CRDS: 25 cm cavity, R=99.998%, temperature stabilized."
+cavity:
+  length_m: 0.25
+  mirror_reflectivity: 0.99998
+  n_photons_per_ringdown: {dist: loguniform, low: 1.0e+6, high: 1.0e+7}
+  mirror_drift_sigma: {dist: loguniform, low: 1.0e-9, high: 5.0e-9}
+  mirror_drift_reversion: 0.02
+  mode_matching_mean: 0.96
+  mode_matching_sigma: {dist: uniform, low: 0.01, high: 0.025}
+  baseline_loss_drift_rate: {dist: loguniform, low: 5.0e-11, high: 5.0e-10}
+  baseline_temp_sensitivity: {dist: loguniform, low: 5.0e-10, high: 5.0e-9}
+  n_transverse_modes: 1
+detector:
+  noise_sigma_rel: {dist: loguniform, low: 5.0e-6, high: 2.0e-5}
+  type: "InGaAs photodiode (simulated)"
+environment:
+  temperature_K: 318.0
+  pressure_atm: {dist: uniform, low: 0.13, high: 0.15}
+  temperature_jitter_K: {dist: uniform, low: 0.0, high: 0.01}
+  pressure_jitter_atm: {dist: uniform, low: 0.0, high: 0.0005}

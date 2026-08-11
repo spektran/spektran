@@ -279,3 +279,18 @@ baselines:
         predictions:
           T1: predictions_t1-test.csv
           T3: predictions_t3-test-heldout.csv
+
+  ridge_crds:
+    display_name: Ridge (CRDS)
+    description: "Ridge regression on CRDS tau spectrum — concentration from ring-down times"
+    directory: ridge_crds_t1
+    tasks:
+      T1-CRDS:
+        script: train.py
+        datasets: [ch4-crds-t1-train-v0, ch4-crds-t1-val-v0, ch4-crds-t1-test-v0, ch4-crds-t3-heldout-v0]
+        predictions:
+          T1-CRDS: predictions_crds-t1-test.csv
+          T3-CRDS: predictions_crds-t3-heldout.csv
+        scores:
+          T1-CRDS: scores_crds_t1.json
+          T3-CRDS: scores_crds_t3.json

@@ -4,7 +4,7 @@
   "title": "SPEKTRAN virtual instrument configuration",
   "description": "Schema (v0.1 draft) for a virtual-instrument YAML/JSON config. A virtual instrument defines DISTRIBUTIONS for every noise/instrument parameter; the generator samples one concrete value per record and writes it to the record's provenance.noise_config.",
   "type": "object",
-  "required": ["instrument_config_id", "schema_version", "technique", "detector"],
+  "required": ["instrument_config_id", "schema_version", "technique"],
   "additionalProperties": false,
   "properties": {
     "instrument_config_id": {
@@ -13,7 +13,7 @@
       "description": "Stable identifier, e.g. 'vi-easy-01'."
     },
     "schema_version": { "enum": ["0.1", "0.2"] },
-    "technique": { "enum": ["TDLAS-DA", "TDLAS-WMS", "NDIR"] },
+    "technique": { "enum": ["TDLAS-DA", "TDLAS-WMS", "NDIR", "CRDS", "FTIR", "DOAS"] },
     "held_out": {
       "type": "boolean",
       "default": false,
@@ -125,6 +125,23 @@
         "shape": { "enum": ["gaussian", "tophat"], "default": "gaussian" }
       }
     },
+    "cavity": {
+      "type": "object",
+      "description": "Optical cavity parameters (CRDS instruments).",
+      "properties": {
+        "length_m": { "$ref": "#/$defs/dist_or_number" },
+        "mirror_reflectivity": { "$ref": "#/$defs/dist_or_number" },
+        "n_photons_per_ringdown": { "$ref": "#/$defs/dist_or_number" },
+        "mirror_drift_sigma": { "$ref": "#/$defs/dist_or_number" },
+        "mirror_drift_reversion": { "$ref": "#/$defs/dist_or_number" },
+        "mode_matching_mean": { "$ref": "#/$defs/dist_or_number" },
+        "mode_matching_sigma": { "$ref": "#/$defs/dist_or_number" },
+        "baseline_loss_drift_rate": { "$ref": "#/$defs/dist_or_number" },
+        "baseline_temp_sensitivity": { "$ref": "#/$defs/dist_or_number" },
+        "n_transverse_modes": { "$ref": "#/$defs/dist_or_number" },
+        "mode_spread_fraction": { "$ref": "#/$defs/dist_or_number" }
+      }
+    },
     "optics": {
       "type": "object",
       "additionalProperties": false,
@@ -178,8 +195,12 @@
     },
     "detector": {
       "type": "object",
-      "additionalProperties": false,
       "properties": {
+        "type": { "type": "string", "description": "Detector type description." },
+        "noise_sigma_rel": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Generic noise sigma (relative). Used by CRDS and other modalities."
+        },
         "white_noise_rel": {
           "$ref": "#/$defs/dist_or_number",
           "description": "White-noise sigma relative to full-scale signal."

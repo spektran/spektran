@@ -1,0 +1,26 @@
+# Field-portable CRDS: shorter cavity, moderate noise
+instrument_config_id: vi-crds-field-36
+schema_version: "0.2"
+technique: CRDS
+held_out: false
+description: "Field-portable CRDS: 35 cm cavity, R=99.99%, moderate drift and noise."
+cavity:
+  length_m: 0.35
+  mirror_reflectivity: 0.9999
+  n_photons_per_ringdown: {dist: loguniform, low: 1.0e+5, high: 1.0e+6}
+  mirror_drift_sigma: {dist: loguniform, low: 1.0e-7, high: 1.0e-6}
+  mirror_drift_reversion: 0.005
+  mode_matching_mean: 0.92
+  mode_matching_sigma: {dist: uniform, low: 0.02, high: 0.05}
+  baseline_loss_drift_rate: {dist: loguniform, low: 1.0e-8, high: 1.0e-7}
+  baseline_temp_sensitivity: {dist: loguniform, low: 1.0e-7, high: 1.0e-6}
+  n_transverse_modes: 2
+  mode_spread_fraction: 0.03
+detector:
+  noise_sigma_rel: {dist: loguniform, low: 5.0e-5, high: 5.0e-4}
+  type: "PMT (simulated)"
+environment:
+  temperature_K: 296.0
+  pressure_atm: 1.0
+  temperature_jitter_K: {dist: uniform, low: 0.0, high: 0.5}
+  pressure_jitter_atm: {dist: uniform, low: 0.0, high: 0.005}

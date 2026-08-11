@@ -1,0 +1,26 @@
+# Held-out CRDS instrument for cross-instrument generalization (T3)
+instrument_config_id: vi-crds-heldout-38
+schema_version: "0.2"
+technique: CRDS
+held_out: true
+description: "Held-out CRDS for T3: 40 cm cavity, R=99.997%, unseen instrument parameters."
+cavity:
+  length_m: 0.40
+  mirror_reflectivity: 0.99997
+  n_photons_per_ringdown: {dist: loguniform, low: 3.0e+5, high: 3.0e+6}
+  mirror_drift_sigma: {dist: loguniform, low: 5.0e-8, high: 5.0e-7}
+  mirror_drift_reversion: 0.008
+  mode_matching_mean: 0.94
+  mode_matching_sigma: {dist: uniform, low: 0.015, high: 0.035}
+  baseline_loss_drift_rate: {dist: loguniform, low: 5.0e-9, high: 5.0e-8}
+  baseline_temp_sensitivity: {dist: loguniform, low: 5.0e-8, high: 5.0e-7}
+  n_transverse_modes: 2
+  mode_spread_fraction: 0.04
+detector:
+  noise_sigma_rel: {dist: loguniform, low: 2.0e-5, high: 2.0e-4}
+  type: "InGaAs APD (simulated)"
+environment:
+  temperature_K: 296.0
+  pressure_atm: 1.0
+  temperature_jitter_K: {dist: uniform, low: 0.0, high: 0.2}
+  pressure_jitter_atm: {dist: uniform, low: 0.0, high: 0.003}

@@ -1,0 +1,17 @@
+dataset_id: ch4-crds-t1-test-v0
+technique: CRDS
+instrument_config:
+  - configs/instruments/vi-crds-lab-35.yaml
+  - configs/instruments/vi-crds-field-36.yaml
+  - configs/instruments/vi-crds-picarro-37.yaml
+n_records: 500
+master_seed: 601003
+gas:
+  molecule: CH4
+  concentration_ppm: {low: 0.1, high: 500.0, log_uniform: true}
+  path_length_m: 0.50
+  matrix_gas: N2
+  wavenumber_start_cm1: 6046.0
+  wavenumber_end_cm1: 6048.0
+  n_spectral_points: 200
+line_source: demo

@@ -22,21 +22,40 @@
       "description": "UUIDv4 uniquely identifying this record."
     },
     "schema_version": {
-      "enum": ["0.1", "0.2"],
+      "enum": [
+        "0.1",
+        "0.2"
+      ],
       "description": "Version of this schema the record conforms to."
     },
     "data_origin": {
-      "enum": ["simulated", "experimental", "augmented"],
+      "enum": [
+        "simulated",
+        "experimental",
+        "augmented"
+      ],
       "description": "Provenance class. All official SPEKTRAN releases are 'simulated'. 'experimental' and 'augmented' are reserved for future external contributions."
     },
     "technique": {
-      "enum": ["TDLAS-DA", "TDLAS-WMS", "NDIR"],
+      "enum": [
+        "TDLAS-DA",
+        "TDLAS-WMS",
+        "NDIR",
+        "CRDS",
+        "FTIR",
+        "DOAS"
+      ],
       "description": "Measurement technique."
     },
     "provenance": {
       "type": "object",
       "description": "Full reproducibility trace. Required when data_origin is 'simulated': same generator_version + random_seed + configs must reproduce the record bit-for-bit.",
-      "required": ["generator_version", "random_seed", "instrument_config_id", "noise_config"],
+      "required": [
+        "generator_version",
+        "random_seed",
+        "instrument_config_id",
+        "noise_config"
+      ],
       "additionalProperties": false,
       "properties": {
         "generator_version": {
@@ -71,74 +90,181 @@
         "raw_scan": {
           "type": "object",
           "description": "Raw detector signal over one laser scan (time domain).",
-          "required": ["array_ref", "n_samples", "sampling_rate_Hz"],
+          "required": [
+            "array_ref",
+            "n_samples",
+            "sampling_rate_Hz"
+          ],
           "additionalProperties": false,
           "properties": {
-            "array_ref": { "$ref": "#/$defs/array_ref" },
-            "n_samples": { "type": "integer", "minimum": 2 },
-            "sampling_rate_Hz": { "type": "number", "exclusiveMinimum": 0 }
+            "array_ref": {
+              "$ref": "#/$defs/array_ref"
+            },
+            "n_samples": {
+              "type": "integer",
+              "minimum": 2
+            },
+            "sampling_rate_Hz": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
           }
         },
         "absorbance": {
           "type": "object",
           "description": "Direct-absorption absorbance spectrum on a wavenumber axis.",
-          "required": ["array_ref", "n_samples", "wavenumber_axis"],
+          "required": [
+            "array_ref",
+            "n_samples",
+            "wavenumber_axis"
+          ],
           "additionalProperties": false,
           "properties": {
-            "array_ref": { "$ref": "#/$defs/array_ref" },
-            "n_samples": { "type": "integer", "minimum": 2 },
-            "wavenumber_axis": { "$ref": "#/$defs/wavenumber_axis" }
+            "array_ref": {
+              "$ref": "#/$defs/array_ref"
+            },
+            "n_samples": {
+              "type": "integer",
+              "minimum": 2
+            },
+            "wavenumber_axis": {
+              "$ref": "#/$defs/wavenumber_axis"
+            }
           }
         },
-        "demod_1f": { "$ref": "#/$defs/demod_signal" },
-        "demod_2f": { "$ref": "#/$defs/demod_signal" },
-        "demod_3f": { "$ref": "#/$defs/demod_signal" },
-        "demod_4f": { "$ref": "#/$defs/demod_signal" },
+        "demod_1f": {
+          "$ref": "#/$defs/demod_signal"
+        },
+        "demod_2f": {
+          "$ref": "#/$defs/demod_signal"
+        },
+        "demod_3f": {
+          "$ref": "#/$defs/demod_signal"
+        },
+        "demod_4f": {
+          "$ref": "#/$defs/demod_signal"
+        },
         "ratio_2f1f": {
           "type": "object",
           "description": "Calibration-free WMS 2f/1f ratio (R_2f / R_1f). Self-normalizing against laser intensity variations (Rieker et al. 2009, doi:10.1364/AO.48.005546).",
-          "required": ["array_ref", "n_samples"],
+          "required": [
+            "array_ref",
+            "n_samples"
+          ],
           "additionalProperties": false,
           "properties": {
-            "array_ref": { "$ref": "#/$defs/array_ref" },
-            "n_samples": { "type": "integer", "minimum": 2 }
+            "array_ref": {
+              "$ref": "#/$defs/array_ref"
+            },
+            "n_samples": {
+              "type": "integer",
+              "minimum": 2
+            }
           }
         },
         "active_channel": {
           "type": "object",
           "description": "NDIR active channel detector signal (scalar).",
-          "required": ["array_ref", "n_samples"],
+          "required": [
+            "array_ref",
+            "n_samples"
+          ],
           "additionalProperties": false,
           "properties": {
-            "array_ref": { "$ref": "#/$defs/array_ref" },
-            "n_samples": { "type": "integer", "minimum": 1 }
+            "array_ref": {
+              "$ref": "#/$defs/array_ref"
+            },
+            "n_samples": {
+              "type": "integer",
+              "minimum": 1
+            }
           }
         },
         "reference_channel": {
           "type": "object",
           "description": "NDIR reference channel detector signal (scalar).",
-          "required": ["array_ref", "n_samples"],
+          "required": [
+            "array_ref",
+            "n_samples"
+          ],
           "additionalProperties": false,
           "properties": {
-            "array_ref": { "$ref": "#/$defs/array_ref" },
-            "n_samples": { "type": "integer", "minimum": 1 }
+            "array_ref": {
+              "$ref": "#/$defs/array_ref"
+            },
+            "n_samples": {
+              "type": "integer",
+              "minimum": 1
+            }
           }
         },
         "ratio": {
           "type": "object",
           "description": "NDIR active/reference ratio (scalar).",
-          "required": ["array_ref", "n_samples"],
+          "required": [
+            "array_ref",
+            "n_samples"
+          ],
           "additionalProperties": false,
           "properties": {
-            "array_ref": { "$ref": "#/$defs/array_ref" },
-            "n_samples": { "type": "integer", "minimum": 1 }
+            "array_ref": {
+              "$ref": "#/$defs/array_ref"
+            },
+            "n_samples": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "tau_spectrum": {
+          "type": "object",
+          "description": "Ring-down time spectrum across wavenumber scan (CRDS).",
+          "required": [
+            "array_ref",
+            "n_samples"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "array_ref": {
+              "type": "string"
+            },
+            "n_samples": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "unit": {
+              "type": "string"
+            }
+          }
+        },
+        "alpha_spectrum": {
+          "type": "object",
+          "description": "Absorption coefficient spectrum derived from ring-down times (CRDS).",
+          "required": [
+            "array_ref",
+            "n_samples"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "array_ref": {
+              "type": "string"
+            },
+            "n_samples": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "unit": {
+              "type": "string"
+            }
           }
         }
       }
     },
     "labels": {
       "type": "object",
-      "required": ["species"],
+      "required": [
+        "species"
+      ],
       "additionalProperties": false,
       "properties": {
         "species": {
@@ -146,7 +272,11 @@
           "minItems": 1,
           "items": {
             "type": "object",
-            "required": ["molecule", "hitran_molecule_id", "concentration_ppm"],
+            "required": [
+              "molecule",
+              "hitran_molecule_id",
+              "concentration_ppm"
+            ],
             "additionalProperties": false,
             "properties": {
               "molecule": {
@@ -172,19 +302,36 @@
           }
         },
         "ood_label": {
-          "enum": [0, 1],
+          "enum": [
+            0,
+            1
+          ],
           "description": "Out-of-distribution flag for the T6 instrument-detection task: 0 = in-distribution instrument, 1 = held-out/out-of-distribution instrument. Present only on T6 dataset records."
         }
       }
     },
     "conditions": {
       "type": "object",
-      "required": ["temperature_K", "pressure_atm", "path_length_m", "matrix_gas"],
+      "required": [
+        "temperature_K",
+        "pressure_atm",
+        "path_length_m",
+        "matrix_gas"
+      ],
       "additionalProperties": false,
       "properties": {
-        "temperature_K": { "type": "number", "exclusiveMinimum": 0 },
-        "pressure_atm": { "type": "number", "exclusiveMinimum": 0 },
-        "path_length_m": { "type": "number", "exclusiveMinimum": 0 },
+        "temperature_K": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "pressure_atm": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "path_length_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
         "matrix_gas": {
           "type": "string",
           "description": "Bulk/bath gas, e.g. 'N2' or 'air'."
@@ -203,12 +350,24 @@
           "description": "Interfering absorbers present in addition to the labeled target species.",
           "items": {
             "type": "object",
-            "required": ["molecule", "hitran_molecule_id", "concentration_ppm"],
+            "required": [
+              "molecule",
+              "hitran_molecule_id",
+              "concentration_ppm"
+            ],
             "additionalProperties": false,
             "properties": {
-              "molecule": { "type": "string" },
-              "hitran_molecule_id": { "type": "integer", "minimum": 1 },
-              "concentration_ppm": { "type": "number", "minimum": 0 }
+              "molecule": {
+                "type": "string"
+              },
+              "hitran_molecule_id": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "concentration_ppm": {
+                "type": "number",
+                "minimum": 0
+              }
             }
           }
         }
@@ -272,16 +431,34 @@
       "description": "Metadata for experimental (measured) records. Optional; primarily for data_origin: experimental/augmented.",
       "additionalProperties": false,
       "properties": {
-        "operator": { "type": "string", "description": "Person or team who performed the measurement." },
-        "date_utc": { "type": "string", "format": "date-time", "description": "Measurement timestamp (ISO 8601)." },
-        "facility": { "type": "string", "description": "Laboratory or field site." },
-        "instrument_serial": { "type": "string", "description": "Serial number of the physical instrument." },
-        "notes": { "type": "string", "description": "Free-text notes about the measurement." }
+        "operator": {
+          "type": "string",
+          "description": "Person or team who performed the measurement."
+        },
+        "date_utc": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Measurement timestamp (ISO 8601)."
+        },
+        "facility": {
+          "type": "string",
+          "description": "Laboratory or field site."
+        },
+        "instrument_serial": {
+          "type": "string",
+          "description": "Serial number of the physical instrument."
+        },
+        "notes": {
+          "type": "string",
+          "description": "Free-text notes about the measurement."
+        }
       }
     },
     "instrument": {
       "type": "object",
-      "required": ["detector", "target_lines"],
+      "required": [
+        "target_lines"
+      ],
       "additionalProperties": false,
       "properties": {
         "source": {
@@ -289,7 +466,10 @@
           "description": "Broadband IR source (NDIR).",
           "additionalProperties": false,
           "properties": {
-            "temperature_K": { "type": "number", "exclusiveMinimum": 0 }
+            "temperature_K": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
           }
         },
         "filters": {
@@ -297,23 +477,46 @@
           "description": "NDIR bandpass filter configuration.",
           "additionalProperties": false,
           "properties": {
-            "active_center_cm1": { "type": "number", "exclusiveMinimum": 0 },
-            "active_fwhm_cm1": { "type": "number", "exclusiveMinimum": 0 },
-            "reference_center_cm1": { "type": "number", "exclusiveMinimum": 0 },
-            "reference_fwhm_cm1": { "type": "number", "exclusiveMinimum": 0 },
-            "shape": { "enum": ["gaussian", "tophat"] }
+            "active_center_cm1": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "active_fwhm_cm1": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "reference_center_cm1": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "reference_fwhm_cm1": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "shape": {
+              "enum": [
+                "gaussian",
+                "tophat"
+              ]
+            }
           }
         },
         "laser": {
           "type": "object",
-          "required": ["center_wavenumber_cm1", "scan_range_cm1"],
+          "required": [
+            "center_wavenumber_cm1",
+            "scan_range_cm1"
+          ],
           "additionalProperties": false,
           "properties": {
             "type": {
               "type": "string",
               "description": "Laser source class, e.g. 'DFB', 'VCSEL', 'QCL', 'ICL', 'ECDL'."
             },
-            "center_wavenumber_cm1": { "type": "number", "exclusiveMinimum": 0 },
+            "center_wavenumber_cm1": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
             "scan_range_cm1": {
               "type": "number",
               "exclusiveMinimum": 0,
@@ -325,7 +528,11 @@
               "description": "Scan (ramp) repetition rate."
             },
             "scan_waveform": {
-              "enum": ["sawtooth", "triangle", "sine"],
+              "enum": [
+                "sawtooth",
+                "triangle",
+                "sine"
+              ],
               "description": "Shape of the scan drive waveform."
             },
             "linewidth_MHz": {
@@ -350,7 +557,9 @@
             },
             "tuning_poly_cm1": {
               "type": "array",
-              "items": { "type": "number" },
+              "items": {
+                "type": "number"
+              },
               "description": "Polynomial coefficients (ascending order, cm-1 per unit normalized ramp) of the current-to-optical-frequency tuning response used to build the frequency axis."
             }
           }
@@ -358,18 +567,33 @@
         "modulation": {
           "type": "object",
           "description": "Wavelength-modulation parameters. Required when technique is TDLAS-WMS.",
-          "required": ["frequency_Hz", "depth_cm1"],
+          "required": [
+            "frequency_Hz",
+            "depth_cm1"
+          ],
           "additionalProperties": false,
           "properties": {
-            "frequency_Hz": { "type": "number", "exclusiveMinimum": 0 },
+            "frequency_Hz": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
             "depth_cm1": {
               "type": "number",
               "exclusiveMinimum": 0,
               "description": "Optical-frequency modulation amplitude a in nu(t) = nu_c + a*cos(2*pi*f*t)."
             },
-            "phase_rad": { "type": "number" },
+            "phase_rad": {
+              "type": "number"
+            },
             "harmonic_scheme": {
-              "enum": ["1f", "2f", "2f/1f", "3f", "4f", "other"],
+              "enum": [
+                "1f",
+                "2f",
+                "2f/1f",
+                "3f",
+                "4f",
+                "other"
+              ],
               "description": "Harmonic detection / normalization scheme."
             },
             "modulation_index": {
@@ -404,8 +628,14 @@
               "type": "string",
               "description": "e.g. 'Herriott multipass', 'White', 'single-pass extractive', 'open path', 'in situ line-of-sight'."
             },
-            "number_of_passes": { "type": "integer", "minimum": 1 },
-            "volume_cm3": { "type": "number", "exclusiveMinimum": 0 },
+            "number_of_passes": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "volume_cm3": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
             "temperature_control": {
               "type": "string",
               "description": "Thermal stabilization / insulation arrangement, free text."
@@ -414,11 +644,19 @@
         },
         "detector": {
           "type": "object",
-          "required": ["type"],
+          "required": [
+            "type"
+          ],
           "additionalProperties": false,
           "properties": {
-            "type": { "type": "string", "description": "e.g. 'InGaAs photodiode'." },
-            "bandwidth_Hz": { "type": "number", "exclusiveMinimum": 0 }
+            "type": {
+              "type": "string",
+              "description": "e.g. 'InGaAs photodiode'."
+            },
+            "bandwidth_Hz": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
           }
         },
         "target_lines": {
@@ -427,12 +665,24 @@
           "description": "HITRAN transitions targeted by this measurement.",
           "items": {
             "type": "object",
-            "required": ["hitran_molecule_id", "wavenumber_cm1"],
+            "required": [
+              "hitran_molecule_id",
+              "wavenumber_cm1"
+            ],
             "additionalProperties": false,
             "properties": {
-              "hitran_molecule_id": { "type": "integer", "minimum": 1 },
-              "isotopologue_id": { "type": "integer", "minimum": 1 },
-              "wavenumber_cm1": { "type": "number", "exclusiveMinimum": 0 },
+              "hitran_molecule_id": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "isotopologue_id": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "wavenumber_cm1": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
               "line_strength_cm_per_molec": {
                 "type": "number",
                 "exclusiveMinimum": 0,
@@ -443,8 +693,14 @@
                 "minimum": 0,
                 "description": "Lower-state energy E''."
               },
-              "gamma_air_cm1_per_atm": { "type": "number", "minimum": 0 },
-              "gamma_self_cm1_per_atm": { "type": "number", "minimum": 0 },
+              "gamma_air_cm1_per_atm": {
+                "type": "number",
+                "minimum": 0
+              },
+              "gamma_self_cm1_per_atm": {
+                "type": "number",
+                "minimum": 0
+              },
               "n_air": {
                 "type": "number",
                 "description": "Temperature exponent of gamma_air (dimensionless)."
@@ -455,6 +711,30 @@
               }
             }
           }
+        },
+        "cavity": {
+          "type": "object",
+          "description": "Optical cavity parameters (CRDS).",
+          "additionalProperties": false,
+          "properties": {
+            "length_m": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "mirror_reflectivity": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "finesse": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "tau0_s": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          }
         }
       }
     }
@@ -462,21 +742,48 @@
   "allOf": [
     {
       "if": {
-        "properties": { "data_origin": { "const": "simulated" } }
+        "properties": {
+          "data_origin": {
+            "const": "simulated"
+          }
+        }
       },
-      "then": { "required": ["provenance"] }
+      "then": {
+        "required": [
+          "provenance"
+        ]
+      }
     },
     {
       "if": {
-        "properties": { "technique": { "const": "TDLAS-WMS" } }
+        "properties": {
+          "technique": {
+            "const": "TDLAS-WMS"
+          }
+        }
       },
       "then": {
         "properties": {
-          "instrument": { "required": ["laser", "detector", "target_lines", "modulation"] },
+          "instrument": {
+            "required": [
+              "laser",
+              "detector",
+              "target_lines",
+              "modulation"
+            ]
+          },
           "signals": {
             "anyOf": [
-              { "required": ["demod_1f"] },
-              { "required": ["demod_2f"] }
+              {
+                "required": [
+                  "demod_1f"
+                ]
+              },
+              {
+                "required": [
+                  "demod_2f"
+                ]
+              }
             ]
           }
         }
@@ -484,15 +791,33 @@
     },
     {
       "if": {
-        "properties": { "technique": { "const": "TDLAS-DA" } }
+        "properties": {
+          "technique": {
+            "const": "TDLAS-DA"
+          }
+        }
       },
       "then": {
         "properties": {
-          "instrument": { "required": ["laser", "detector", "target_lines"] },
+          "instrument": {
+            "required": [
+              "laser",
+              "detector",
+              "target_lines"
+            ]
+          },
           "signals": {
             "anyOf": [
-              { "required": ["absorbance"] },
-              { "required": ["raw_scan"] }
+              {
+                "required": [
+                  "absorbance"
+                ]
+              },
+              {
+                "required": [
+                  "raw_scan"
+                ]
+              }
             ]
           }
         }
@@ -500,12 +825,18 @@
     },
     {
       "if": {
-        "properties": { "technique": { "const": "NDIR" } }
+        "properties": {
+          "technique": {
+            "const": "NDIR"
+          }
+        }
       },
       "then": {
         "properties": {
           "signals": {
-            "required": ["ratio"]
+            "required": [
+              "ratio"
+            ]
           }
         }
       }
@@ -520,22 +851,42 @@
     "wavenumber_axis": {
       "type": "object",
       "description": "Uniform wavenumber axis: nu[i] = start_cm1 + i * step_cm1.",
-      "required": ["start_cm1", "step_cm1"],
+      "required": [
+        "start_cm1",
+        "step_cm1"
+      ],
       "additionalProperties": false,
       "properties": {
-        "start_cm1": { "type": "number", "exclusiveMinimum": 0 },
-        "step_cm1": { "type": "number", "exclusiveMinimum": 0 }
+        "start_cm1": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "step_cm1": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
       }
     },
     "demod_signal": {
       "type": "object",
       "description": "Lock-in demodulated harmonic signal (WMS).",
-      "required": ["array_ref", "n_samples"],
+      "required": [
+        "array_ref",
+        "n_samples"
+      ],
       "additionalProperties": false,
       "properties": {
-        "array_ref": { "$ref": "#/$defs/array_ref" },
-        "n_samples": { "type": "integer", "minimum": 2 },
-        "lowpass_cutoff_Hz": { "type": "number", "exclusiveMinimum": 0 }
+        "array_ref": {
+          "$ref": "#/$defs/array_ref"
+        },
+        "n_samples": {
+          "type": "integer",
+          "minimum": 2
+        },
+        "lowpass_cutoff_Hz": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
       }
     }
   }
