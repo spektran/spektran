@@ -1,6 +1,6 @@
 # Baselines
 
-14 reference models for the SPEKTRAN benchmark. They chase reproducibility,
+21 reference models for the SPEKTRAN benchmark. They chase reproducibility,
 not state of the art: fixed seeds, published hyperparameters, one command each.
 
 All baselines are registered in [`registry.yaml`](registry.yaml) and can be
@@ -8,8 +8,24 @@ trained via the AI Agent-ready CLI:
 
 ```bash
 spektran train --baseline ridge --json    # auto-generates data, trains, reports scores
-spektran list baselines --json            # list all 14 baselines with metadata
+spektran list baselines --json            # list all 21 baselines with metadata
 ```
+
+### Architecture coverage (added 2026-08-11)
+
+| Category | Models | Task |
+|----------|--------|------|
+| Linear | Ridge | T1/T3/T4/T7/T8/T9 |
+| Tree ensemble | Random Forest, Gradient Boosting | T1/T3 |
+| MLP | MLP (BPNN) | T1/T3 |
+| CNN | 1D CNN | T1/T3/T4 |
+| RNN | BiLSTM | T1/T3 |
+| Hybrid | CNN-LSTM-Attention | T1/T3 |
+| Transformer | Patchified Transformer | T1/T3/T4 |
+| Denoising | U-Net, LSTM-DAE, Wing-Poly | T2 |
+| Drift | Moving Average, TCN | T5 |
+| OOD | PCA+Mahalanobis | T6 |
+| Physics | Voigt Fit (LM), PINN | T1/T3 |
 
 ## Setup (manual)
 

@@ -196,3 +196,74 @@ baselines:
           T9: predictions_t9-test.csv
         scores:
           T9: scores.json
+
+  random_forest:
+    display_name: Random Forest / GBR
+    description: "Non-linear tree ensembles: RandomForest + GradientBoosting, best selected on val"
+    directory: random_forest_t1
+    tasks:
+      T1:
+        script: train.py
+        datasets: [ch4-t1-train-v0, ch4-t1-val-v0, ch4-t1-test-v0, ch4-t3-test-heldout-v0]
+        predictions:
+          T1: predictions_t1-test.csv
+          T3: predictions_t3-test-heldout.csv
+
+  mlp:
+    display_name: MLP (BPNN)
+    description: "3-layer fully-connected network (256-128-64) — the classic TDLAS BPNN baseline"
+    directory: mlp_t1
+    tasks:
+      T1:
+        script: train.py
+        datasets: [ch4-t1-train-v0, ch4-t1-val-v0, ch4-t1-test-v0, ch4-t3-test-heldout-v0]
+        predictions:
+          T1: predictions_t1-test.csv
+          T3: predictions_t3-test-heldout.csv
+
+  bilstm:
+    display_name: BiLSTM
+    description: "Bidirectional LSTM with Conv1d downsampling — most cited RNN in TDLAS+ML literature"
+    directory: bilstm_t1
+    tasks:
+      T1:
+        script: train.py
+        datasets: [ch4-t1-train-v0, ch4-t1-val-v0, ch4-t1-test-v0, ch4-t3-test-heldout-v0]
+        predictions:
+          T1: predictions_t1-test.csv
+          T3: predictions_t3-test-heldout.csv
+
+  cnn_lstm_attn:
+    display_name: CNN-LSTM-Attention
+    description: "1D CNN + BiLSTM + self-attention pooling — dominant 2024-2025 TDLAS architecture"
+    directory: cnn_lstm_attn_t1
+    tasks:
+      T1:
+        script: train.py
+        datasets: [ch4-t1-train-v0, ch4-t1-val-v0, ch4-t1-test-v0, ch4-t3-test-heldout-v0]
+        predictions:
+          T1: predictions_t1-test.csv
+          T3: predictions_t3-test-heldout.csv
+
+  lstm_dae:
+    display_name: LSTM-DAE
+    description: "LSTM Denoising AutoEncoder — bottleneck compression paradigm for spectral denoising"
+    directory: lstm_dae_t2
+    tasks:
+      T2:
+        script: train.py
+        datasets: [ch4-t1-train-v0, ch4-t1-val-v0, ch4-t1-test-v0]
+        predictions:
+          T2: predictions_t2-test.h5
+
+  pinn:
+    display_name: PINN
+    description: "Physics-Informed Neural Network — MLP with Beer-Lambert physics constraint in loss"
+    directory: pinn_t1
+    tasks:
+      T1:
+        script: train.py
+        datasets: [ch4-t1-train-v0, ch4-t1-val-v0, ch4-t1-test-v0, ch4-t3-test-heldout-v0]
+        predictions:
+          T1: predictions_t1-test.csv
+          T3: predictions_t3-test-heldout.csv
