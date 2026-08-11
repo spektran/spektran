@@ -280,7 +280,7 @@ def cmd_download(args: argparse.Namespace) -> int:
     print("Available configs:")
     for name, desc in configs:
         print(f"  {name:15s} {desc}")
-    print(f"\nExample:")
+    print("\nExample:")
     print('  from datasets import load_dataset')
     print('  ds = load_dataset("spektran/spektran-ch4-v0", "da")')
     return 0
