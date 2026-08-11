@@ -188,3 +188,23 @@ Dataset configs: `ch4-t9-{train,test}-v0.yaml`. Temperature range 250-800 K
 (uniform). Instrument: `vi-da-temp-regression-14` (low noise, wide T range).
 Prediction format: CSV with `record_id,temperature_K`. Reference baseline:
 `baselines/ridge_temp_t9` (ridge regression; MAE 9.4 K, MAPE 2.0%).
+
+---
+
+## Additional molecule datasets
+
+Beyond the CH4 v0 benchmark, SPEKTRAN provides pre-built datasets for other
+molecules and multi-gas scenarios on Hugging Face:
+
+| Dataset | Molecules | Configs | Use case |
+|---------|-----------|---------|----------|
+| [spektran-co2-v0](https://huggingface.co/datasets/spektran/spektran-co2-v0) | CO2 | `da`, `wms` | CO2 concentration + cross-instrument + WMS |
+| [spektran-industrial-v0](https://huggingface.co/datasets/spektran/spektran-industrial-v0) | SO2, NO, CO | `so2`, `no`, `co` | Industrial emission monitoring |
+| [spektran-multigas-v0](https://huggingface.co/datasets/spektran/spektran-multigas-v0) | CH4+CO2+H2O, CO+CO2 | `ch4_co2_h2o`, `co_co2` | Multi-species mixture regression |
+
+These datasets use the same task structure (T1-style concentration regression)
+and can be loaded with one line:
+
+```python
+from datasets import load_dataset
+ds = load_dataset("spektran/spektran-co2-v0", "da")

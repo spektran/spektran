@@ -1,0 +1,15 @@
+# CO concentration regression: train split (incomplete combustion detection)
+dataset_id: co-t1-train-v0
+instrument_config:
+  - configs/instruments/vi-co-da-easy-30.yaml
+  - configs/instruments/vi-co-da-medium-31.yaml
+  - configs/instruments/vi-co-da-hard-32.yaml
+n_records: 3000
+master_seed: 303001
+gas:
+  molecule: CO
+  concentration_ppm: {low: 1.0, high: 5000.0, log_uniform: true}
+  path_length_m: 10.0
+  matrix_gas: N2
+n_points: 2000
+line_source: demo

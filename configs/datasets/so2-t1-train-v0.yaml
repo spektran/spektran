@@ -1,0 +1,15 @@
+# SO2 concentration regression: train split (industrial emission monitoring)
+dataset_id: so2-t1-train-v0
+instrument_config:
+  - configs/instruments/vi-so2-da-easy-24.yaml
+  - configs/instruments/vi-so2-da-medium-25.yaml
+  - configs/instruments/vi-so2-da-hard-26.yaml
+n_records: 3000
+master_seed: 301001
+gas:
+  molecule: SO2
+  concentration_ppm: {low: 1.0, high: 5000.0, log_uniform: true}
+  path_length_m: 5.0
+  matrix_gas: N2
+n_points: 2000
+line_source: demo

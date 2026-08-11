@@ -24,7 +24,7 @@
 [**文档**](https://spektran.github.io/spektran/) &nbsp;&middot;&nbsp;
 [**在线演示**](https://huggingface.co/spaces/spektran/spektran-demo) &nbsp;&middot;&nbsp;
 [**排行榜**](https://spektran.github.io/spektran/leaderboard/) &nbsp;&middot;&nbsp;
-[**数据集**](https://huggingface.co/datasets/spektran/spektran-ch4-v0) &nbsp;&middot;&nbsp;
+[**数据集**](https://huggingface.co/spektran) &nbsp;&middot;&nbsp;
 [**基线模型**](https://huggingface.co/spektran/spektran-baselines-v0)
 
 </div>
@@ -72,7 +72,10 @@
 
 ```python
 from datasets import load_dataset
-ds = load_dataset("spektran/spektran-ch4-v0")
+ds = load_dataset("spektran/spektran-ch4-v0")       # CH4 基准
+ds = load_dataset("spektran/spektran-co2-v0", "da") # CO2 基准
+ds = load_dataset("spektran/spektran-industrial-v0", "so2")  # 工业排放 SO2
+ds = load_dataset("spektran/spektran-multigas-v0", "ch4_co2_h2o")  # 多气体混合
 ```
 
 **完整引擎** — 在本地模拟光谱：
@@ -230,7 +233,9 @@ done
 SPEKTRAN 的基准任务对应着工业和环境科学中的真实问题：
 
 - **甲烷泄漏检测** — 油气设施、垃圾填埋场、畜牧业（T1、T3）
-- **工业排放监测** — SO2、NO、CO 烟气连续分析（T4、T8）
+- **CO2 监测** — 温室气体定量、室内空气质量、过程控制（[CO2 数据集](https://huggingface.co/datasets/spektran/spektran-co2-v0)）
+- **工业排放监测** — SO2、NO、CO 烟气连续分析（[工业数据集](https://huggingface.co/datasets/spektran/spektran-industrial-v0)）
+- **多气体混合物** — 燃烧排放中分离重叠光谱组分（[多气体数据集](https://huggingface.co/datasets/spektran/spektran-multigas-v0)）
 - **医学呼气分析** — ppb 级痕量气体生物标志物检测（T1、T9）
 - **仪器无关部署** — 模型跨硬件迁移，无需重新标定（T3、T7）
 - **抗漂移野外传感器** — 恶劣环境下的长期自主监测（T5）

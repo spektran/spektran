@@ -24,7 +24,7 @@
 [**Documentation**](https://spektran.github.io/spektran/) &nbsp;&middot;&nbsp;
 [**Interactive Demo**](https://huggingface.co/spaces/spektran/spektran-demo) &nbsp;&middot;&nbsp;
 [**Leaderboard**](https://spektran.github.io/spektran/leaderboard/) &nbsp;&middot;&nbsp;
-[**Dataset**](https://huggingface.co/datasets/spektran/spektran-ch4-v0) &nbsp;&middot;&nbsp;
+[**Datasets**](https://huggingface.co/spektran) &nbsp;&middot;&nbsp;
 [**Baselines**](https://huggingface.co/spektran/spektran-baselines-v0)
 
 </div>
@@ -72,7 +72,10 @@
 
 ```python
 from datasets import load_dataset
-ds = load_dataset("spektran/spektran-ch4-v0")
+ds = load_dataset("spektran/spektran-ch4-v0")       # CH4 benchmark
+ds = load_dataset("spektran/spektran-co2-v0", "da") # CO2 benchmark
+ds = load_dataset("spektran/spektran-industrial-v0", "so2")  # Industrial SO2
+ds = load_dataset("spektran/spektran-multigas-v0", "ch4_co2_h2o")  # Multi-gas
 ```
 
 **Full engine** — simulate spectra locally:
@@ -243,7 +246,9 @@ spektran benchmark --task T1-concentration \
 SPEKTRAN's benchmarks mirror problems that matter in industry and environmental science:
 
 - **Methane leak detection** — oil & gas facilities, landfills, livestock operations (T1, T3)
-- **Industrial emissions monitoring** — continuous stack gas analysis for SO2, NO, CO (T4, T8)
+- **CO2 monitoring** — greenhouse gas quantification, indoor air quality, process control ([CO2 dataset](https://huggingface.co/datasets/spektran/spektran-co2-v0))
+- **Industrial emissions monitoring** — SO2, NO, CO stack gas analysis ([industrial dataset](https://huggingface.co/datasets/spektran/spektran-industrial-v0))
+- **Multi-gas mixtures** — disentangling overlapping species in combustion exhaust ([multi-gas dataset](https://huggingface.co/datasets/spektran/spektran-multigas-v0))
 - **Medical breath analysis** — trace-gas biomarkers at ppb levels (T1, T9)
 - **Instrument-agnostic deployment** — models that transfer across hardware without recalibration (T3, T7)
 - **Drift-resilient field sensors** — long-term autonomous monitoring in harsh environments (T5)

@@ -1,0 +1,15 @@
+# CO2 WMS concentration: test split
+dataset_id: co2-t4-test-v0
+instrument_config:
+  - configs/instruments/vi-co2-wms-easy-21.yaml
+  - configs/instruments/vi-co2-wms-medium-22.yaml
+  - configs/instruments/vi-co2-wms-hard-23.yaml
+n_records: 1000
+master_seed: 202003
+gas:
+  molecule: CO2
+  concentration_ppm: {low: 100.0, high: 50000.0, log_uniform: true}
+  path_length_m: 10.0
+  matrix_gas: N2
+n_points: 2000
+line_source: demo

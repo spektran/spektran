@@ -172,11 +172,29 @@ spektran/
 
 ```python
 from datasets import load_dataset
+
+# CH4 benchmark (original)
 ds = load_dataset("spektran/spektran-ch4-v0", "da")  # T1/T3 concentration
+
+# CO2 benchmark
+ds = load_dataset("spektran/spektran-co2-v0", "da")   # CO2 DA concentration
+ds = load_dataset("spektran/spektran-co2-v0", "wms")  # CO2 WMS concentration
+
+# Industrial gases (SO2, NO, CO)
+ds = load_dataset("spektran/spektran-industrial-v0", "so2")
+ds = load_dataset("spektran/spektran-industrial-v0", "no")
+ds = load_dataset("spektran/spektran-industrial-v0", "co")
+
+# Multi-gas mixtures
+ds = load_dataset("spektran/spektran-multigas-v0", "ch4_co2_h2o")  # Triple mixture
+ds = load_dataset("spektran/spektran-multigas-v0", "co_co2")        # CO+CO2
 ```
 
-Available configs: `da`, `wms`, `drift`, `ood`, `ndir`, `multispecies`, `temperature`,
+**CH4 configs**: `da`, `wms`, `drift`, `ood`, `ndir`, `multispecies`, `temperature`,
 `da_hitran`, `wms_hitran`, `da_large`.
+**CO2 configs**: `da`, `wms`.
+**Industrial configs**: `so2`, `no`, `co`.
+**Multi-gas configs**: `ch4_co2_h2o`, `co_co2`.
 
 ## Extending the Project
 
@@ -197,5 +215,5 @@ To modify simulation physics:
 - [GitHub](https://github.com/spektran/spektran)
 - [Documentation](https://spektran.github.io/spektran/)
 - [Leaderboard](https://spektran.github.io/spektran/leaderboard/)
-- [HF Dataset](https://huggingface.co/datasets/spektran/spektran-ch4-v0)
+- [HF Datasets](https://huggingface.co/spektran)
 - [PyPI](https://pypi.org/project/spektran/)

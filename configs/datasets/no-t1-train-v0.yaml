@@ -1,0 +1,15 @@
+# NO concentration regression: train split (combustion exhaust monitoring)
+dataset_id: no-t1-train-v0
+instrument_config:
+  - configs/instruments/vi-no-da-easy-27.yaml
+  - configs/instruments/vi-no-da-medium-28.yaml
+  - configs/instruments/vi-no-da-hard-29.yaml
+n_records: 3000
+master_seed: 302001
+gas:
+  molecule: "NO"
+  concentration_ppm: {low: 1.0, high: 2000.0, log_uniform: true}
+  path_length_m: 5.0
+  matrix_gas: N2
+n_points: 2000
+line_source: demo

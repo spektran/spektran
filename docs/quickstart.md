@@ -17,7 +17,11 @@ The official v0 splits are hosted on Hugging Face:
 
 ```python
 from datasets import load_dataset
-ds = load_dataset("spektran/spektran-ch4-v0")
+
+ds = load_dataset("spektran/spektran-ch4-v0")                          # CH4 benchmark
+ds = load_dataset("spektran/spektran-co2-v0", "da")                    # CO2 DA benchmark
+ds = load_dataset("spektran/spektran-industrial-v0", "so2")            # SO2 industrial
+ds = load_dataset("spektran/spektran-multigas-v0", "ch4_co2_h2o")      # Multi-gas mixture
 ```
 
 Everything below is for running the engine, regenerating data bit-for-bit,

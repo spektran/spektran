@@ -5,7 +5,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ---
 
-## [0.5.1] — 2026-08-11 — AI Agent Ready
+## [0.5.1] — 2026-08-11 — AI Agent Ready + Multi-Molecule Expansion
 
 ### Added
 - **AI Agent-ready CLI** — 8 commands (`info`, `list`, `status`, `train`, `generate`, `validate`, `benchmark`, `download`), all with `--json` structured output for AI agent integration
@@ -13,11 +13,18 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - **`spektran train`** — one-command baseline training with auto data generation and score reporting
 - **Baseline registry** (`baselines/registry.yaml`) — declarative manifest of all 14 baselines
 - **AI Agent Guide** — dedicated documentation page (`docs/agent.md`)
+- **CO2 benchmark dataset** (`spektran/spektran-co2-v0`) — DA (train/val/test/heldout) + WMS (train/val/test) configs for CO2 near 4978 cm⁻¹, with 4 new virtual instruments
+- **Industrial emission dataset** (`spektran/spektran-industrial-v0`) — SO2, NO, CO concentration regression benchmarks with 9 new virtual instruments
+- **Multi-gas mixture dataset** (`spektran/spektran-multigas-v0`) — CH4+CO2+H2O triple mixture and CO+CO2 dual mixture regression benchmarks
+- 16 new virtual instrument configs for CO2 (DA + WMS), SO2, NO, and CO
+- 17 new dataset split configs across all new molecules and mixtures
 
 ### Changed
 - All project branding updated to "AI Agent-Ready" positioning across README, README_zh, docs site, pyproject.toml, CITATION.cff, .zenodo.json, Colab notebook, HF dataset card, and HF Space
 - Quickstart docs now lead with "Option 0: AI Agent (zero code)"
 - GitHub repo description and topics updated (`agent-ready`, `ai-agent`)
+- README Quick Start now shows all 4 dataset repos (CH4, CO2, industrial, multi-gas)
+- AGENTS.md updated with all new HF dataset repos and configs
 
 ---
 
