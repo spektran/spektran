@@ -15,7 +15,6 @@ from pathlib import Path
 
 from . import __version__
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -162,7 +161,8 @@ def _list_tasks(args: argparse.Namespace) -> int:
     baseline_map: dict[str, list[str]] = {}
     for name, bl in registry.get("baselines", {}).items():
         for task_key in bl.get("tasks", {}):
-            baseline_map.setdefault(f"T{task_key}" if not task_key.startswith("T") else task_key, [])
+            tk = f"T{task_key}" if not task_key.startswith("T") else task_key
+            baseline_map.setdefault(tk, [])
             short_task = task_key.replace("T", "") if task_key.startswith("T") else task_key
             for full_id in TASK_SPECS:
                 if full_id.startswith(f"T{short_task}-") or full_id.startswith(f"{task_key}-"):
@@ -331,7 +331,6 @@ def cmd_train(args: argparse.Namespace) -> int:
             return 1
         if not use_json:
             print(f"Generating {ds_id}...")
-        gen_argv = ["generate", str(cfg_path), "--out", str(data_dir)]
         rc = cmd_generate(argparse.Namespace(
             config=str(cfg_path), out=str(data_dir), n=None, json=False,
         ))
@@ -394,7 +393,8 @@ def cmd_train(args: argparse.Namespace) -> int:
         if scores:
             print("Scores:")
             for task, s in scores.items():
-                metrics = ", ".join(f"{k}: {v}" for k, v in s.items() if isinstance(v, (int, float)))
+                pairs = (f"{k}: {v}" for k, v in s.items() if isinstance(v, (int, float)))
+                metrics = ", ".join(pairs)
                 print(f"  {task}: {metrics}")
     return 0
 
@@ -735,7 +735,9 @@ def main(argv: list[str] | None = None) -> int:
     # --- train ---
     p_train = sub.add_parser("train", help="train a baseline (auto-generates data)")
     p_train.add_argument("--baseline", required=True, help="baseline name (from registry)")
-    p_train.add_argument("--task", default=None, help="specific task (default: all tasks for baseline)")
+    p_train.add_argument(
+        "--task", default=None, help="specific task (default: all)",
+    )
     p_train.add_argument("--data-dir", default="data", help="data directory")
     p_train.add_argument("--json", action="store_true", help="JSON output")
 
