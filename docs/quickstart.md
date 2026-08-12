@@ -116,3 +116,29 @@ spektran benchmark --task T1-concentration \
 The CNN baseline (`baselines/cnn1d/train.py`) takes ~7 minutes on CPU; full
 scoring commands for both models, including the T3 `--t1-mae` convention,
 are in [baselines/README.md](https://github.com/spektran/spektran/blob/main/baselines/README.md).
+
+## New modalities: CRDS, FTIR, DOAS
+
+SPEKTRAN v0.6.0 adds three optical sensing modalities beyond TDLAS and NDIR.
+Each has its own forward model, noise chain, and benchmark configs:
+
+```bash
+# CRDS — cavity ring-down spectroscopy (CH4)
+spektran generate configs/datasets/ch4-crds-t1-train-v0.yaml --out data --json
+
+# FTIR — Fourier transform infrared (CH4)
+spektran generate configs/datasets/ch4-ftir-t1-train-v0.yaml --out data --json
+
+# DOAS — differential optical absorption spectroscopy (SO2, UV/Vis)
+spektran generate configs/datasets/so2-doas-t1-train-v0.yaml --out data --json
+```
+
+Train baselines:
+
+```bash
+python baselines/ridge_crds_t1/train.py    # CRDS ridge (MAE 36.5 ppm)
+python baselines/ridge_ftir_t1/train.py    # FTIR ridge (MAE 83.7 ppm)
+python baselines/ridge_doas_t1/train.py    # DOAS ridge (MAE 1.40 ppm)
+```
+
+See the [benchmark rules](benchmark.md#new-modality-benchmarks-v060) for details.

@@ -40,9 +40,24 @@ Schema modifications are write-privileged:
 - Every change is recorded in `schema/CHANGELOG.md` with rationale.
 - Breaking changes bump the minor version pre-1.0 (`0.1` → `0.2`).
 
+## Adding a new modality
+
+SPEKTRAN ships 5 modalities (TDLAS, NDIR, CRDS, FTIR, DOAS). To add a sixth:
+
+1. Add physics module(s) under `src/spektran/physics/` (forward model).
+2. Add noise module(s) under `src/spektran/instrument/` (instrument noise chain).
+3. Create virtual instrument configs under `configs/instruments/vi-{technique}-*.yaml`.
+4. Extend `record.schema.json` with conditional fields for the new technique.
+5. Add a generator module (`src/spektran/{technique}_generator.py`) and CLI routing in `cli.py`.
+6. Add dataset configs, benchmark tasks, and at least one baseline.
+7. Run gates G2–G4 for the new modality.
+8. Update `docs/`, `README.md`, `README_zh.md`, and `AGENTS.md`.
+
+The `technique` field in the schema already supports extension — new modalities extend, not fork.
+
 ## Data contributions (future)
 
-External data (experimental or simulated) will be accepted once the curated ingestion pipeline lands (Phase 3). Requirements preview:
+External data (experimental or simulated) will be accepted once the curated ingestion pipeline lands (Phase 6). Requirements preview:
 
 - Records must validate against the current `record.schema.json` (`spektran validate`).
 - Unit-consistency lint must pass with zero warnings.

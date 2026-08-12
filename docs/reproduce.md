@@ -17,3 +17,10 @@
 - v0.5 adds `spektran train --baseline <name>` for one-command baseline
   training with automatic data generation. All commands support `--json`
   output for AI agent integration (see [`AGENTS.md`](https://github.com/spektran/spektran/blob/main/AGENTS.md)).
+- v0.6 extends full reproducibility to CRDS, FTIR, and DOAS modalities.
+  Each new generator uses the same `SeedSequence.spawn` per-record pattern
+  as TDLAS and NDIR. CRDS and FTIR use HITRAN demo line lists; DOAS uses
+  synthetic cross sections (by design — UV/Vis cross sections have different
+  structure from IR line-by-line parameters). All three modalities share the
+  same instrument-sampling and noise-chain infrastructure, and their
+  provenance records are schema-validated identically.

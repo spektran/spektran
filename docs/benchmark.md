@@ -208,3 +208,27 @@ and can be loaded with one line:
 ```python
 from datasets import load_dataset
 ds = load_dataset("spektran/spektran-co2-v0", "da")
+```
+
+## New modality benchmarks (v0.6.0)
+
+Three additional optical sensing modalities were added in v0.6.0, each with
+T1-style concentration regression and T3-style cross-instrument generalization:
+
+| Modality | Physics | Input signal | Instruments | Baseline MAE |
+|----------|---------|-------------|-------------|-------------|
+| **CRDS** | Cavity ring-down time → absorption | `tau_spectrum` | 4 (lab/field/Picarro/held-out) | 36.5 ppm |
+| **FTIR** | Interferogram → ILS-broadened spectrum | `ftir_spectrum` | 4 (lab/field/TCCON/held-out) | 83.7 ppm |
+| **DOAS** | UV/Vis Beer-Lambert → differential OD | `doas_spectrum` | 4 (zenith/MAX-DOAS/long-path/held-out) | 1.40 ppm |
+
+Generate locally:
+
+```bash
+spektran generate configs/datasets/ch4-crds-t1-train-v0.yaml --out data --json
+spektran generate configs/datasets/ch4-ftir-t1-train-v0.yaml --out data --json
+spektran generate configs/datasets/so2-doas-t1-train-v0.yaml --out data --json
+```
+
+Physical difficulty ordering (Ridge baseline): DOAS (1.40 ppm at ppb-scale
+concentrations) < TDLAS (2.84 ppm) < CRDS (36.5 ppm, nonlinear tau → conc)
+< FTIR (83.7 ppm, ILS convolution smoothing)

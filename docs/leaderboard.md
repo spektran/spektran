@@ -151,6 +151,44 @@ target is gas temperature, inferred from temperature-dependent line-shape change
 
 ---
 
+## T1-CRDS — Concentration Regression (Cavity Ring-Down)
+
+| Model | Type | MAE (ppm) | T3 MAE (ppm) | T3 Degradation | Code |
+|---|---|---|---|---|---|
+| Ridge (tau) | Linear | **36.5** | **39.8** | **1.09x** | `baselines/ridge_crds_t1/` |
+
+CRDS measures ring-down time tau, which depends nonlinearly on absorption
+coefficient: alpha = (1/c)(1/tau - 1/tau_0). The nonlinear tau-to-concentration
+mapping makes this harder for linear models than TDLAS's direct Beer-Lambert absorbance.
+
+---
+
+## T1-FTIR — Concentration Regression (Fourier Transform Infrared)
+
+| Model | Type | MAE (ppm) | T3 MAE (ppm) | T3 Degradation | Code |
+|---|---|---|---|---|---|
+| Ridge (spectrum) | Linear | **83.7** | **79.5** | **0.95x** | `baselines/ridge_ftir_t1/` |
+
+FTIR recovers spectra through ILS convolution (apodized FFT of truncated
+interferogram), which smooths narrow features and limits the spectral resolution.
+The high MAE reflects this information loss, while the near-unity T3 degradation
+suggests the held-out instrument's different apodization function doesn't change
+the underlying difficulty.
+
+---
+
+## T1-DOAS — Concentration Regression (Differential Optical Absorption)
+
+| Model | Type | MAE (ppm) | T3 MAE (ppm) | T3 Degradation | Code |
+|---|---|---|---|---|---|
+| Ridge (diff OD) | Linear | **1.40** | **1.65** | **1.18x** | `baselines/ridge_doas_t1/` |
+
+DOAS differential OD is linear in concentration by design (polynomial high-pass
+isolates the differential absorption from broadband extinction). The low MAE
+reflects this linearity plus the ppb-scale concentration range (0.001–10 ppm).
+
+---
+
 ## Submitting Results
 
 1. Generate predictions on the official test split using `spektran generate`.
