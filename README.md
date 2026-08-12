@@ -7,7 +7,7 @@
 ### The MNIST of Gas Sensing
 
 **AI Agent-Ready simulation engine + ML benchmark for optical gas sensing**<br>
-*HITRAN-grade physics. 9 tasks. 22 baselines. Full pipeline via natural language.*
+*HITRAN-grade physics. 9 tasks. 25 baselines. 5 modalities. Full pipeline via natural language.*
 
 <br>
 
@@ -45,7 +45,7 @@
 
 ### Simulation Engine
 - **10 molecules** — CH4, H2O, CO2, CO, NH3, NO, NO2, SO2, HCl, HF
-- **2 modalities** — TDLAS (DA + WMS) and NDIR
+- **5 modalities** — TDLAS (DA + WMS), NDIR, CRDS, FTIR, DOAS
 - **Advanced line shapes** — Voigt & Hartmann-Tran Profile
 - **14+ virtual instruments** with realistic noise chains
 - **WMS 1f–4f** demodulation + 2f/1f calibration-free ratio
@@ -55,7 +55,7 @@
 
 ### ML Benchmark
 - **9 tasks** (T1–T9) — regression, denoising, OOD, transfer, multi-species
-- **22 baselines** — Ridge, CNN, Transformer, U-Net, SpektralNet, RF, PINN, ...
+- **25 baselines** — Ridge, CNN, Transformer, U-Net, SpektralNet, RF, PINN, ...
 - **Official splits** — train / val / test / held-out instrument
 - **AI Agent-ready CLI** — `--json` on every command, discoverable API
 - **Public leaderboard** on GitHub Pages
@@ -162,7 +162,7 @@ Agent: spektran train --baseline ridge --task T1 --json
 ```bash
 spektran info --json           # What is this project? What's available?
 spektran list tasks --json     # 9 tasks with metrics and available baselines
-spektran list baselines --json # 22 baselines with pre-computed scores
+spektran list baselines --json # 25 baselines with pre-computed scores
 spektran status --json         # What data exists? What's been trained?
 ```
 
@@ -239,6 +239,9 @@ spektran benchmark --task T1-concentration \
 | **T7** Cross-modality | Ridge (TDLAS→NDIR) | MAE 130.68 ppm (46x) |
 | **T8** Multi-species | Ridge (dual) | CH4 0.89 / H2O 3937 ppm |
 | **T9** Temperature | Ridge | MAE 9.4 K |
+| **T1-CRDS** Concentration | Ridge (tau) | MAE 36.5 ppm |
+| **T1-FTIR** Concentration | Ridge (spectrum) | MAE 83.7 ppm |
+| **T1-DOAS** Concentration | Ridge (diff OD) | MAE 1.40 ppm |
 
 </details>
 
