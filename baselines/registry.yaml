@@ -280,6 +280,21 @@ baselines:
           T1: predictions_t1-test.csv
           T3: predictions_t3-test-heldout.csv
 
+  ridge_doas:
+    display_name: Ridge (DOAS)
+    description: "Ridge regression on DOAS differential OD — concentration from UV/Vis spectral features"
+    directory: ridge_doas_t1
+    tasks:
+      T1-DOAS:
+        script: train.py
+        datasets: [so2-doas-t1-train-v0, so2-doas-t1-val-v0, so2-doas-t1-test-v0, so2-doas-t3-heldout-v0]
+        predictions:
+          T1-DOAS: predictions_doas-t1-test.csv
+          T3-DOAS: predictions_doas-t3-heldout.csv
+        scores:
+          T1-DOAS: scores_doas_t1.json
+          T3-DOAS: scores_doas_t3.json
+
   ridge_ftir:
     display_name: Ridge (FTIR)
     description: "Ridge regression on FTIR recovered spectrum — concentration from ILS-broadened absorption"

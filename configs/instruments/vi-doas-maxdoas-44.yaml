@@ -1,0 +1,22 @@
+# MAX-DOAS: multi-axis, elevation scanning, tropospheric profiling
+instrument_config_id: vi-doas-maxdoas-44
+schema_version: "0.2"
+technique: DOAS
+held_out: false
+description: "MAX-DOAS: variable elevation angles, stronger aerosol, wider noise range."
+spectrograph:
+  mie_tau_ref: {dist: uniform, low: 0.1, high: 0.8}
+  mie_angstrom_exp: {dist: uniform, low: 0.8, high: 2.0}
+  stray_light_fraction: {dist: loguniform, low: 5.0e-5, high: 5.0e-4}
+  ring_effect_amplitude: {dist: uniform, low: 0.01, high: 0.04}
+  wavelength_shift_nm: {dist: loguniform, low: 0.01, high: 0.05}
+detector:
+  photon_count_ref: {dist: loguniform, low: 1.0e+5, high: 2.0e+6}
+  dark_current_sigma: {dist: loguniform, low: 5.0e-6, high: 5.0e-5}
+  readout_noise_sigma: {dist: loguniform, low: 5.0e-5, high: 5.0e-4}
+  type: "CCD (simulated)"
+environment:
+  temperature_K: {dist: uniform, low: 280.0, high: 310.0}
+  pressure_atm: {dist: uniform, low: 0.90, high: 1.05}
+  temperature_jitter_K: {dist: uniform, low: 0.1, high: 1.0}
+  pressure_jitter_atm: {dist: uniform, low: 0.001, high: 0.005}

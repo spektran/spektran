@@ -279,6 +279,28 @@
               "type": "string"
             }
           }
+        },
+        "doas_spectrum": {
+          "type": "object",
+          "description": "DOAS differential optical density after polynomial high-pass filtering.",
+          "required": [
+            "array_ref",
+            "n_samples",
+            "unit"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "array_ref": {
+              "$ref": "#/$defs/array_ref"
+            },
+            "n_samples": {
+              "type": "integer",
+              "minimum": 2
+            },
+            "unit": {
+              "type": "string"
+            }
+          }
         }
       }
     },
@@ -772,6 +794,20 @@
             },
             "apodization": {
               "type": "string"
+            }
+          }
+        },
+        "spectrograph": {
+          "type": "object",
+          "description": "DOAS spectrograph parameters.",
+          "properties": {
+            "poly_order": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "mie_tau_ref": {
+              "type": "number",
+              "minimum": 0
             }
           }
         }

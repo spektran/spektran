@@ -1,0 +1,22 @@
+# Zenith-sky DOAS: ground-based, looking up, long atmospheric path
+instrument_config_id: vi-doas-zenith-43
+schema_version: "0.2"
+technique: DOAS
+held_out: false
+description: "Zenith-sky DOAS: high photon count, moderate Ring effect, low stray light."
+spectrograph:
+  mie_tau_ref: {dist: uniform, low: 0.05, high: 0.3}
+  mie_angstrom_exp: {dist: uniform, low: 1.0, high: 1.6}
+  stray_light_fraction: {dist: loguniform, low: 1.0e-5, high: 1.0e-4}
+  ring_effect_amplitude: {dist: uniform, low: 0.005, high: 0.02}
+  wavelength_shift_nm: {dist: loguniform, low: 0.005, high: 0.02}
+detector:
+  photon_count_ref: {dist: loguniform, low: 5.0e+5, high: 5.0e+6}
+  dark_current_sigma: {dist: loguniform, low: 1.0e-6, high: 1.0e-5}
+  readout_noise_sigma: {dist: loguniform, low: 1.0e-5, high: 1.0e-4}
+  type: "CCD (simulated)"
+environment:
+  temperature_K: 296.0
+  pressure_atm: 1.0
+  temperature_jitter_K: {dist: uniform, low: 0.0, high: 0.5}
+  pressure_jitter_atm: {dist: uniform, low: 0.0, high: 0.002}

@@ -1,0 +1,22 @@
+# Held-out DOAS: satellite-class, different noise regime
+instrument_config_id: vi-doas-heldout-46
+schema_version: "0.2"
+technique: DOAS
+held_out: true
+description: "Held-out satellite DOAS: high aerosol, strong Ring, large wavelength drift."
+spectrograph:
+  mie_tau_ref: {dist: uniform, low: 0.3, high: 1.0}
+  mie_angstrom_exp: {dist: uniform, low: 0.5, high: 1.8}
+  stray_light_fraction: {dist: loguniform, low: 1.0e-4, high: 1.0e-3}
+  ring_effect_amplitude: {dist: uniform, low: 0.02, high: 0.06}
+  wavelength_shift_nm: {dist: loguniform, low: 0.02, high: 0.1}
+detector:
+  photon_count_ref: {dist: loguniform, low: 5.0e+4, high: 1.0e+6}
+  dark_current_sigma: {dist: loguniform, low: 1.0e-5, high: 1.0e-4}
+  readout_noise_sigma: {dist: loguniform, low: 1.0e-4, high: 1.0e-3}
+  type: "CCD (simulated)"
+environment:
+  temperature_K: {dist: uniform, low: 250.0, high: 300.0}
+  pressure_atm: {dist: uniform, low: 0.3, high: 1.0}
+  temperature_jitter_K: {dist: uniform, low: 1.0, high: 5.0}
+  pressure_jitter_atm: {dist: uniform, low: 0.005, high: 0.02}

@@ -101,6 +101,18 @@ def load_crds_split(name: str) -> tuple[np.ndarray, np.ndarray, list[str]]:
     return X, y, ids
 
 
+def load_doas_split(name: str) -> tuple[np.ndarray, np.ndarray, list[str]]:
+    """Load a DOAS split: X = doas_spectrum [n, n_points], y = concentration [ppm]."""
+    records = read_records(DATA / f"{name}.h5")
+    records.sort(key=lambda r: r["meta"]["record_id"])
+    X = np.stack([r["arrays"]["doas_spectrum"] for r in records])
+    y = np.array(
+        [r["meta"]["labels"]["species"][0]["concentration_ppm"] for r in records]
+    )
+    ids = [r["meta"]["record_id"] for r in records]
+    return X, y, ids
+
+
 def load_ftir_split(name: str) -> tuple[np.ndarray, np.ndarray, list[str]]:
     """Load an FTIR split: X = ftir_spectrum [n, n_points], y = concentration [ppm]."""
     records = read_records(DATA / f"{name}.h5")

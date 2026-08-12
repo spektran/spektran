@@ -622,6 +622,33 @@
           "description": "Channel spectrum free spectral range [cm-1]."
         }
       }
+    },
+    "spectrograph": {
+      "type": "object",
+      "description": "DOAS spectrograph parameters (Platt & Stutz, 2008).",
+      "additionalProperties": false,
+      "properties": {
+        "mie_tau_ref": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Reference Mie aerosol optical depth."
+        },
+        "mie_angstrom_exp": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Angstrom exponent for Mie scattering."
+        },
+        "stray_light_fraction": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Stray light fraction in spectrograph."
+        },
+        "ring_effect_amplitude": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Ring effect amplitude (rotational Raman filling-in)."
+        },
+        "wavelength_shift_nm": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Wavelength calibration drift sigma [nm]."
+        }
+      }
     }
   },
   "$defs": {

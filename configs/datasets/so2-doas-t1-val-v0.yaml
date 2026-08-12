@@ -1,0 +1,19 @@
+dataset_id: so2-doas-t1-val-v0
+technique: DOAS
+instrument_config:
+  - configs/instruments/vi-doas-zenith-43.yaml
+  - configs/instruments/vi-doas-maxdoas-44.yaml
+  - configs/instruments/vi-doas-lp-45.yaml
+n_records: 500
+master_seed: 801002
+gas:
+  molecule: SO2
+  concentration_ppm: {low: 0.001, high: 10.0, log_uniform: true}
+  path_length_m: 1000.0
+  matrix_gas: air
+  wavelength_start_nm: 300.0
+  wavelength_end_nm: 360.0
+  n_output_points: 500
+  cross_section_center_nm: 330.0
+  cross_section_peak_cm2: 6.0e-19
+  poly_order: 5
