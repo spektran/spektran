@@ -975,22 +975,6 @@ INIT_JS = """
 }
 """
 
-TOGGLE_THEME_JS = """
-(theme) => {
-    const next = theme === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', next);
-    return next;
-}
-"""
-
-TOGGLE_LANG_JS = """
-(lang) => {
-    const next = lang === 'en' ? 'zh' : 'en';
-    window.applyLang(next);
-    return next;
-}
-"""
-
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Build the Gradio app
@@ -1013,6 +997,8 @@ with gr.Blocks(
     theme_state = gr.State("dark")
     lang_state = gr.State("en")
     sim_data = gr.State(None)
+    theme_bridge = gr.Textbox(visible=False, value="dark", elem_id="sp-theme-val")
+    lang_bridge = gr.Textbox(visible=False, value="en", elem_id="sp-lang-val")
 
     # ── Control bar (theme + language) ────────────────────────────
     with gr.Row(elem_classes=["sp-ctrl-row"]):
@@ -1236,19 +1222,29 @@ with gr.Blocks(
     def _toggle_theme(current):
         new = "light" if current == "dark" else "dark"
         icon = "☀️" if new == "light" else "🌙"
-        return new, gr.update(value=icon)
+        return new, gr.update(value=icon), new
 
-    theme_btn.click(_toggle_theme, [theme_state], [theme_state, theme_btn],
-                    js=TOGGLE_THEME_JS)
+    theme_btn.click(_toggle_theme, [theme_state],
+                    [theme_state, theme_btn, theme_bridge])
+
+    theme_bridge.change(
+        fn=None, inputs=[theme_bridge],
+        js="(theme) => { document.documentElement.setAttribute('data-theme', theme); }"
+    )
 
     # ── Language toggle ───────────────────────────────────────────
     def _toggle_lang(current):
         new = "zh" if current == "en" else "en"
         label = "中文" if new == "zh" else "EN"
-        return new, gr.update(value=label)
+        return new, gr.update(value=label), new
 
-    lang_btn.click(_toggle_lang, [lang_state], [lang_state, lang_btn],
-                   js=TOGGLE_LANG_JS)
+    lang_btn.click(_toggle_lang, [lang_state],
+                   [lang_state, lang_btn, lang_bridge])
+
+    lang_bridge.change(
+        fn=None, inputs=[lang_bridge],
+        js="(lang) => { if(window.applyLang) window.applyLang(lang); }"
+    )
 
     # ── Init JS on load ──────────────────────────────────────────
     demo.load(fn=None, js=INIT_JS)
