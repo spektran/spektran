@@ -265,7 +265,7 @@ def plot_doas(concentration_ppm, path_length_m, poly_order, rayleigh, mie_tau):
 
 molecule_names = list(MOLECULES.keys())
 
-with gr.Blocks(title="SPEKTRAN Interactive Demo") as demo:
+with gr.Blocks(title="SPEKTRAN Interactive Demo", theme=gr.themes.Soft()) as demo:
     gr.Markdown(
         """
         # SPEKTRAN Interactive Demo
@@ -395,4 +395,4 @@ with gr.Blocks(title="SPEKTRAN Interactive Demo") as demo:
     )
 
 if __name__ == "__main__":
-    demo.launch(theme=gr.themes.Soft())
+    demo.launch()
