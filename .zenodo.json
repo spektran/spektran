@@ -1,6 +1,7 @@
 {
   "title": "SPEKTRAN: AI Agent-ready simulation engine and ML benchmark for optical gas sensing",
   "description": "AI Agent-ready simulation engine and ML benchmark for optical gas sensing. 5 modalities (TDLAS, NDIR, CRDS, FTIR, DOAS). Full ML pipeline operable via natural language and structured CLI. v0.6.0: 10 target molecules, 9 benchmark tasks (T1-T9), 25 ML baselines, 46 virtual instruments, JSON-output CLI for AI agent integration. Built on hapi (HITRAN API) for spectroscopic physics.",
+  "version": "0.6.0",
   "license": "Apache-2.0",
   "upload_type": "software",
   "keywords": [

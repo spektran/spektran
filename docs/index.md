@@ -37,19 +37,19 @@
     1f–4f lock-in demodulation, 2f/1f calibration-free ratio,
     etalon fringes in the time-domain chain
 
--   :material-cog-outline:{ .lg .middle } **14+ Virtual Instruments**
+-   :material-cog-outline:{ .lg .middle } **46 Virtual Instruments**
 
     ---
 
-    Laser scan nonlinearity, thermal chirp, RIN, etalon fringes,
-    window contamination, beam wander, ADC quantization
+    Literature-anchored noise chains: laser chirp, etalon fringes,
+    window contamination, beam wander, mirror drift, Ring effect
 
--   :material-flask-outline:{ .lg .middle } **2 Modalities**
+-   :material-flask-outline:{ .lg .middle } **5 Modalities**
 
     ---
 
-    TDLAS (direct absorption + wavelength modulation) and
-    NDIR (Planck source + bandpass filter)
+    TDLAS (DA + WMS), NDIR, CRDS (cavity ring-down),
+    FTIR (Fourier transform), DOAS (differential optical)
 
 -   :material-trophy-outline:{ .lg .middle } **9 Benchmark Tasks**
 

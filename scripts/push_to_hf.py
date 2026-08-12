@@ -7,12 +7,15 @@ Usage:
 Converts generated HDF5 splits under data/ into multiple HF dataset configs
 and pushes with the CC BY 4.0 license tag. ML users then need one line:
 
-    load_dataset("spektran/spektran-ch4-v0", "da")         # T1/T3
-    load_dataset("spektran/spektran-ch4-v0", "wms")        # T4
+    load_dataset("spektran/spektran-ch4-v0", "da")         # T1/T3 TDLAS
+    load_dataset("spektran/spektran-ch4-v0", "wms")        # T4 WMS
     load_dataset("spektran/spektran-ch4-v0", "drift")      # T5
     load_dataset("spektran/spektran-ch4-v0", "ood")        # T6
     load_dataset("spektran/spektran-ch4-v0", "multispecies")  # T8
     load_dataset("spektran/spektran-ch4-v0", "temperature")   # T9
+    load_dataset("spektran/spektran-ch4-v0", "crds")       # CRDS
+    load_dataset("spektran/spektran-ch4-v0", "ftir")       # FTIR
+    load_dataset("spektran/spektran-ch4-v0", "doas")       # DOAS
 """
 
 from __future__ import annotations
@@ -74,6 +77,24 @@ CONFIGS = {
         "validation_5k": "ch4-t1-val-v0-5k.h5",
         "test_10k": "ch4-t1-test-v0-10k.h5",
     },
+    "crds": {
+        "train": "ch4-crds-t1-train-v0.h5",
+        "validation": "ch4-crds-t1-val-v0.h5",
+        "test": "ch4-crds-t1-test-v0.h5",
+        "test_heldout_instrument": "ch4-crds-t3-heldout-v0.h5",
+    },
+    "ftir": {
+        "train": "ch4-ftir-t1-train-v0.h5",
+        "validation": "ch4-ftir-t1-val-v0.h5",
+        "test": "ch4-ftir-t1-test-v0.h5",
+        "test_heldout_instrument": "ch4-ftir-t3-heldout-v0.h5",
+    },
+    "doas": {
+        "train": "so2-doas-t1-train-v0.h5",
+        "validation": "so2-doas-t1-val-v0.h5",
+        "test": "so2-doas-t1-test-v0.h5",
+        "test_heldout_instrument": "so2-doas-t3-heldout-v0.h5",
+    },
 }
 
 
@@ -95,6 +116,19 @@ def _record_to_row(rec: dict, include_ood: bool = False) -> dict:
 
     if technique == "NDIR":
         row["ratio"] = float(arrays["ratio"])
+    elif technique == "CRDS":
+        row["tau_spectrum"] = arrays["tau_spectrum"].tolist()
+        row["tau_spectrum_clean"] = arrays["tau_spectrum_clean"].tolist()
+        row["alpha_spectrum"] = arrays["alpha_spectrum"].tolist()
+        row["nu_cm1"] = arrays["nu_cm1"].tolist()
+    elif technique == "FTIR":
+        row["ftir_spectrum"] = arrays["ftir_spectrum"].tolist()
+        row["ftir_spectrum_clean"] = arrays["ftir_spectrum_clean"].tolist()
+        row["nu_cm1"] = arrays["nu_cm1"].tolist()
+    elif technique == "DOAS":
+        row["doas_spectrum"] = arrays["doas_spectrum"].tolist()
+        row["doas_spectrum_clean"] = arrays["doas_spectrum_clean"].tolist()
+        row["wavelength_nm"] = arrays["wavelength_nm"].tolist()
     else:
         row["raw_scan"] = arrays["raw_scan"].tolist()
         row["absorbance_clean"] = arrays["absorbance_clean"].tolist()
@@ -151,7 +185,7 @@ def main() -> int:
         print(f"\n=== Config: {config_name} ===")
         dd = build_config_dataset(CONFIGS[config_name], include_ood=(config_name == "ood"))
         if dd is None:
-            print(f"  no data files found, skipping")
+            print("  no data files found, skipping")
             continue
         dd.push_to_hub(
             args.repo,
