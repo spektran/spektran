@@ -34,7 +34,6 @@ from __future__ import annotations
 import numpy as np
 
 from .absorption import absorption_coefficient
-from .constants import C_CM_PER_S
 from .hitran import LineList
 
 

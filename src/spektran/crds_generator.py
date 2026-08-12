@@ -35,7 +35,6 @@ from .instrument.environment import jittered_conditions
 from .instrument.sampling import sample_instrument
 from .physics.crds import (
     absorption_from_tau,
-    empty_cavity_tau,
     ring_down_time,
     simulate_crds_spectrum,
 )
@@ -143,7 +142,6 @@ def generate_crds_record(
         )
         cavity_length_cm = cavity_length_m * 100.0
         for i in range(n_pts):
-            tau0_drifted = empty_cavity_tau(cavity_length_cm, R_array[i])
             alpha_i = clean["alpha_spectrum_cm1"][i]
             tau_noisy[i] = ring_down_time(cavity_length_cm, R_array[i], alpha_i)
         tau_noisy = shot_noise_tau(rng, tau_noisy, n_photons)

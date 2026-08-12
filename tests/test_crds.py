@@ -126,8 +126,8 @@ class TestFitRingDown:
     def test_clean_exponential(self):
         tau_true = 30e-6
         t = np.linspace(0, 5 * tau_true, 500)
-        I = ring_down_trace(t, tau_true, I0=1.0)
-        tau_fit, I0_fit, _ = fit_ring_down(t, I)
+        intensity = ring_down_trace(t, tau_true, I0=1.0)
+        tau_fit, I0_fit, _ = fit_ring_down(t, intensity)
         assert tau_fit == pytest.approx(tau_true, rel=1e-4)
         assert I0_fit == pytest.approx(1.0, rel=1e-3)
 
@@ -135,9 +135,9 @@ class TestFitRingDown:
         rng = np.random.default_rng(42)
         tau_true = 30e-6
         t = np.linspace(0, 2 * tau_true, 500)
-        I = ring_down_trace(t, tau_true, I0=1.0) + rng.normal(0, 0.005, 500)
-        I = np.maximum(I, 1e-10)
-        tau_fit, _, _ = fit_ring_down(t, I)
+        intensity = ring_down_trace(t, tau_true, I0=1.0) + rng.normal(0, 0.005, 500)
+        intensity = np.maximum(intensity, 1e-10)
+        tau_fit, _, _ = fit_ring_down(t, intensity)
         assert tau_fit == pytest.approx(tau_true, rel=0.15)
 
 

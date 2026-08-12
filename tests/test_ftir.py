@@ -5,20 +5,20 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
+from spektran.instrument.ftir_noise import (
+    channel_spectrum,
+    detector_noise,
+    phase_error,
+    sampling_error,
+    self_apodization,
+    source_fluctuation,
+)
 from spektran.physics.ftir import (
     apodization_function,
     generate_interferogram,
     interferogram_to_spectrum,
     simulate_ftir_spectrum,
     spectral_resolution_cm1,
-)
-from spektran.instrument.ftir_noise import (
-    channel_spectrum,
-    detector_noise,
-    self_apodization,
-    source_fluctuation,
-    sampling_error,
-    phase_error,
 )
 from spektran.physics.hitran import demo_ch4_2nu3
 
@@ -186,9 +186,10 @@ class TestFTIRNoise:
 
 class TestFTIRGenerator:
     def test_single_record(self):
-        from spektran.ftir_generator import generate_ftir_record, FTIRGenerationSpec
-        from spektran.instrument.sampling import load_instrument_config
         from pathlib import Path
+
+        from spektran.ftir_generator import FTIRGenerationSpec, generate_ftir_record
+        from spektran.instrument.sampling import load_instrument_config
 
         lines = demo_ch4_2nu3()
         spec = FTIRGenerationSpec(
@@ -214,9 +215,10 @@ class TestFTIRGenerator:
         assert record["meta"]["labels"]["species"][0]["concentration_ppm"] > 0
 
     def test_reproducibility(self):
-        from spektran.ftir_generator import generate_ftir_record, FTIRGenerationSpec
-        from spektran.instrument.sampling import load_instrument_config
         from pathlib import Path
+
+        from spektran.ftir_generator import FTIRGenerationSpec, generate_ftir_record
+        from spektran.instrument.sampling import load_instrument_config
 
         lines = demo_ch4_2nu3()
         spec = FTIRGenerationSpec(
@@ -240,9 +242,10 @@ class TestFTIRGenerator:
         )
 
     def test_dataset_generation(self):
-        from spektran.ftir_generator import generate_ftir_dataset, FTIRGenerationSpec
-        from spektran.instrument.sampling import load_instrument_config
         from pathlib import Path
+
+        from spektran.ftir_generator import FTIRGenerationSpec, generate_ftir_dataset
+        from spektran.instrument.sampling import load_instrument_config
 
         lines = demo_ch4_2nu3()
         spec = FTIRGenerationSpec(

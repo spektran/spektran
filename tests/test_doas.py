@@ -5,6 +5,14 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
+from spektran.instrument.doas_noise import (
+    dark_current_noise,
+    photon_noise,
+    readout_noise,
+    ring_effect,
+    stray_light,
+    wavelength_shift,
+)
 from spektran.physics.doas import (
     doas_optical_density,
     mie_extinction,
@@ -13,14 +21,6 @@ from spektran.physics.doas import (
     rayleigh_cross_section,
     simulate_doas_cross_section,
     simulate_doas_spectrum,
-)
-from spektran.instrument.doas_noise import (
-    dark_current_noise,
-    photon_noise,
-    readout_noise,
-    ring_effect,
-    stray_light,
-    wavelength_shift,
 )
 
 
@@ -179,9 +179,10 @@ class TestDOASNoise:
 
 class TestDOASGenerator:
     def test_single_record(self):
-        from spektran.doas_generator import generate_doas_record, DOASGenerationSpec
-        from spektran.instrument.sampling import load_instrument_config
         from pathlib import Path
+
+        from spektran.doas_generator import DOASGenerationSpec, generate_doas_record
+        from spektran.instrument.sampling import load_instrument_config
 
         spec = DOASGenerationSpec(
             concentration_ppm_low=0.01,
@@ -201,9 +202,10 @@ class TestDOASGenerator:
         assert record["meta"]["labels"]["species"][0]["concentration_ppm"] > 0
 
     def test_reproducibility(self):
-        from spektran.doas_generator import generate_doas_record, DOASGenerationSpec
-        from spektran.instrument.sampling import load_instrument_config
         from pathlib import Path
+
+        from spektran.doas_generator import DOASGenerationSpec, generate_doas_record
+        from spektran.instrument.sampling import load_instrument_config
 
         spec = DOASGenerationSpec(
             concentration_ppm_low=0.1,
@@ -223,9 +225,10 @@ class TestDOASGenerator:
         )
 
     def test_dataset_generation(self):
-        from spektran.doas_generator import generate_doas_dataset, DOASGenerationSpec
-        from spektran.instrument.sampling import load_instrument_config
         from pathlib import Path
+
+        from spektran.doas_generator import DOASGenerationSpec, generate_doas_dataset
+        from spektran.instrument.sampling import load_instrument_config
 
         spec = DOASGenerationSpec(
             concentration_ppm_low=0.01,
