@@ -6,11 +6,12 @@
 
 ## What is SPEKTRAN?
 
-An open-source simulation engine + ML benchmark for optical gas sensing (TDLAS/NDIR).
-It generates physically rigorous synthetic training data and provides 9 benchmark tasks
-with 22 baselines. Think "MNIST for gas sensing" — but grounded in real physics.
+An open-source simulation engine + ML benchmark for optical gas sensing.
+5 modalities (TDLAS, NDIR, CRDS, FTIR, DOAS). It generates physically rigorous
+synthetic training data and provides 9 benchmark tasks with 25 baselines.
+Think "MNIST for gas sensing" — but grounded in real physics.
 
-- **Version**: 0.5.1
+- **Version**: 0.6.0
 - **License**: Apache-2.0 (code), CC BY 4.0 (data)
 - **Python**: 3.10+
 - **Install**: `pip install spektran`
@@ -32,8 +33,8 @@ has been generated. Every command supports `--json` for structured output.
 |---------|---------|---------|
 | `spektran info --json` | Project overview (start here) | See above |
 | `spektran list tasks --json` | All 9 benchmark tasks with metrics | Discovery |
-| `spektran list baselines --json` | All 22 baselines with scores | Discovery |
-| `spektran list instruments --json` | All 18 virtual instruments | Discovery |
+| `spektran list baselines --json` | All 25 baselines with scores | Discovery |
+| `spektran list instruments --json` | All 46 virtual instruments | Discovery |
 | `spektran list datasets --json` | All datasets + generation status | Discovery |
 | `spektran status --json` | Data & training state | Inspection |
 | `spektran generate <config> --out data --json` | Generate dataset from YAML config | Data pipeline |
@@ -133,11 +134,13 @@ Non-zero exit codes always indicate failure. Parse `error` field for diagnostics
 ```
 spektran/
   src/spektran/          # Python package (physics engine, CLI, benchmark)
+    physics/             # Forward models: absorption, wms, ndir, crds, ftir, doas
+    instrument/          # Noise chains per modality
   configs/
-    instruments/         # 18 virtual instrument configs (vi-*.yaml)
-    datasets/            # 25+ dataset split configs (ch4-*.yaml)
+    instruments/         # 46 virtual instrument configs (vi-*.yaml)
+    datasets/            # 50+ dataset split configs
   baselines/
-    registry.yaml        # Baseline metadata registry (22 baselines)
+    registry.yaml        # Baseline metadata registry (25 baselines)
     ridge_regression/    # Each baseline has: train.py, predictions, scores
     cnn1d/
     transformer_t1/
@@ -167,6 +170,9 @@ spektran/
 | T7 | Cross-modality transfer | TDLAS -> NDIR | ppm | Degradation ratio |
 | T8 | Multi-species regression | DA scan | CH4 + H2O ppm | Aggregate MAE |
 | T9 | Temperature regression | DA scan | Temperature (K) | MAE |
+| T1-CRDS | CRDS concentration | Ring-down tau | ppm | MAE |
+| T1-FTIR | FTIR concentration | ILS-broadened spectrum | ppm | MAE |
+| T1-DOAS | DOAS concentration | Differential OD | ppm | MAE |
 
 ## Pre-built Datasets (No Generation Needed)
 
@@ -196,6 +202,24 @@ ds = load_dataset("spektran/spektran-multigas-v0", "co_co2")        # CO+CO2
 **Industrial configs**: `so2`, `no`, `co`.
 **Multi-gas configs**: `ch4_co2_h2o`, `co_co2`.
 
+**CRDS configs** (local generation):
+```bash
+spektran generate configs/datasets/ch4-crds-t1-train-v0.yaml --out data --json
+spektran generate configs/datasets/ch4-crds-t3-heldout-v0.yaml --out data --json
+```
+
+**FTIR configs** (local generation):
+```bash
+spektran generate configs/datasets/ch4-ftir-t1-train-v0.yaml --out data --json
+spektran generate configs/datasets/ch4-ftir-t3-heldout-v0.yaml --out data --json
+```
+
+**DOAS configs** (local generation):
+```bash
+spektran generate configs/datasets/so2-doas-t1-train-v0.yaml --out data --json
+spektran generate configs/datasets/so2-doas-t3-heldout-v0.yaml --out data --json
+```
+
 ## Extending the Project
 
 To add a new baseline:
@@ -206,8 +230,8 @@ To add a new baseline:
 
 To modify simulation physics:
 
-- Forward models: `src/spektran/physics/` (lineshape, absorption, wms, ndir)
-- Noise chain: `src/spektran/instrument/` (laser, detector, etalon, optics)
+- Forward models: `src/spektran/physics/` (lineshape, absorption, wms, ndir, crds, ftir, doas)
+- Noise chain: `src/spektran/instrument/` (laser, detector, etalon, optics, crds_noise, ftir_noise, doas_noise)
 - Instrument configs: `configs/instruments/vi-*.yaml`
 
 ## Links

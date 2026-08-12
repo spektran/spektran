@@ -7,7 +7,7 @@
 ### 气体传感领域的 MNIST
 
 **AI Agent-Ready 光学气体传感仿真引擎与 ML 基准**<br>
-*HITRAN 级物理精度。9 项任务。22 种基线。自然语言驱动全链条 ML 流水线。*
+*HITRAN 级物理精度。9 项任务。25 种基线。5 种模态。自然语言驱动全链条 ML 流水线。*
 
 <br>
 
@@ -45,9 +45,9 @@
 
 ### 仿真引擎
 - **10 种气体分子** — CH4、H2O、CO2、CO、NH3、NO、NO2、SO2、HCl、HF
-- **2 种检测模态** — TDLAS（DA + WMS）与 NDIR
+- **5 种检测模态** — TDLAS（DA + WMS）、NDIR、CRDS、FTIR、DOAS
 - **先进线型** — Voigt 线型与 Hartmann-Tran 线型
-- **14+ 种虚拟仪器**，配备真实噪声链路
+- **46+ 种虚拟仪器**，配备真实噪声链路
 - **WMS 1f–4f** 解调 + 2f/1f 免标定比值法
 
 </td>
@@ -55,7 +55,7 @@
 
 ### 机器学习基准
 - **9 项任务（T1–T9）** — 回归、去噪、OOD、迁移、多组分
-- **22 种基线模型** — Ridge、SpektralNet、CNN、Transformer、U-Net、RF、PINN 等
+- **25 种基线模型** — Ridge、SpektralNet、CNN、Transformer、U-Net、RF、PINN 等
 - **官方数据划分** — 训练集 / 验证集 / 测试集 / 留出仪器集
 - **AI Agent-Ready CLI** — 全命令 `--json` 输出，可发现式 API
 - **公开排行榜**，托管于 GitHub Pages
@@ -158,7 +158,7 @@ Agent: spektran train --baseline ridge --task T1 --json
 ```bash
 spektran info --json           # 这个项目是什么？有哪些资源？
 spektran list tasks --json     # 9 项任务及其指标、可用基线
-spektran list baselines --json # 22 种基线及预计算分数
+spektran list baselines --json # 25 种基线及预计算分数
 spektran status --json         # 已生成的数据和训练状态
 ```
 
@@ -226,6 +226,9 @@ done
 | **T7** 跨模态 | Ridge（TDLAS→NDIR） | MAE 130.68 ppm（46x） |
 | **T8** 多组分 | Ridge（双通道） | CH4 0.89 / H2O 3937 ppm |
 | **T9** 温度 | Ridge | MAE 9.4 K |
+| **T1-CRDS** 浓度（CRDS） | Ridge（tau） | MAE 36.5 ppm |
+| **T1-FTIR** 浓度（FTIR） | Ridge（spectrum） | MAE 83.7 ppm |
+| **T1-DOAS** 浓度（DOAS） | Ridge（diff OD） | MAE 1.40 ppm |
 
 </details>
 
@@ -280,7 +283,7 @@ SPEKTRAN 的基准任务对应着工业和环境科学中的真实问题：
   title     = {SPEKTRAN: Simulation Engine and ML Benchmark for Optical Gas Sensing},
   url       = {https://github.com/spektran/spektran},
   doi       = {10.5281/zenodo.21790394},
-  version   = {0.5.1},
+  version   = {0.6.0},
   license   = {Apache-2.0}
 }
 ```

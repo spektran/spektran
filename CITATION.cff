@@ -9,10 +9,14 @@ doi: "10.5281/zenodo.21790394"
 license: Apache-2.0
 keywords:
   - TDLAS
+  - NDIR
+  - CRDS
+  - FTIR
+  - DOAS
   - absorption spectroscopy
   - gas sensing
   - machine learning
   - benchmark
   - AI agent
-version: 0.5.1
-date-released: "2026-08-11"
+version: 0.6.0
+date-released: "2026-08-12"

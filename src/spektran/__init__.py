@@ -1,3 +1,3 @@
-"""SPEKTRAN: simulation engine, data standard, and ML benchmark for TDLAS."""
+"""SPEKTRAN: simulation engine, data standard, and ML benchmark for optical gas sensing."""
 
-__version__ = "0.5.1"
+__version__ = "0.6.0"

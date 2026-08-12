@@ -2,33 +2,32 @@
 
 This roadmap is public and technical. It describes what the project intends to build, not what has been promised. Timelines are estimates. Contributions that accelerate any milestone are welcome.
 
-## Current state: v0.5.1 (2026-08)
+## Current state: v0.6.0 (2026-08)
 
-Two modalities shipped — TDLAS and NDIR:
+Five modalities shipped — TDLAS, NDIR, CRDS, FTIR, DOAS:
 - **TDLAS**: DA + WMS forward physics, 10 molecules, 14+ virtual instruments,
   TIPS polynomials, thermal chirp tuning, window/beam path effects,
   temperature-dependent detector noise
 - **NDIR**: Planck source + bandpass filter forward model, 4 virtual
   instruments (easy/medium/hard/heldout), thermopile/pyroelectric noise
-- 9 benchmark tasks (T1-T9) with 30+ dataset configs
+- **CRDS**: Ring-down time → absorption coefficient forward model, mirror
+  degradation + mode-matching noise chain, 4 virtual instruments
+- **FTIR**: Interferogram ↔ spectrum forward model with 5 apodization
+  functions, channel spectra + self-apodization noise chain, 4 virtual instruments
+- **DOAS**: UV/Vis Beer-Lambert + Rayleigh/Mie scattering + polynomial
+  high-pass forward model, Ring effect + stray light noise chain, 4 virtual instruments
+- 9 benchmark tasks (T1-T9) with 50+ dataset configs
 - T7: cross-modality transfer; T8: multi-species regression; T9: temperature regression
-- 12+ baseline models (classical + Transformer, U-Net, TCN)
-- **v0.5.0 additions**:
-  - Hartmann-Tran Profile (HTP): beyond-Voigt line shape with speed-dependent
-    broadening/shifting, Dicke narrowing, correlation (HITRAN2016+)
-  - WMS 2f/1f calibration-free ratio (Rieker et al. 2009)
-  - Etalon fringes wired into WMS time-domain chain
-  - Laser RIN (relative intensity noise), TIA bandwidth, detector responsivity
-  - Isotopologue handling + configurable line-wing cutoff
-  - Vectorized absorption coefficient (NumPy broadcasting)
-  - Sim-to-real validation against literature (G5)
-- Static leaderboard on GitHub Pages
+- 25 baseline models (classical + Transformer, U-Net, TCN, SpektralNet, PINN)
+- 46 virtual instruments across all modalities
+- Static leaderboard on GitHub Pages (T1-TDLAS, T1-CRDS, T1-FTIR, T1-DOAS)
 - Dual-implementation physics cross-validation (G3)
 - Noise realism envelope checks against 18-paper survey (G4)
+- Literature-anchored noise parameters for all modalities
 - HDF5 persistence + Hugging Face Hub integration
 - MkDocs documentation on GitHub Pages
-- Schema extended for NDIR technique (record + instrument schemas)
-- CLI supports both TDLAS and NDIR generation
+- Schema extended for all 5 techniques (record + instrument schemas)
+- CLI supports generation for all modalities
 
 ---
 
@@ -197,17 +196,30 @@ reference baseline. This closes out Phase 3.1 and the v0.2.x line.
 
 ---
 
-## Phase 5: Additional modalities (v0.6.0+)
+## Phase 5: Additional modalities (v0.6.0) — shipped 2026-08
 
-### 5.1 PAS (Photoacoustic Spectroscopy)
+### 5.1 CRDS (Cavity Ring-Down Spectroscopy)
+- [x] Ring-down time fitting forward model (`physics/crds.py`)
+- [x] 6-effect noise chain: shot noise, mirror drift, mode matching, detector noise, baseline loss, temperature sensitivity
+- [x] 4 virtual instruments (lab/field/Picarro-class/held-out)
+- [x] 4 dataset configs (train/val/test/heldout), Ridge baseline (MAE 36.5 ppm)
+
+### 5.2 FTIR (Fourier Transform Infrared)
+- [x] Interferogram ↔ spectrum forward model with 5 apodization functions (`physics/ftir.py`)
+- [x] 6-effect noise chain: detector, source 1/f, phase error, channel spectra, sampling error, self-apodization
+- [x] 4 virtual instruments (lab/field/TCCON-class/held-out)
+- [x] 4 dataset configs (train/val/test/heldout), Ridge baseline (MAE 83.7 ppm)
+
+### 5.3 DOAS (Differential Optical Absorption Spectroscopy)
+- [x] UV/Vis Beer-Lambert + Rayleigh/Mie scattering + polynomial high-pass forward model (`physics/doas.py`)
+- [x] 6-effect noise chain: photon noise, stray light, Ring effect, wavelength shift, dark current, readout noise
+- [x] 4 virtual instruments (zenith-sky/MAX-DOAS/long-path/held-out)
+- [x] 4 dataset configs (train/val/test/heldout), Ridge baseline (MAE 1.40 ppm)
+
+### 5.4 PAS (Photoacoustic Spectroscopy) — future
 - Acoustic resonator model
 - Microphone noise chain
 - Concentration regression benchmark
-
-### 5.2 CRDS (Cavity Ring-Down Spectroscopy)
-- Ring-down time fitting forward model
-- Mirror reflectivity degradation noise
-- Benchmark: ring-down time → concentration
 
 ---
 

@@ -5,6 +5,27 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ---
 
+## [0.6.0] — 2026-08-12 — 5-Modality Milestone: CRDS + FTIR + DOAS
+
+### Added
+- **CRDS modality** — cavity ring-down spectroscopy forward model (`physics/crds.py`), 6-effect noise chain (`instrument/crds_noise.py`), dataset generator (`crds_generator.py`), 4 virtual instruments (lab/field/Picarro-class/held-out), 4 dataset configs, Ridge baseline (MAE 36.5 ppm)
+- **FTIR modality** — interferogram ↔ spectrum forward model with 5 apodization functions (`physics/ftir.py`), 6-effect noise chain including self-apodization and channel spectra (`instrument/ftir_noise.py`), dataset generator (`ftir_generator.py`), 4 virtual instruments (lab/field/TCCON-class/held-out), 4 dataset configs, Ridge baseline (MAE 83.7 ppm)
+- **DOAS modality** — UV/Vis Beer-Lambert + Rayleigh/Mie scattering + polynomial high-pass forward model (`physics/doas.py`), 6-effect noise chain including Ring effect and stray light (`instrument/doas_noise.py`), dataset generator (`doas_generator.py`), 4 virtual instruments (zenith-sky/MAX-DOAS/long-path/held-out), 4 dataset configs, Ridge baseline (MAE 1.40 ppm)
+- CLI `spektran generate` now routes CRDS, FTIR, and DOAS dataset configs
+- Literature anchors for all 12 new virtual instruments
+- Quality gate extensions: G3 physics validation for CRDS/FTIR/DOAS, G5 sim-to-real gap notes
+- 47 new tests (410 total), covering physics, noise, and generator for each new modality
+- Schema extended: `ftir_spectrum`, `doas_spectrum` signal types; `spectrometer`, `spectrograph`, `cavity` instrument blocks
+- Example scripts for CRDS, FTIR, and DOAS
+
+### Changed
+- Version bump 0.5.1 → 0.6.0
+- README, README_zh, AGENTS.md, docs site, pyproject.toml, CITATION.cff, .zenodo.json updated for 5-modality scope
+- Baseline count 22 → 25; virtual instrument count 18 → 46
+- Leaderboard includes T1-CRDS, T1-FTIR, T1-DOAS results
+
+---
+
 ## [0.5.1] — 2026-08-11 — AI Agent Ready + Multi-Molecule Expansion
 
 ### Added
