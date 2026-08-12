@@ -549,6 +549,7 @@ CUSTOM_CSS = """
 
 /* ── Global ──────────────────────────────────────────────────────── */
 * { transition: background-color 0.35s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease; }
+.js-plotly-plot *, .plotly *, .plot-container * { transition: none !important; }
 body, .gradio-container, .main, .contain {
     background: var(--sp-bg) !important;
     color: var(--sp-text) !important;
@@ -920,11 +921,11 @@ input[type="number"]:focus {
     border-radius: 14px !important;
     border: 1px solid var(--sp-border) !important;
     box-shadow: var(--sp-glow) !important;
-    transition: box-shadow 0.3s !important;
 }
 .plot-container:hover {
     box-shadow: var(--sp-glow-h) !important;
 }
+.gr-plot, .gr-plot > div { max-height: 600px !important; overflow: hidden !important; }
 
 /* ── Footer ──────────────────────────────────────────────────────── */
 .sp-footer {
@@ -1049,16 +1050,18 @@ INIT_JS = """
         });
     };
 
-    /* Re-apply after Gradio re-renders */
+    /* Re-apply after Gradio re-renders (skip Plotly mutations) */
     let _rafPending = false;
-    const obs = new MutationObserver(() => {
-        if (window._spLang !== 'en' && !_rafPending) {
-            _rafPending = true;
-            requestAnimationFrame(() => {
-                window.applyLang(window._spLang);
-                _rafPending = false;
-            });
-        }
+    const obs = new MutationObserver((mutations) => {
+        if (window._spLang === 'en' || _rafPending) return;
+        const isPlotly = mutations.every(m =>
+            m.target.closest && m.target.closest('.js-plotly-plot, .plotly, .plot-container'));
+        if (isPlotly) return;
+        _rafPending = true;
+        requestAnimationFrame(() => {
+            window.applyLang(window._spLang);
+            _rafPending = false;
+        });
     });
     obs.observe(document.body, { childList: true, subtree: true });
 
