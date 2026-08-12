@@ -47,3 +47,21 @@ baseline deps 76 s · ridge training 21 s · CNN training 423 s (excluded) ·
 Ridge T1 MAE 2.8426 (Δ0.09%) · Ridge T3 3.7184 (Δ0.04%) · CNN T1 15.5807
 (Δ0.004%) · CNN T3 28.3007 (Δ0.003%) · degradations 1.3081 / 1.8164
 (Δ≤0.2%). Prediction files byte-identical to the official ones.
+
+## v0.6.0 addendum — CRDS, FTIR, DOAS modalities (2026-08-12)
+
+Three new modalities added with the same reproducibility contract as TDLAS/NDIR:
+
+- **CLI generation**: `spektran generate` routes CRDS/FTIR/DOAS configs correctly.
+  Verified by generating all 9 new dataset splits (3 modalities × train/val/test).
+- **Physics gates**: G3-CRDS, G3-FTIR, G3-DOAS all PASS (see gate reports).
+- **Literature anchors**: CRDS/FTIR/DOAS anchors added to `literature_anchors.yaml`
+  with references to Romanini (1997), Crosson (2008), Griffiths & de Haseth (2007),
+  Wunch et al. (2011), Platt & Stutz (2008), Pinardi et al. (2013).
+- **Baselines**: Ridge baselines for all 3 modalities produce reproducible scores
+  (CRDS MAE 36.5 ppm, FTIR MAE 83.7 ppm, DOAS MAE 1.40 ppm).
+- **Documentation**: quickstart, benchmark rules, leaderboard, notebook, and
+  3 standalone examples updated. CONTRIBUTING.md includes modality-addition guide.
+- **Known limitation**: CRDS/FTIR use HITRAN demo line lists (same as TDLAS);
+  DOAS uses synthetic cross sections by design (UV/Vis cross sections have
+  different structure from IR line-by-line parameters).

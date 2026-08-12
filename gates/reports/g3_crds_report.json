@@ -1,0 +1,31 @@
+{
+  "gate": "G3",
+  "scope": "CRDS forward physics (ring-down time, round-trip identity, empty cavity)",
+  "date": "2026-08-12",
+  "checks": {
+    "ring_down_time": {
+      "n_points": 1000,
+      "seed": 20260812,
+      "max_relative_deviation": 0.0,
+      "median_relative_deviation": 0.0,
+      "threshold": 0.001,
+      "pass": true
+    },
+    "roundtrip_identity": {
+      "n_points": 1000,
+      "seed": 20260813,
+      "max_relative_deviation": 3.1616517343868708e-12,
+      "median_relative_deviation": 2.1485561477868197e-16,
+      "threshold": 0.0001,
+      "pass": true
+    },
+    "empty_cavity_tau": {
+      "n_points": 1000,
+      "seed": 20260814,
+      "max_relative_deviation": 0.0,
+      "threshold": 1e-12,
+      "pass": true
+    }
+  },
+  "pass": true
+}

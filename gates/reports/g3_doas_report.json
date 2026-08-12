@@ -1,0 +1,36 @@
+{
+  "gate": "G3",
+  "scope": "DOAS forward physics (Beer-Lambert, Rayleigh, polynomial high-pass, consistency)",
+  "date": "2026-08-12",
+  "checks": {
+    "beer_lambert_od": {
+      "n_points": 1000,
+      "seed": 20260812,
+      "max_relative_deviation": 4.402333530584808e-16,
+      "median_relative_deviation": 0.0,
+      "threshold": 0.001,
+      "pass": true
+    },
+    "rayleigh_lambda4_scaling": {
+      "n_wavelengths": 100,
+      "max_relative_deviation_from_lambda4": 9.705475166659946e-16,
+      "threshold": 0.01,
+      "pass": true
+    },
+    "polynomial_highpass_nulls_poly": {
+      "poly_orders_tested": [
+        3,
+        5,
+        7
+      ],
+      "max_residual": 3.1086244689504383e-15,
+      "pass": true
+    },
+    "molecular_od_consistency": {
+      "max_relative_deviation": 0.0,
+      "threshold": 0.001,
+      "pass": true
+    }
+  },
+  "pass": true
+}

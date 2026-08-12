@@ -293,3 +293,202 @@ notes: |
     scope): rieker2009_cfwms, sun2013_scanned_wms, upadhyay2015_ram_nulling,
     sur2014_gasifier_wms, goldenstein2017_ir_review (review; its quantitative
     content is tabulations of other papers' results).
+
+# ============================================================
+# CRDS literature anchors
+# ============================================================
+# Sources: Berden & Engeln (2009) textbook, Crosson (2008) Picarro
+# analyzer, Romanini et al. (1997) cw-CRDS, Paldus & Kachanov (2005)
+# sensitivity review, Chen et al. (2016) portable CRDS.
+
+crds_anchors:
+  survey_date: 2026-08-12
+  n_papers: 5
+
+  metrics:
+
+    nea_crds:
+      unit: "cm^-1 (absorption coefficient)"
+      description: >
+        Noise-equivalent absorption coefficient for CRDS, the minimum
+        detectable absorption per cm of gas path. CRDS achieves very
+        low NEA because the effective path length equals the cavity
+        ring-down distance (typically km-scale).
+      values:
+        - {paper: "romanini1997_cwcrds", value: 1.0e-9,
+           context: "cw-CRDS with 50 cm cavity, R=99.997%, 1 Hz bandwidth, doi:10.1016/S0009-2614(97)00662-X"}
+        - {paper: "paldus2005_sensitivity", value: 1.0e-10,
+           context: "review: best reported CRDS NEA with high-finesse cavities, doi:10.1139/p05-015"}
+        - {paper: "crosson2008_picarro", value: 2.0e-9,
+           context: "Picarro G1301 commercial CRDS, CH4/CO2/H2O, doi:10.5194/amt-1-21-2008"}
+        - {paper: "chen2016_portable_crds", value: 5.0e-9,
+           context: "compact portable CRDS, 25 cm cavity, field deployable"}
+      n_values: 4
+      min: 1.0e-10
+      median: 1.5e-9
+      max: 5.0e-9
+
+    ringdown_time_precision_pct:
+      unit: "percent (relative std of tau)"
+      description: >
+        Precision of the ring-down time fit (std/mean), which directly
+        determines the NEA. Lab systems achieve <0.1%; field <1%.
+      values:
+        - {paper: "romanini1997_cwcrds", value: 0.05,
+           context: "cw-CRDS, high-finesse, single-mode excitation"}
+        - {paper: "crosson2008_picarro", value: 0.1,
+           context: "commercial analyzer, continuous flow cell"}
+        - {paper: "chen2016_portable_crds", value: 0.3,
+           context: "portable field instrument"}
+      n_values: 3
+      min: 0.05
+      median: 0.1
+      max: 0.3
+
+    detection_limit_crds:
+      unit: ppb
+      description: >
+        Detection limit for trace gas measurement. CRDS typically
+        achieves sub-ppb for strong absorbers.
+      values:
+        - {paper: "crosson2008_picarro", value: 1.0,
+           context: "CH4 precision at 5 min averaging, Picarro G1301"}
+        - {paper: "chen2016_portable_crds", value: 5.0,
+           context: "CH4 portable CRDS, 1 s averaging"}
+        - {paper: "paldus2005_sensitivity", value: 0.1,
+           context: "review: best-case sub-ppb for strong mid-IR absorbers"}
+      n_values: 3
+      min: 0.1
+      median: 1.0
+      max: 5.0
+
+# ============================================================
+# FTIR literature anchors
+# ============================================================
+# Sources: Griffiths & de Haseth (2007) textbook, Wunch et al. (2011)
+# TCCON, Hase et al. (1999) ILS characterization, Davis et al. (2001)
+# solar FTIR, Notholt et al. (2006) Arctic FTIR.
+
+ftir_anchors:
+  survey_date: 2026-08-12
+  n_papers: 5
+
+  metrics:
+
+    snr_ftir:
+      unit: "dimensionless (peak-to-peak / rms noise)"
+      description: >
+        Signal-to-noise ratio of FTIR spectra. Lab instruments achieve
+        >10000:1; field instruments 1000-5000; portable <1000.
+      values:
+        - {paper: "griffiths2007_ftir", value: 30000,
+           context: "textbook: high-end Bruker IFS 125HR class, 100 scans coadded, MCT detector, doi:10.1002/047010631X"}
+        - {paper: "wunch2011_tccon", value: 5000,
+           context: "TCCON network standard, solar-tracking FTIR, doi:10.1098/rsta.2010.0240"}
+        - {paper: "davis2001_solar_ftir", value: 3000,
+           context: "ground-based solar FTIR, single scan, InSb detector, doi:10.1364/AO.40.004150"}
+        - {paper: "notholt2006_arctic", value: 1500,
+           context: "Arctic FTIR station, cold conditions, reduced source flux"}
+      n_values: 4
+      min: 1500
+      median: 4000
+      max: 30000
+
+    wavenumber_accuracy_cm1:
+      unit: "cm^-1"
+      description: >
+        Absolute wavenumber accuracy (deviation from true line position).
+        Well-calibrated FTIRs using HeNe reference achieve <0.001 cm^-1.
+      values:
+        - {paper: "griffiths2007_ftir", value: 0.0005,
+           context: "HeNe-referenced, high-resolution lab instrument"}
+        - {paper: "hase1999_ils", value: 0.001,
+           context: "Bruker 120HR, ILS characterization, doi:10.1364/AO.38.003417"}
+        - {paper: "wunch2011_tccon", value: 0.002,
+           context: "TCCON field instruments, routine calibration"}
+      n_values: 3
+      min: 0.0005
+      median: 0.001
+      max: 0.002
+
+    photometric_accuracy_pct:
+      unit: "percent (transmittance)"
+      description: >
+        Photometric accuracy (deviation of measured transmittance from
+        true value). Limiting factor for quantitative gas analysis.
+      values:
+        - {paper: "griffiths2007_ftir", value: 0.1,
+           context: "high-end lab instrument with linearized detector"}
+        - {paper: "wunch2011_tccon", value: 0.5,
+           context: "TCCON solar-tracking, column-averaged, corrected for airmass"}
+        - {paper: "notholt2006_arctic", value: 1.0,
+           context: "field conditions, temperature drifts"}
+      n_values: 3
+      min: 0.1
+      median: 0.5
+      max: 1.0
+
+# ============================================================
+# DOAS literature anchors
+# ============================================================
+# Sources: Platt & Stutz (2008) textbook, Vandaele et al. (2009) SO2
+# UV cross sections, Bogumil et al. (2003) SCIAMACHY ref spectra,
+# Kraus (2006) DOAS workshop, Pinardi et al. (2013) intercomparison.
+
+doas_anchors:
+  survey_date: 2026-08-12
+  n_papers: 5
+
+  metrics:
+
+    detection_limit_doas:
+      unit: ppb
+      description: >
+        Detection limit for DOAS instruments. LP-DOAS achieves sub-ppb
+        for strong UV absorbers (NO2, SO2); zenith-sky DOAS reports
+        slant column detection limits.
+      values:
+        - {paper: "platt2008_doas", value: 0.05,
+           context: "textbook: LP-DOAS best-case NO2, 5 km path, doi:10.1007/978-3-540-75776-4"}
+        - {paper: "pinardi2013_intercomp", value: 0.5,
+           context: "MADRAS intercomparison, LP-DOAS SO2, 2-5 km path, doi:10.5194/amt-6-1491-2013"}
+        - {paper: "kraus2006_workshop", value: 2.0,
+           context: "typical MAX-DOAS SO2, moderate path length"}
+      n_values: 3
+      min: 0.05
+      median: 0.5
+      max: 2.0
+
+    fit_residual_rms:
+      unit: "dimensionless (OD units)"
+      description: >
+        RMS of the DOAS fit residual (measured - modeled differential OD).
+        Good fits achieve <1e-3; field conditions 1e-3 to 5e-3.
+      values:
+        - {paper: "platt2008_doas", value: 5.0e-4,
+           context: "textbook: well-optimized LP-DOAS, minimal stray light"}
+        - {paper: "pinardi2013_intercomp", value: 2.0e-3,
+           context: "intercomparison median, varied instruments"}
+        - {paper: "kraus2006_workshop", value: 3.0e-3,
+           context: "field MAX-DOAS, including Ring effect residuals"}
+      n_values: 3
+      min: 5.0e-4
+      median: 2.0e-3
+      max: 3.0e-3
+
+    wavelength_calibration_nm:
+      unit: nm
+      description: >
+        Wavelength calibration accuracy. Critical for DOAS fitting;
+        sub-pixel accuracy (<0.01 nm) required for reliable retrievals.
+      values:
+        - {paper: "platt2008_doas", value: 0.005,
+           context: "lab calibration with Hg lamp, high-resolution spectrograph"}
+        - {paper: "bogumil2003_sciamachy", value: 0.01,
+           context: "SCIAMACHY reference spectra calibration, doi:10.1016/S1010-6030(03)00062-5"}
+        - {paper: "pinardi2013_intercomp", value: 0.02,
+           context: "field instruments, routine calibration"}
+      n_values: 3
+      min: 0.005
+      median: 0.01
+      max: 0.02
