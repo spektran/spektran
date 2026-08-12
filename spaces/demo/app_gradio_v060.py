@@ -268,7 +268,7 @@ def plot_ftir(conc, max_opd, apod, path_m, temp, pres):
     )
     res = spectral_resolution_cm1(max_opd)
     nu = result["nu_cm1"]
-    spec = result["spectrum_hires"]
+    spec = result["spectrum"]
 
     fig = go.Figure()
     fig.add_trace(go.Scatter(
