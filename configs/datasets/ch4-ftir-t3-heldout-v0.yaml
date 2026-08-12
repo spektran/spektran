@@ -1,0 +1,15 @@
+dataset_id: ch4-ftir-t3-heldout-v0
+technique: FTIR
+instrument_config:
+  - configs/instruments/vi-ftir-heldout-42.yaml
+n_records: 500
+master_seed: 701004
+gas:
+  molecule: CH4
+  concentration_ppm: {low: 0.5, high: 500.0, log_uniform: true}
+  path_length_m: 10.0
+  matrix_gas: N2
+  wavenumber_start_cm1: 6000.0
+  wavenumber_end_cm1: 6100.0
+  n_output_points: 500
+line_source: demo

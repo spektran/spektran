@@ -257,6 +257,28 @@
               "type": "string"
             }
           }
+        },
+        "ftir_spectrum": {
+          "type": "object",
+          "description": "FTIR recovered spectrum after apodized FFT (wavenumber domain).",
+          "required": [
+            "array_ref",
+            "n_samples",
+            "unit"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "array_ref": {
+              "$ref": "#/$defs/array_ref"
+            },
+            "n_samples": {
+              "type": "integer",
+              "minimum": 2
+            },
+            "unit": {
+              "type": "string"
+            }
+          }
         }
       }
     },
@@ -733,6 +755,23 @@
             "tau0_s": {
               "type": "number",
               "exclusiveMinimum": 0
+            }
+          }
+        },
+        "spectrometer": {
+          "type": "object",
+          "description": "FTIR spectrometer parameters (resolution, apodization).",
+          "properties": {
+            "max_opd_cm": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "resolution_cm1": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "apodization": {
+              "type": "string"
             }
           }
         }

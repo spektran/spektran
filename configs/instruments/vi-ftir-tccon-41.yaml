@@ -1,0 +1,22 @@
+# TCCON-class solar FTIR: high resolution, long-path atmospheric
+instrument_config_id: vi-ftir-tccon-41
+schema_version: "0.2"
+technique: FTIR
+held_out: false
+description: "TCCON-class FTIR: 45 cm max OPD, NB medium, solar viewing geometry, atmospheric T/P."
+spectrometer:
+  max_opd_cm: 45.0
+  apodization: norton_beer_medium
+  zero_fill_factor: 2
+  fov_half_angle_rad: {dist: uniform, low: 0.003, high: 0.008}
+  source_fluctuation_rel: {dist: loguniform, low: 1.0e-4, high: 1.0e-3}
+  channel_spectrum_amplitude: {dist: loguniform, low: 1.0e-4, high: 1.0e-3}
+  channel_spectrum_fsr_cm1: {dist: uniform, low: 4.0, high: 10.0}
+detector:
+  noise_sigma_rel: {dist: loguniform, low: 5.0e-5, high: 5.0e-4}
+  type: "InGaAs (simulated)"
+environment:
+  temperature_K: {dist: uniform, low: 290.0, high: 305.0}
+  pressure_atm: {dist: uniform, low: 0.95, high: 1.05}
+  temperature_jitter_K: {dist: uniform, low: 0.0, high: 0.1}
+  pressure_jitter_atm: {dist: uniform, low: 0.0, high: 0.002}

@@ -4,7 +4,11 @@
   "title": "SPEKTRAN virtual instrument configuration",
   "description": "Schema (v0.1 draft) for a virtual-instrument YAML/JSON config. A virtual instrument defines DISTRIBUTIONS for every noise/instrument parameter; the generator samples one concrete value per record and writes it to the record's provenance.noise_config.",
   "type": "object",
-  "required": ["instrument_config_id", "schema_version", "technique"],
+  "required": [
+    "instrument_config_id",
+    "schema_version",
+    "technique"
+  ],
   "additionalProperties": false,
   "properties": {
     "instrument_config_id": {
@@ -12,33 +16,64 @@
       "pattern": "^[a-z0-9][a-z0-9-]*$",
       "description": "Stable identifier, e.g. 'vi-easy-01'."
     },
-    "schema_version": { "enum": ["0.1", "0.2"] },
-    "technique": { "enum": ["TDLAS-DA", "TDLAS-WMS", "NDIR", "CRDS", "FTIR", "DOAS"] },
+    "schema_version": {
+      "enum": [
+        "0.1",
+        "0.2"
+      ]
+    },
+    "technique": {
+      "enum": [
+        "TDLAS-DA",
+        "TDLAS-WMS",
+        "NDIR",
+        "CRDS",
+        "FTIR",
+        "DOAS"
+      ]
+    },
     "held_out": {
       "type": "boolean",
       "default": false,
       "description": "Held-out instruments feed ONLY test splits (cross-instrument generalization track); their configs must not overlap the training distribution."
     },
-    "description": { "type": "string" },
+    "description": {
+      "type": "string"
+    },
     "laser": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["center_wavenumber_cm1", "scan_range_cm1"],
+      "required": [
+        "center_wavenumber_cm1",
+        "scan_range_cm1"
+      ],
       "properties": {
-        "center_wavenumber_cm1": { "$ref": "#/$defs/dist_or_number" },
-        "scan_range_cm1": { "$ref": "#/$defs/dist_or_number" },
-        "scan_rate_Hz": { "$ref": "#/$defs/dist_or_number" },
+        "center_wavenumber_cm1": {
+          "$ref": "#/$defs/dist_or_number"
+        },
+        "scan_range_cm1": {
+          "$ref": "#/$defs/dist_or_number"
+        },
+        "scan_rate_Hz": {
+          "$ref": "#/$defs/dist_or_number"
+        },
         "scan_nonlinearity_poly_cm1": {
           "type": "array",
           "description": "Distributions for polynomial coefficients (cm-1 per normalized-ramp^k, order 2+ terms) of current->wavenumber scan nonlinearity.",
-          "items": { "$ref": "#/$defs/dist_or_number" }
+          "items": {
+            "$ref": "#/$defs/dist_or_number"
+          }
         },
         "ram_amplitude_rel": {
           "$ref": "#/$defs/dist_or_number",
           "description": "Residual amplitude modulation, relative intensity amplitude."
         },
-        "center_drift_cm1_per_s": { "$ref": "#/$defs/dist_or_number" },
-        "linewidth_MHz": { "$ref": "#/$defs/dist_or_number" },
+        "center_drift_cm1_per_s": {
+          "$ref": "#/$defs/dist_or_number"
+        },
+        "linewidth_MHz": {
+          "$ref": "#/$defs/dist_or_number"
+        },
         "mode_hop_probability": {
           "$ref": "#/$defs/dist_or_number",
           "description": "Probability of a mode hop per scan (0 to 1). DFB lasers: typically < 0.01."
@@ -48,7 +83,9 @@
           "description": "Frequency jump size on mode hop [cm-1]. Typical DFB: 0.1 to 0.5."
         },
         "tuning_model": {
-          "enum": ["thermal_chirp"],
+          "enum": [
+            "thermal_chirp"
+          ],
           "description": "Optional physically-motivated current->frequency tuning model, replacing scan_nonlinearity_poly_cm1. 'thermal_chirp' splits scan_range_cm1 into an instantaneous current (plasma) term and a thermally-lagged term (see tuning_params)."
         },
         "tuning_params": {
@@ -72,13 +109,25 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "frequency_Hz": { "$ref": "#/$defs/dist_or_number" },
-        "depth_cm1": { "$ref": "#/$defs/dist_or_number" },
-        "lockin_phase_error_rad": { "$ref": "#/$defs/dist_or_number" },
-        "lowpass_cutoff_Hz": { "$ref": "#/$defs/dist_or_number" },
+        "frequency_Hz": {
+          "$ref": "#/$defs/dist_or_number"
+        },
+        "depth_cm1": {
+          "$ref": "#/$defs/dist_or_number"
+        },
+        "lockin_phase_error_rad": {
+          "$ref": "#/$defs/dist_or_number"
+        },
+        "lowpass_cutoff_Hz": {
+          "$ref": "#/$defs/dist_or_number"
+        },
         "harmonics": {
           "type": "array",
-          "items": { "type": "integer", "minimum": 1, "maximum": 8 },
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 8
+          },
           "minItems": 1,
           "description": "Harmonics to demodulate. Default [1, 2]; extend to [1, 2, 3, 4] for higher-harmonic detection."
         }
@@ -91,15 +140,24 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["free_spectral_range_cm1", "amplitude_rel"],
+        "required": [
+          "free_spectral_range_cm1",
+          "amplitude_rel"
+        ],
         "properties": {
-          "free_spectral_range_cm1": { "$ref": "#/$defs/dist_or_number" },
+          "free_spectral_range_cm1": {
+            "$ref": "#/$defs/dist_or_number"
+          },
           "amplitude_rel": {
             "$ref": "#/$defs/dist_or_number",
             "description": "Fringe amplitude relative to DC transmitted intensity."
           },
-          "phase_rad": { "$ref": "#/$defs/dist_or_number" },
-          "phase_drift_rad_per_s": { "$ref": "#/$defs/dist_or_number" }
+          "phase_rad": {
+            "$ref": "#/$defs/dist_or_number"
+          },
+          "phase_drift_rad_per_s": {
+            "$ref": "#/$defs/dist_or_number"
+          }
         }
       }
     },
@@ -108,9 +166,18 @@
       "additionalProperties": false,
       "description": "Broadband IR source parameters (NDIR instruments).",
       "properties": {
-        "temperature_K": { "$ref": "#/$defs/dist_or_number", "description": "Blackbody source temperature" },
-        "temperature_drift_K_per_s": { "$ref": "#/$defs/dist_or_number", "description": "Source temperature drift rate" },
-        "intensity_fluctuation_rel": { "$ref": "#/$defs/dist_or_number", "description": "Common-mode source intensity fluctuation sigma" }
+        "temperature_K": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Blackbody source temperature"
+        },
+        "temperature_drift_K_per_s": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Source temperature drift rate"
+        },
+        "intensity_fluctuation_rel": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Common-mode source intensity fluctuation sigma"
+        }
       }
     },
     "filters": {
@@ -118,28 +185,64 @@
       "additionalProperties": false,
       "description": "Optical bandpass filter parameters (NDIR instruments).",
       "properties": {
-        "active_center_cm1": { "$ref": "#/$defs/dist_or_number" },
-        "active_fwhm_cm1": { "$ref": "#/$defs/dist_or_number" },
-        "reference_center_cm1": { "$ref": "#/$defs/dist_or_number" },
-        "reference_fwhm_cm1": { "$ref": "#/$defs/dist_or_number" },
-        "shape": { "enum": ["gaussian", "tophat"], "default": "gaussian" }
+        "active_center_cm1": {
+          "$ref": "#/$defs/dist_or_number"
+        },
+        "active_fwhm_cm1": {
+          "$ref": "#/$defs/dist_or_number"
+        },
+        "reference_center_cm1": {
+          "$ref": "#/$defs/dist_or_number"
+        },
+        "reference_fwhm_cm1": {
+          "$ref": "#/$defs/dist_or_number"
+        },
+        "shape": {
+          "enum": [
+            "gaussian",
+            "tophat"
+          ],
+          "default": "gaussian"
+        }
       }
     },
     "cavity": {
       "type": "object",
       "description": "Optical cavity parameters (CRDS instruments).",
       "properties": {
-        "length_m": { "$ref": "#/$defs/dist_or_number" },
-        "mirror_reflectivity": { "$ref": "#/$defs/dist_or_number" },
-        "n_photons_per_ringdown": { "$ref": "#/$defs/dist_or_number" },
-        "mirror_drift_sigma": { "$ref": "#/$defs/dist_or_number" },
-        "mirror_drift_reversion": { "$ref": "#/$defs/dist_or_number" },
-        "mode_matching_mean": { "$ref": "#/$defs/dist_or_number" },
-        "mode_matching_sigma": { "$ref": "#/$defs/dist_or_number" },
-        "baseline_loss_drift_rate": { "$ref": "#/$defs/dist_or_number" },
-        "baseline_temp_sensitivity": { "$ref": "#/$defs/dist_or_number" },
-        "n_transverse_modes": { "$ref": "#/$defs/dist_or_number" },
-        "mode_spread_fraction": { "$ref": "#/$defs/dist_or_number" }
+        "length_m": {
+          "$ref": "#/$defs/dist_or_number"
+        },
+        "mirror_reflectivity": {
+          "$ref": "#/$defs/dist_or_number"
+        },
+        "n_photons_per_ringdown": {
+          "$ref": "#/$defs/dist_or_number"
+        },
+        "mirror_drift_sigma": {
+          "$ref": "#/$defs/dist_or_number"
+        },
+        "mirror_drift_reversion": {
+          "$ref": "#/$defs/dist_or_number"
+        },
+        "mode_matching_mean": {
+          "$ref": "#/$defs/dist_or_number"
+        },
+        "mode_matching_sigma": {
+          "$ref": "#/$defs/dist_or_number"
+        },
+        "baseline_loss_drift_rate": {
+          "$ref": "#/$defs/dist_or_number"
+        },
+        "baseline_temp_sensitivity": {
+          "$ref": "#/$defs/dist_or_number"
+        },
+        "n_transverse_modes": {
+          "$ref": "#/$defs/dist_or_number"
+        },
+        "mode_spread_fraction": {
+          "$ref": "#/$defs/dist_or_number"
+        }
       }
     },
     "optics": {
@@ -148,16 +251,24 @@
       "properties": {
         "baseline_poly_rel": {
           "type": "array",
-          "items": { "$ref": "#/$defs/dist_or_number" },
+          "items": {
+            "$ref": "#/$defs/dist_or_number"
+          },
           "description": "Distributions for slow polynomial baseline coefficients (relative)."
         },
         "intensity_ramp_slope_rel": {
           "$ref": "#/$defs/dist_or_number",
           "description": "Linear laser-intensity change over the current scan (relative, edge-to-edge/2)."
         },
-        "intensity_ramp_curvature_rel": { "$ref": "#/$defs/dist_or_number" },
-        "intensity_fluctuation_rel": { "$ref": "#/$defs/dist_or_number" },
-        "transmittance_drift_rel_per_s": { "$ref": "#/$defs/dist_or_number" },
+        "intensity_ramp_curvature_rel": {
+          "$ref": "#/$defs/dist_or_number"
+        },
+        "intensity_fluctuation_rel": {
+          "$ref": "#/$defs/dist_or_number"
+        },
+        "transmittance_drift_rel_per_s": {
+          "$ref": "#/$defs/dist_or_number"
+        },
         "window_contamination_rel": {
           "$ref": "#/$defs/dist_or_number",
           "description": "Broadband fractional transmission loss from window fouling (0 = clean)."
@@ -184,7 +295,9 @@
         },
         "baseline_drift_coeffs_sigma": {
           "type": "array",
-          "items": { "$ref": "#/$defs/dist_or_number" },
+          "items": {
+            "$ref": "#/$defs/dist_or_number"
+          },
           "description": "Sigma of OU-process polynomial drift coefficients (order 1, 2, ...). Replaces baseline_poly_rel when present."
         },
         "baseline_drift_tau": {
@@ -196,7 +309,10 @@
     "detector": {
       "type": "object",
       "properties": {
-        "type": { "type": "string", "description": "Detector type description." },
+        "type": {
+          "type": "string",
+          "description": "Detector type description."
+        },
         "noise_sigma_rel": {
           "$ref": "#/$defs/dist_or_number",
           "description": "Generic noise sigma (relative). Used by CRDS and other modalities."
@@ -209,11 +325,21 @@
           "$ref": "#/$defs/dist_or_number",
           "description": "Total sigma of the 1/f^slope noise component, relative to full scale."
         },
-        "one_over_f_corner_Hz": { "$ref": "#/$defs/dist_or_number" },
-        "one_over_f_slope": { "$ref": "#/$defs/dist_or_number" },
-        "gain_nonlinearity_rel": { "$ref": "#/$defs/dist_or_number" },
-        "adc_bits": { "$ref": "#/$defs/dist_or_number" },
-        "bandwidth_Hz": { "$ref": "#/$defs/dist_or_number" },
+        "one_over_f_corner_Hz": {
+          "$ref": "#/$defs/dist_or_number"
+        },
+        "one_over_f_slope": {
+          "$ref": "#/$defs/dist_or_number"
+        },
+        "gain_nonlinearity_rel": {
+          "$ref": "#/$defs/dist_or_number"
+        },
+        "adc_bits": {
+          "$ref": "#/$defs/dist_or_number"
+        },
+        "bandwidth_Hz": {
+          "$ref": "#/$defs/dist_or_number"
+        },
         "detector_temperature_K": {
           "$ref": "#/$defs/dist_or_number",
           "description": "Detector operating temperature [K]. Defaults to environment T if absent."
@@ -260,12 +386,16 @@
         },
         "emi_frequencies_Hz": {
           "type": "array",
-          "items": { "$ref": "#/$defs/dist_or_number" },
+          "items": {
+            "$ref": "#/$defs/dist_or_number"
+          },
           "description": "Frequencies of periodic electromagnetic interference [Hz]. Typically 50 or 60 Hz mains + harmonics."
         },
         "emi_amplitudes_rel": {
           "type": "array",
-          "items": { "$ref": "#/$defs/dist_or_number" },
+          "items": {
+            "$ref": "#/$defs/dist_or_number"
+          },
           "description": "Amplitudes of EMI (relative). Typical: 1e-5 to 5e-4."
         },
         "speckle_noise_sigma": {
@@ -294,10 +424,18 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "temperature_K": { "$ref": "#/$defs/dist_or_number" },
-        "pressure_atm": { "$ref": "#/$defs/dist_or_number" },
-        "temperature_jitter_K": { "$ref": "#/$defs/dist_or_number" },
-        "pressure_jitter_atm": { "$ref": "#/$defs/dist_or_number" }
+        "temperature_K": {
+          "$ref": "#/$defs/dist_or_number"
+        },
+        "pressure_atm": {
+          "$ref": "#/$defs/dist_or_number"
+        },
+        "temperature_jitter_K": {
+          "$ref": "#/$defs/dist_or_number"
+        },
+        "pressure_jitter_atm": {
+          "$ref": "#/$defs/dist_or_number"
+        }
       }
     },
     "physics": {
@@ -315,7 +453,10 @@
           "description": "H2O mole fraction for MT_CKD continuum absorption. 0 = disable."
         },
         "line_profile": {
-          "enum": ["voigt", "htp"],
+          "enum": [
+            "voigt",
+            "htp"
+          ],
           "default": "voigt",
           "description": "Line-shape model: 'voigt' (default) or 'htp' (Hartmann-Tran Profile)."
         }
@@ -349,7 +490,9 @@
           "$ref": "#/$defs/dist_or_number",
           "description": "Base fringe amplitude (relative) per pass."
         },
-        "phase_rad": { "$ref": "#/$defs/dist_or_number" },
+        "phase_rad": {
+          "$ref": "#/$defs/dist_or_number"
+        },
         "amplitude_decay": {
           "$ref": "#/$defs/dist_or_number",
           "description": "Per-pass amplitude decay factor (0 to 1). Typical: 0.7 to 0.95."
@@ -369,8 +512,12 @@
             "maximum": 1,
             "description": "Fraction of total path length for this layer."
           },
-          "temperature_K": { "$ref": "#/$defs/dist_or_number" },
-          "pressure_atm": { "$ref": "#/$defs/dist_or_number" },
+          "temperature_K": {
+            "$ref": "#/$defs/dist_or_number"
+          },
+          "pressure_atm": {
+            "$ref": "#/$defs/dist_or_number"
+          },
           "concentration_scale": {
             "$ref": "#/$defs/dist_or_number",
             "description": "Multiplicative factor for target concentration in this layer."
@@ -388,7 +535,10 @@
           "exclusiveMinimum": 0,
           "description": "Typical signal-to-noise ratio of the peak signal (dimensionless)."
         },
-        "detection_limit_ppm": { "type": "number", "exclusiveMinimum": 0 },
+        "detection_limit_ppm": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
         "detection_bandwidth_Hz": {
           "type": "number",
           "exclusiveMinimum": 0,
@@ -399,8 +549,14 @@
           "exclusiveMinimum": 0,
           "description": "Minimum of the Allan(-Werle) deviation curve."
         },
-        "allan_optimum_time_s": { "type": "number", "exclusiveMinimum": 0 },
-        "precision_1sigma_ppm": { "type": "number", "exclusiveMinimum": 0 },
+        "allan_optimum_time_s": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "precision_1sigma_ppm": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
         "accuracy_rel": {
           "type": "number",
           "minimum": 0,
@@ -412,9 +568,59 @@
           "maximum": 1,
           "description": "R^2 of the concentration-response calibration curve (dimensionless)."
         },
-        "response_time_s": { "type": "number", "exclusiveMinimum": 0 },
-        "drift_ppm_per_h": { "type": "number", "minimum": 0 },
-        "measurement_rate_Hz": { "type": "number", "exclusiveMinimum": 0 }
+        "response_time_s": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "drift_ppm_per_h": {
+          "type": "number",
+          "minimum": 0
+        },
+        "measurement_rate_Hz": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      }
+    },
+    "spectrometer": {
+      "type": "object",
+      "description": "FTIR spectrometer parameters (Griffiths & de Haseth, 2007).",
+      "additionalProperties": false,
+      "properties": {
+        "max_opd_cm": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Maximum optical path difference [cm]."
+        },
+        "apodization": {
+          "enum": [
+            "boxcar",
+            "triangular",
+            "happ_genzel",
+            "norton_beer_medium",
+            "norton_beer_strong"
+          ],
+          "default": "norton_beer_medium"
+        },
+        "zero_fill_factor": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Zero-fill factor (2 = standard)."
+        },
+        "fov_half_angle_rad": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Spectrometer field-of-view half-angle [rad]."
+        },
+        "source_fluctuation_rel": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Source intensity fluctuation sigma (relative)."
+        },
+        "channel_spectrum_amplitude": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Beamsplitter etalon channel spectrum amplitude (relative)."
+        },
+        "channel_spectrum_fsr_cm1": {
+          "$ref": "#/$defs/dist_or_number",
+          "description": "Channel spectrum free spectral range [cm-1]."
+        }
       }
     }
   },
@@ -422,44 +628,92 @@
     "dist_or_number": {
       "description": "Either a fixed number or a sampling distribution.",
       "oneOf": [
-        { "type": "number" },
+        {
+          "type": "number"
+        },
         {
           "type": "object",
-          "required": ["dist"],
+          "required": [
+            "dist"
+          ],
           "oneOf": [
             {
               "properties": {
-                "dist": { "const": "uniform" },
-                "low": { "type": "number" },
-                "high": { "type": "number" }
+                "dist": {
+                  "const": "uniform"
+                },
+                "low": {
+                  "type": "number"
+                },
+                "high": {
+                  "type": "number"
+                }
               },
-              "required": ["dist", "low", "high"],
+              "required": [
+                "dist",
+                "low",
+                "high"
+              ],
               "additionalProperties": false
             },
             {
               "properties": {
-                "dist": { "const": "normal" },
-                "mean": { "type": "number" },
-                "sigma": { "type": "number", "minimum": 0 }
+                "dist": {
+                  "const": "normal"
+                },
+                "mean": {
+                  "type": "number"
+                },
+                "sigma": {
+                  "type": "number",
+                  "minimum": 0
+                }
               },
-              "required": ["dist", "mean", "sigma"],
+              "required": [
+                "dist",
+                "mean",
+                "sigma"
+              ],
               "additionalProperties": false
             },
             {
               "properties": {
-                "dist": { "const": "loguniform" },
-                "low": { "type": "number", "exclusiveMinimum": 0 },
-                "high": { "type": "number", "exclusiveMinimum": 0 }
+                "dist": {
+                  "const": "loguniform"
+                },
+                "low": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "high": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                }
               },
-              "required": ["dist", "low", "high"],
+              "required": [
+                "dist",
+                "low",
+                "high"
+              ],
               "additionalProperties": false
             },
             {
               "properties": {
-                "dist": { "const": "choice" },
-                "values": { "type": "array", "minItems": 1, "items": { "type": "number" } }
+                "dist": {
+                  "const": "choice"
+                },
+                "values": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "number"
+                  }
+                }
               },
-              "required": ["dist", "values"],
+              "required": [
+                "dist",
+                "values"
+              ],
               "additionalProperties": false
             }
           ]

@@ -280,6 +280,21 @@ baselines:
           T1: predictions_t1-test.csv
           T3: predictions_t3-test-heldout.csv
 
+  ridge_ftir:
+    display_name: Ridge (FTIR)
+    description: "Ridge regression on FTIR recovered spectrum — concentration from ILS-broadened absorption"
+    directory: ridge_ftir_t1
+    tasks:
+      T1-FTIR:
+        script: train.py
+        datasets: [ch4-ftir-t1-train-v0, ch4-ftir-t1-val-v0, ch4-ftir-t1-test-v0, ch4-ftir-t3-heldout-v0]
+        predictions:
+          T1-FTIR: predictions_ftir-t1-test.csv
+          T3-FTIR: predictions_ftir-t3-heldout.csv
+        scores:
+          T1-FTIR: scores_ftir_t1.json
+          T3-FTIR: scores_ftir_t3.json
+
   ridge_crds:
     display_name: Ridge (CRDS)
     description: "Ridge regression on CRDS tau spectrum — concentration from ring-down times"

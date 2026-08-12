@@ -1,0 +1,22 @@
+# Held-out FTIR: different resolution and apodization for cross-instrument test
+instrument_config_id: vi-ftir-heldout-42
+schema_version: "0.2"
+technique: FTIR
+held_out: true
+description: "Held-out FTIR: 20 cm OPD, Norton-Beer strong, distinct noise profile."
+spectrometer:
+  max_opd_cm: 20.0
+  apodization: norton_beer_strong
+  zero_fill_factor: 2
+  fov_half_angle_rad: {dist: uniform, low: 0.01, high: 0.02}
+  source_fluctuation_rel: {dist: loguniform, low: 2.0e-4, high: 2.0e-3}
+  channel_spectrum_amplitude: {dist: loguniform, low: 2.0e-3, high: 1.0e-2}
+  channel_spectrum_fsr_cm1: {dist: uniform, low: 2.5, high: 7.0}
+detector:
+  noise_sigma_rel: {dist: loguniform, low: 5.0e-5, high: 5.0e-4}
+  type: "MCT (simulated)"
+environment:
+  temperature_K: {dist: uniform, low: 285.0, high: 315.0}
+  pressure_atm: {dist: uniform, low: 0.90, high: 1.10}
+  temperature_jitter_K: {dist: uniform, low: 0.05, high: 0.3}
+  pressure_jitter_atm: {dist: uniform, low: 0.001, high: 0.003}

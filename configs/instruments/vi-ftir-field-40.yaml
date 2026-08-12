@@ -1,0 +1,22 @@
+# Field-portable FTIR: lower resolution, more noise
+instrument_config_id: vi-ftir-field-40
+schema_version: "0.2"
+technique: FTIR
+held_out: false
+description: "Field-portable FTIR: 5 cm max OPD, Happ-Genzel apodization, higher noise."
+spectrometer:
+  max_opd_cm: 5.0
+  apodization: happ_genzel
+  zero_fill_factor: 2
+  fov_half_angle_rad: {dist: uniform, low: 0.015, high: 0.03}
+  source_fluctuation_rel: {dist: loguniform, low: 5.0e-4, high: 5.0e-3}
+  channel_spectrum_amplitude: {dist: loguniform, low: 1.0e-3, high: 1.0e-2}
+  channel_spectrum_fsr_cm1: {dist: uniform, low: 2.0, high: 6.0}
+detector:
+  noise_sigma_rel: {dist: loguniform, low: 1.0e-4, high: 1.0e-3}
+  type: "DTGS (simulated)"
+environment:
+  temperature_K: {dist: uniform, low: 280.0, high: 310.0}
+  pressure_atm: {dist: uniform, low: 0.85, high: 1.05}
+  temperature_jitter_K: {dist: uniform, low: 0.1, high: 0.5}
+  pressure_jitter_atm: {dist: uniform, low: 0.001, high: 0.005}

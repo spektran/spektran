@@ -1,0 +1,22 @@
+# High-resolution lab FTIR: Bruker IFS 125HR class
+instrument_config_id: vi-ftir-lab-39
+schema_version: "0.2"
+technique: FTIR
+held_out: false
+description: "High-resolution lab FTIR: 45 cm max OPD, Norton-Beer medium, InGaAs detector."
+spectrometer:
+  max_opd_cm: 45.0
+  apodization: norton_beer_medium
+  zero_fill_factor: 2
+  fov_half_angle_rad: {dist: uniform, low: 0.005, high: 0.015}
+  source_fluctuation_rel: {dist: loguniform, low: 5.0e-5, high: 5.0e-4}
+  channel_spectrum_amplitude: {dist: loguniform, low: 5.0e-4, high: 5.0e-3}
+  channel_spectrum_fsr_cm1: {dist: uniform, low: 3.0, high: 8.0}
+detector:
+  noise_sigma_rel: {dist: loguniform, low: 1.0e-5, high: 1.0e-4}
+  type: "InGaAs (simulated)"
+environment:
+  temperature_K: 296.0
+  pressure_atm: 1.0
+  temperature_jitter_K: {dist: uniform, low: 0.0, high: 0.05}
+  pressure_jitter_atm: {dist: uniform, low: 0.0, high: 0.001}

@@ -23,6 +23,13 @@ from .lineshape import (
     voigt_profile,
 )
 from .lineshape_htp import htp_profile
+from .ftir import (
+    apodization_function,
+    generate_interferogram,
+    interferogram_to_spectrum,
+    simulate_ftir_spectrum,
+    spectral_resolution_cm1,
+)
 from .crds import (
     absorption_from_tau,
     cavity_finesse,
@@ -48,6 +55,7 @@ __all__ = [
     "WMSConfig",
     "absorption_coefficient",
     "absorption_from_tau",
+    "apodization_function",
     "bandpass_filter",
     "cavity_finesse",
     "empty_cavity_tau",
@@ -65,7 +73,9 @@ __all__ = [
     "fetch_lines",
     "fit_ring_down",
     "gaussian_profile",
+    "generate_interferogram",
     "htp_profile",
+    "interferogram_to_spectrum",
     "line_strength_at_T",
     "lockin_demodulate",
     "lorentz_hwhm_cm1",
@@ -78,8 +88,10 @@ __all__ = [
     "ring_down_trace",
     "simulate_absorbance",
     "simulate_crds_spectrum",
+    "simulate_ftir_spectrum",
     "simulate_ndir",
     "simulate_wms",
+    "spectral_resolution_cm1",
     "tips_q_ratio",
     "voigt_profile",
 ]
