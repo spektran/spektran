@@ -580,6 +580,87 @@ def cmd_generate(args: argparse.Namespace) -> int:
         _report(cfg["dataset_id"], n, t1 - t0, t2 - t1)
         return 0
 
+    if technique == "CRDS":
+        from .crds_generator import CRDSGenerationSpec, generate_crds_dataset
+
+        crds_spec = CRDSGenerationSpec(
+            lines=lines, molecule=molecule,
+            concentration_ppm_low=float(conc.get("low", 0.1)),
+            concentration_ppm_high=float(conc.get("high", 500.0)),
+            log_uniform_concentration=bool(conc.get("log_uniform", True)),
+            path_length_m=float(gas.get("path_length_m", 0.50)),
+            matrix_gas=gas.get("matrix_gas", "N2"),
+            wavenumber_start_cm1=float(gas.get("wavenumber_start_cm1", 6046.0)),
+            wavenumber_end_cm1=float(gas.get("wavenumber_end_cm1", 6048.0)),
+            n_spectral_points=int(gas.get("n_spectral_points", 200)),
+        )
+        n = args.n if args.n else int(cfg["n_records"])
+        t0 = time.time()
+        records = []
+        counts = _split_counts(n, len(instruments))
+        for i, (inst, n_i) in enumerate(zip(instruments, counts)):
+            records.extend(generate_crds_dataset(crds_spec, inst, n_i, seed + i))
+        t1 = time.time()
+        write_records(out_path, records, validate=True)
+        t2 = time.time()
+        _report(cfg["dataset_id"], n, t1 - t0, t2 - t1)
+        return 0
+
+    if technique == "FTIR":
+        from .ftir_generator import FTIRGenerationSpec, generate_ftir_dataset
+
+        ftir_spec = FTIRGenerationSpec(
+            lines=lines, molecule=molecule,
+            concentration_ppm_low=float(conc.get("low", 0.5)),
+            concentration_ppm_high=float(conc.get("high", 500.0)),
+            log_uniform_concentration=bool(conc.get("log_uniform", True)),
+            path_length_m=float(gas.get("path_length_m", 10.0)),
+            matrix_gas=gas.get("matrix_gas", "N2"),
+            wavenumber_start_cm1=float(gas.get("wavenumber_start_cm1", 6000.0)),
+            wavenumber_end_cm1=float(gas.get("wavenumber_end_cm1", 6100.0)),
+            n_output_points=int(gas.get("n_output_points", 500)),
+        )
+        n = args.n if args.n else int(cfg["n_records"])
+        t0 = time.time()
+        records = []
+        counts = _split_counts(n, len(instruments))
+        for i, (inst, n_i) in enumerate(zip(instruments, counts)):
+            records.extend(generate_ftir_dataset(ftir_spec, inst, n_i, seed + i))
+        t1 = time.time()
+        write_records(out_path, records, validate=True)
+        t2 = time.time()
+        _report(cfg["dataset_id"], n, t1 - t0, t2 - t1)
+        return 0
+
+    if technique == "DOAS":
+        from .doas_generator import DOASGenerationSpec, generate_doas_dataset
+
+        doas_spec = DOASGenerationSpec(
+            molecule=molecule,
+            concentration_ppm_low=float(conc.get("low", 0.001)),
+            concentration_ppm_high=float(conc.get("high", 10.0)),
+            log_uniform_concentration=bool(conc.get("log_uniform", True)),
+            path_length_m=float(gas.get("path_length_m", 1000.0)),
+            matrix_gas=gas.get("matrix_gas", "air"),
+            wavelength_start_nm=float(gas.get("wavelength_start_nm", 300.0)),
+            wavelength_end_nm=float(gas.get("wavelength_end_nm", 360.0)),
+            n_output_points=int(gas.get("n_output_points", 500)),
+            cross_section_center_nm=float(gas.get("cross_section_center_nm", 330.0)),
+            cross_section_peak_cm2=float(gas.get("cross_section_peak_cm2", 6e-19)),
+            poly_order=int(gas.get("poly_order", 5)),
+        )
+        n = args.n if args.n else int(cfg["n_records"])
+        t0 = time.time()
+        records = []
+        counts = _split_counts(n, len(instruments))
+        for i, (inst, n_i) in enumerate(zip(instruments, counts)):
+            records.extend(generate_doas_dataset(doas_spec, inst, n_i, seed + i))
+        t1 = time.time()
+        write_records(out_path, records, validate=True)
+        t2 = time.time()
+        _report(cfg["dataset_id"], n, t1 - t0, t2 - t1)
+        return 0
+
     spec = GenerationSpec(
         lines=lines, molecule=molecule,
         concentration_ppm_low=float(conc.get("low", 1.0)),
@@ -683,6 +764,9 @@ def cmd_download(args: argparse.Namespace) -> int:
         ("drift", "T5 drift compensation (time series)"),
         ("ood", "T6 OOD instrument detection"),
         ("ndir", "T7 NDIR + cross-modality transfer"),
+        ("crds", "T1-CRDS ring-down time concentration (local generate)"),
+        ("ftir", "T1-FTIR ILS-broadened spectrum concentration (local generate)"),
+        ("doas", "T1-DOAS differential OD concentration (local generate)"),
         ("multispecies", "T8 multi-species regression (CH4+H2O)"),
         ("temperature", "T9 temperature regression"),
         ("da_hitran", "T1/T3 with HITRAN production lines (76 lines)"),
@@ -705,7 +789,8 @@ def cmd_download(args: argparse.Namespace) -> int:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="spektran",
-        description="SPEKTRAN — TDLAS/NDIR simulation engine and ML benchmark. "
+        description="SPEKTRAN — optical gas sensing simulation engine and ML benchmark "
+                    "(TDLAS, NDIR, CRDS, FTIR, DOAS). "
                     "Agent-ready: use --json on any command for structured output.",
     )
     parser.add_argument("--version", action="version", version=__version__)
