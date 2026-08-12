@@ -1,6 +1,7 @@
-"""SPEKTRAN Interactive Demo — try TDLAS simulation in 30 seconds.
+"""SPEKTRAN Interactive Demo — try optical gas sensing simulation in 30 seconds.
 
 Hosted on Hugging Face Spaces: https://huggingface.co/spaces/spektran/spektran-demo
+5 modalities: TDLAS (DA + WMS), NDIR, CRDS, FTIR, DOAS.
 """
 
 import gradio as gr
@@ -25,6 +26,9 @@ from spektran.physics import (
     demo_so2,
     simulate_wms,
 )
+from spektran.physics.crds import empty_cavity_tau, ring_down_time, ring_down_trace
+from spektran.physics.ftir import simulate_ftir_spectrum, spectral_resolution_cm1
+from spektran.physics.doas import simulate_doas_cross_section, simulate_doas_spectrum
 
 MOLECULES = {
     "CH4": {"lines_fn": demo_ch4_2nu3, "nu_start": 6045.5, "nu_end": 6048.5, "band": "2nu3 R-branch, ~1653 nm"},
@@ -160,17 +164,117 @@ def plot_multispecies(mol1, conc1, mol2, conc2, temperature_K, pressure_atm, pat
     return fig
 
 
+def plot_crds(concentration_ppm, mirror_r, cavity_length_cm, path_length_m,
+              temperature_K, pressure_atm):
+    lines = demo_ch4_2nu3()
+    nu = np.linspace(6046.0, 6048.0, 200)
+    alpha = absorption_coefficient(
+        nu, lines,
+        mole_fraction=concentration_ppm * 1e-6,
+        temperature_K=temperature_K,
+        pressure_atm=pressure_atm,
+    )
+    tau = np.array([ring_down_time(cavity_length_cm, mirror_r, float(a)) for a in alpha])
+    tau0 = empty_cavity_tau(cavity_length_cm, mirror_r)
+
+    fig, axes = plt.subplots(2, 1, figsize=(10, 7))
+    axes[0].plot(nu, tau * 1e6, color="#7c3aed", linewidth=1.5)
+    axes[0].axhline(tau0 * 1e6, color="#ef4444", linestyle="--", label=f"empty cavity: {tau0*1e6:.1f} us")
+    axes[0].set_xlabel("Wavenumber (cm$^{-1}$)")
+    axes[0].set_ylabel("Ring-down time (us)")
+    axes[0].set_title("CRDS — CH4 Ring-Down Time Spectrum")
+    axes[0].legend()
+    axes[0].grid(True, alpha=0.3)
+
+    t_trace = np.linspace(0, 5 * tau0, 1000)
+    peak_idx = int(np.argmax(alpha))
+    decay_on = np.exp(-t_trace / tau[peak_idx])
+    decay_off = np.exp(-t_trace / tau0)
+    axes[1].plot(t_trace * 1e6, decay_on, color="#7c3aed", label="on-line (peak)")
+    axes[1].plot(t_trace * 1e6, decay_off, color="#ef4444", linestyle="--", label="off-line")
+    axes[1].set_xlabel("Time (us)")
+    axes[1].set_ylabel("Intensity (arb.)")
+    axes[1].set_title("Ring-Down Decay")
+    axes[1].legend()
+    axes[1].grid(True, alpha=0.3)
+
+    fig.tight_layout()
+    return fig
+
+
+def plot_ftir(concentration_ppm, max_opd_cm, apodization, path_length_m,
+              temperature_K, pressure_atm):
+    lines = demo_ch4_2nu3()
+    result = simulate_ftir_spectrum(
+        lines=lines, molecule="CH4",
+        concentration_ppm=concentration_ppm,
+        temperature_K=temperature_K, pressure_atm=pressure_atm,
+        path_length_m=path_length_m, max_opd_cm=max_opd_cm,
+        wavenumber_start_cm1=6045.0, wavenumber_end_cm1=6049.0,
+        n_hires_points=10000, n_output_points=500,
+        apod_function=apodization,
+    )
+    res = spectral_resolution_cm1(max_opd_cm)
+
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.plot(result["nu_cm1"], result["spectrum_hires"], color="#0891b2", linewidth=1.5)
+    ax.set_xlabel("Wavenumber (cm$^{-1}$)")
+    ax.set_ylabel("Transmittance")
+    ax.set_title(f"FTIR — CH4 High-Resolution Spectrum (res = {res:.3f} cm$^{{-1}}$)")
+    ax.grid(True, alpha=0.3)
+    info = (
+        f"Apodization: {apodization}\n"
+        f"Max OPD: {max_opd_cm:.1f} cm, [{concentration_ppm:.0f}] ppm CH4"
+    )
+    ax.text(0.02, 0.02, info, transform=ax.transAxes, fontsize=9,
+            verticalalignment="bottom", bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.5))
+    fig.tight_layout()
+    return fig
+
+
+def plot_doas(concentration_ppm, path_length_m, poly_order, rayleigh, mie_tau):
+    wavelength = np.linspace(300.0, 360.0, 500)
+    sigma = simulate_doas_cross_section(
+        wavelength, center_nm=330.0, peak_cross_section_cm2=6e-19,
+        n_features=5, feature_width_nm=0.8,
+    )
+    result = simulate_doas_spectrum(
+        wavelength_nm=wavelength, target_sigma_cm2=sigma,
+        target_concentration_ppm=concentration_ppm,
+        temperature_K=296.0, pressure_atm=1.0,
+        path_length_m=path_length_m, poly_order=poly_order,
+        rayleigh=rayleigh, mie_tau_ref=mie_tau,
+    )
+
+    fig, axes = plt.subplots(2, 1, figsize=(10, 7))
+    axes[0].plot(wavelength, result["od_total"], color="#ea580c", linewidth=1.5)
+    axes[0].set_xlabel("Wavelength (nm)")
+    axes[0].set_ylabel("Optical Density")
+    axes[0].set_title(f"DOAS — SO2 Total OD ({concentration_ppm:.2f} ppm, {path_length_m:.0f} m)")
+    axes[0].grid(True, alpha=0.3)
+
+    axes[1].plot(wavelength, result["doas_spectrum"], color="#2563eb", linewidth=1.5)
+    axes[1].set_xlabel("Wavelength (nm)")
+    axes[1].set_ylabel("Differential OD")
+    axes[1].set_title("Differential Optical Density (after polynomial high-pass)")
+    axes[1].grid(True, alpha=0.3)
+
+    fig.tight_layout()
+    return fig
+
+
 molecule_names = list(MOLECULES.keys())
 
 with gr.Blocks(title="SPEKTRAN Interactive Demo") as demo:
     gr.Markdown(
         """
         # SPEKTRAN Interactive Demo
-        **Try TDLAS gas-sensing simulation in 30 seconds.**
+        **Try optical gas sensing simulation in 30 seconds — 5 modalities.**
 
         SPEKTRAN is an open-source platform generating physically rigorous
         synthetic training data for ML-based gas sensing. This demo runs the
         forward physics engine in real time — no data download or install needed.
+        Supports TDLAS (DA + WMS), CRDS, FTIR, and DOAS.
 
         [GitHub](https://github.com/spektran/spektran) |
         [Paper](https://doi.org/10.5281/zenodo.21790394) |
@@ -230,12 +334,63 @@ with gr.Blocks(title="SPEKTRAN Interactive Demo") as demo:
         ms_inputs = [ms_mol1, ms_conc1, ms_mol2, ms_conc2, ms_temp, ms_pres, ms_path]
         ms_btn.click(plot_multispecies, inputs=ms_inputs, outputs=ms_plot)
 
+    with gr.Tab("CRDS (Cavity Ring-Down)"):
+        gr.Markdown("Simulate cavity ring-down spectroscopy: absorption coefficient from ring-down time decay.")
+        with gr.Row():
+            with gr.Column(scale=1):
+                crds_conc = gr.Slider(1, 5000, value=100, step=1, label="CH4 Concentration (ppm)")
+                crds_r = gr.Slider(0.9999, 0.999999, value=0.99995, step=0.000001, label="Mirror Reflectivity")
+                crds_len = gr.Slider(10, 100, value=50, step=1, label="Cavity Length (cm)")
+                crds_path = gr.Slider(0.1, 100.0, value=10.0, step=0.1, label="Gas Path Length (m)")
+                crds_temp = gr.Slider(200, 500, value=296, step=1, label="Temperature (K)")
+                crds_pres = gr.Slider(0.01, 2.0, value=1.0, step=0.01, label="Pressure (atm)")
+                crds_btn = gr.Button("Simulate", variant="primary")
+            with gr.Column(scale=2):
+                crds_plot = gr.Plot(label="CRDS Ring-Down Spectrum")
+        crds_inputs = [crds_conc, crds_r, crds_len, crds_path, crds_temp, crds_pres]
+        crds_btn.click(plot_crds, inputs=crds_inputs, outputs=crds_plot)
+
+    with gr.Tab("FTIR (Fourier Transform)"):
+        gr.Markdown("Simulate Fourier transform infrared spectroscopy: interferogram -> apodized FFT -> broadband spectrum.")
+        with gr.Row():
+            with gr.Column(scale=1):
+                ftir_conc = gr.Slider(10, 5000, value=500, step=10, label="CH4 Concentration (ppm)")
+                ftir_opd = gr.Slider(0.5, 50.0, value=10.0, step=0.5, label="Max OPD (cm)")
+                ftir_apod = gr.Dropdown(
+                    ["boxcar", "triangular", "happ_genzel", "norton_beer_medium", "norton_beer_strong"],
+                    value="happ_genzel", label="Apodization"
+                )
+                ftir_path = gr.Slider(0.1, 50.0, value=10.0, step=0.1, label="Path Length (m)")
+                ftir_temp = gr.Slider(200, 500, value=296, step=1, label="Temperature (K)")
+                ftir_pres = gr.Slider(0.01, 2.0, value=1.0, step=0.01, label="Pressure (atm)")
+                ftir_btn = gr.Button("Simulate", variant="primary")
+            with gr.Column(scale=2):
+                ftir_plot = gr.Plot(label="FTIR Spectrum")
+        ftir_inputs = [ftir_conc, ftir_opd, ftir_apod, ftir_path, ftir_temp, ftir_pres]
+        ftir_btn.click(plot_ftir, inputs=ftir_inputs, outputs=ftir_plot)
+
+    with gr.Tab("DOAS (Differential OAS)"):
+        gr.Markdown("Simulate differential optical absorption spectroscopy: UV/Vis Beer-Lambert + polynomial high-pass filter.")
+        with gr.Row():
+            with gr.Column(scale=1):
+                doas_conc = gr.Slider(0.01, 100.0, value=1.0, step=0.01, label="SO2 Concentration (ppm)")
+                doas_path = gr.Slider(10, 5000, value=500, step=10, label="Path Length (m)")
+                doas_poly = gr.Slider(1, 9, value=5, step=1, label="Polynomial Order")
+                doas_ray = gr.Checkbox(value=True, label="Include Rayleigh Scattering")
+                doas_mie = gr.Slider(0.0, 2.0, value=0.3, step=0.01, label="Mie Aerosol Optical Depth")
+                doas_btn = gr.Button("Simulate", variant="primary")
+            with gr.Column(scale=2):
+                doas_plot = gr.Plot(label="DOAS Differential OD")
+        doas_inputs = [doas_conc, doas_path, doas_poly, doas_ray, doas_mie]
+        doas_btn.click(plot_doas, inputs=doas_inputs, outputs=doas_plot)
+
     gr.Markdown(
         """
         ---
-        **Note:** This demo uses approximate built-in line lists for offline operation.
+        **Note:** This demo uses approximate built-in line lists (TDLAS/CRDS/FTIR)
+        and synthetic cross sections (DOAS) for offline operation.
         Official benchmark data uses HITRAN-fetched parameters.
-        SPEKTRAN v0.5.0 | Apache-2.0 (code) | CC BY 4.0 (data)
+        SPEKTRAN v0.6.0 | Apache-2.0 (code) | CC BY 4.0 (data)
         """
     )
 
